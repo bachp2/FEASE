@@ -50,6 +50,9 @@
     <ClInclude Include="fease_draw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mouse_listener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="solid.vs">

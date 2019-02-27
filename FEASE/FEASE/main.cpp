@@ -1,5 +1,10 @@
-﻿#define GLM_ENABLE_EXPERIMENTAL
+﻿#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
+#define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z); 
+
+
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glad/glad.h>
+
 
 #define GLFW_INCLUDE_GLU // for gluErrorString
 #include <GLFW/glfw3.h>
@@ -299,6 +304,24 @@ bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
 bool firstMouse = true;
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+	if (mouseListener.flag) {
+		mouseListener.state = NIL;
+		mouseListener.flag = false;
+		//printf("staring at the abyss...\n");
+	}
+
+	if (action == GLFW_PRESS) {
+		mouseListener.button = button;
+		mouseListener.state = LIMBO;
+	}
+
+	if (action == GLFW_RELEASE && mouseListener.state == LIMBO) {
+		mouseListener.state = CLICK;
+		//printf("clicked!\n");
+		mouseListener.flag = true;
+	} 
+	else if (action == GLFW_RELEASE && mouseListener.state == DRAG) mouseListener.flag = true;
+
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
 		double mouseX, mouseY;
@@ -332,10 +355,21 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	
+	//PRINT2F(xoffset, yoffset);
 
+	if (mouseListener.state == LIMBO) {
+		mouseListener.state = DRAG;
+		printf("dragging a dead mouse!\n");
+	}
 	lastX = xpos;
 	lastY = ypos;
-
+	
+	/*if (mouseListener.state == DRAG &&
+		mouseListener.button == GLFW_MOUSE_BUTTON_LEFT && !imguiIO->WantCaptureMouse)
+	{
+		camera.ProcessMouseMovement(xoffset, yoffset);
+	}*/
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) && !imguiIO->WantCaptureMouse)
 		camera.ProcessMouseMovement(xoffset, yoffset);
 }
