@@ -15,4 +15,15 @@ struct MouseListener {
 	Mouse_State state = NIL;
 	int button;
 	bool flag = false;
+
+	inline bool draggedBy(int btn) {
+		if (button == btn && state == DRAG) return true;
+		return false;
+	}
+
+	inline bool clickedBy(int btn) {
+		if (button == btn && state == CLICK) return true;
+		return false;
+	}
+
 } mouseListener;
