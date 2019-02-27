@@ -98,7 +98,7 @@ struct Grid {
 
 		glGenBuffers(1, &vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(grid_vertices), grid_vertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(grid_vertices), grid_vertices, GL_STATIC_DRAW);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
@@ -137,5 +137,5 @@ struct Grid {
 		glDeleteBuffers(1, &vbo);
 		glDeleteBuffers(1, &ebo);
 	}
-};
+} grid;
 

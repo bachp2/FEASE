@@ -19,7 +19,7 @@
 
 #include <camera.h>
 #include <shader.h>
-
+#include <mouse_listener.h>
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -32,11 +32,8 @@ glm::mat4 projection, view, model;
 
 ArcBallCamera camera(1.0f);
 
-Grid grid;
-
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
-
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -296,8 +293,8 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 
-bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my);
-bool selectGrid(glm::ivec2& coord, const glm::vec3& hit);
+bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim);
+bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
 
 bool firstMouse = true;
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -309,13 +306,14 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		//std::cout << "Cursor Position at (" << mouseX << " : " << mouseY << ")" << std::endl;
 		glm::vec3 hit;
+		auto lim = 0.1;
 		//auto r = getHitPtFromRaycastToGrid(hit, mouseX, mouseY);
 		//printf("hit? %d\n", r);
-		if (getHitPtFromRaycastToGrid(hit, mouseX, mouseY))
+		if (getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
 		{
 			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
 			glm::ivec2 coord(0);
-			if (selectGrid(coord, hit))
+			if (selectGrid(coord, hit, lim))
 			{
 				printf("i: %d, j: %d\n", coord.x, coord.y);
 			}
@@ -375,7 +373,7 @@ static void create_texture(unsigned int* texture) {
 	stbi_image_free(data);
 }
 
-inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my) {
+inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim) {
 	float x = (2.0f * mx) / scrWidth - 1.0f;
 	float y = 1.0f - (2.0f * my) / scrHeight;
 	float z = 1.0f;
@@ -397,22 +395,21 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my)
 		hit.y = 0.0f;
 		//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
 		auto grid_halft_size_after_scaling = 1.0f / camera.Zoom / 2;
-		if (hit.x > grid_halft_size_after_scaling || hit.x < -grid_halft_size_after_scaling) return false;
-		if (hit.z > grid_halft_size_after_scaling || hit.z < -grid_halft_size_after_scaling) return false;
+		if (hit.x > grid_halft_size_after_scaling + lim || hit.x < -grid_halft_size_after_scaling - lim) return false;
+		if (hit.z > grid_halft_size_after_scaling + lim || hit.z < -grid_halft_size_after_scaling - lim) return false;
 		return true;
 	}
 	return false;
 }
 
 bool numCloseWithin(float num, float lim);
-inline static bool selectGrid(glm::ivec2& coord, const glm::vec3& hit)
+inline static bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim)
 {
 	auto grid_halft_size_after_scaling = 1.0f / camera.Zoom / 2;
 	auto grid_step = grid_halft_size_after_scaling * 2 / grid.gnum;
-	printf("grid step: %.2f\n", grid_step);
 	auto a = hit.x / grid_step;
 	auto b = hit.z / grid_step;
-	if (!numCloseWithin(a, 0.1) || !numCloseWithin(b, 0.1))
+	if (!numCloseWithin(a, lim) || !numCloseWithin(b, lim))
 		return false; //can't select a grid coordinate near its vicinity
 	a = round(a);
 	b = round(b);
