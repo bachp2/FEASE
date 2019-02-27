@@ -295,9 +295,11 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
-bool firstMouse = true;
-bool getHitPtFromRaycast(glm::vec3& hit, float mx, float my);
 
+bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my);
+bool selectGrid(glm::ivec2& coord, const glm::vec3& hit);
+
+bool firstMouse = true;
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
@@ -307,7 +309,17 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		//std::cout << "Cursor Position at (" << mouseX << " : " << mouseY << ")" << std::endl;
 		glm::vec3 hit;
-		getHitPtFromRaycast(hit, mouseX, mouseY);
+		//auto r = getHitPtFromRaycastToGrid(hit, mouseX, mouseY);
+		//printf("hit? %d\n", r);
+		if (getHitPtFromRaycastToGrid(hit, mouseX, mouseY))
+		{
+			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
+			glm::ivec2 coord(0);
+			if (selectGrid(coord, hit))
+			{
+				printf("i: %d, j: %d\n", coord.x, coord.y);
+			}
+		}
 	}
 }
 
@@ -363,7 +375,7 @@ static void create_texture(unsigned int* texture) {
 	stbi_image_free(data);
 }
 
-inline static bool getHitPtFromRaycast(glm::vec3& hit, float mx, float my) {
+inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my) {
 	float x = (2.0f * mx) / scrWidth - 1.0f;
 	float y = 1.0f - (2.0f * my) / scrHeight;
 	float z = 1.0f;
@@ -373,6 +385,44 @@ inline static bool getHitPtFromRaycast(glm::vec3& hit, float mx, float my) {
 	ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
 	glm::vec3 ray_wor = (glm::inverse(view) * ray_eye);
 	ray_wor = glm::normalize(ray_wor);
-	printf("x: %.2f, y: %.2f, z: %.2f\n", ray_wor.x, ray_wor.y, ray_wor.z);
+
+	//printf("x: %.2f, y: %.2f, z: %.2f\n", ray_wor.x, ray_wor.y, ray_wor.z);
+	auto camPos = camera.getPosition();
+	//printf("radius: %.2f ", camera.Radius);
+	//printf("x: %.2f, y: %.2f, z: %.2f\n", camPos.x, camPos.y, camPos.z);
+	// find t
+	auto t = -camPos.y / ray_wor.y;
+	if (t >= -0.00001f) {
+		hit = camPos + t*ray_wor;
+		hit.y = 0.0f;
+		//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
+		auto grid_halft_size_after_scaling = 1.0f / camera.Zoom / 2;
+		if (hit.x > grid_halft_size_after_scaling || hit.x < -grid_halft_size_after_scaling) return false;
+		if (hit.z > grid_halft_size_after_scaling || hit.z < -grid_halft_size_after_scaling) return false;
+		return true;
+	}
+	return false;
+}
+
+bool numCloseWithin(float num, float lim);
+inline static bool selectGrid(glm::ivec2& coord, const glm::vec3& hit)
+{
+	auto grid_halft_size_after_scaling = 1.0f / camera.Zoom / 2;
+	auto grid_step = grid_halft_size_after_scaling * 2 / grid.gnum;
+	printf("grid step: %.2f\n", grid_step);
+	auto a = hit.x / grid_step;
+	auto b = hit.z / grid_step;
+	if (!numCloseWithin(a, 0.1) || !numCloseWithin(b, 0.1))
+		return false; //can't select a grid coordinate near its vicinity
+	a = round(a);
+	b = round(b);
+	//printf("a: %.2f, b: %.2f\n", a, b);
+	coord = glm::ivec2(a, b);
 	return true;
+}
+
+inline static bool numCloseWithin(float num, float lim) {
+	auto center = round(num);
+	if (num >= center - lim && num <= center + lim) return true;
+	return false;
 }

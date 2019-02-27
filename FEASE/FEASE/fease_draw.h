@@ -90,7 +90,8 @@ const unsigned int grid_indices[] = {
 struct Grid {
 	Shader* shader;
 	unsigned int vbo, vao, ebo;
-
+	unsigned int gnum; //number of grids
+	float gridThickness;
 	inline void setup(Shader* gridShader, const unsigned int scrWidth, const unsigned int scrHeight) {
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
@@ -116,6 +117,13 @@ struct Grid {
 		Color grid_color = hexCodeToRGB("#004883");
 		
 		shader->setVec4("gridColor", glm::vec4(grid_color.r, grid_color.g, grid_color.b, 1.0));
+
+		gnum = 10;
+		shader->setInt("multiplicationFactor", gnum);
+
+		gridThickness = 0.02;
+		shader->setFloat("threshold", gridThickness);
+
 		Shader::reset();
 	}
 

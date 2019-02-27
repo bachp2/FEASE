@@ -1,7 +1,7 @@
 #version 330 core
 
-uniform int multiplicationFactor = 20;
-uniform float threshold = 0.02;
+uniform int multiplicationFactor;
+uniform float threshold;
 uniform vec4 gridColor;
  
 in vec2 vUV;

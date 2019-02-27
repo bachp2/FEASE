@@ -63,6 +63,14 @@ public:
 		return glm::lookAt(glm::vec3(0.0f, 0.0f, Radius), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f))*glm::inverse(model);
 	}
 	
+	glm::vec3 getPosition() 
+	{
+		return Vec3(
+			Radius*sinf(PI/2 - Pitch)*sinf(Yaw),
+			-Radius*cosf(PI/2 - Pitch),
+			Radius*sinf(PI/2 - Pitch)*cosf(Yaw)
+		);
+	}
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime)
@@ -92,7 +100,9 @@ public:
 	void ProcessMouseScroll(float yoffset)
 	{
 		Zoom -= ScrollSensitivity*yoffset;
-		if (Zoom < 0.01f) Zoom = 0.01f;
+		if (Zoom < 0.1f) Zoom = 0.1f;
+		if (Zoom > 7.0f) Zoom = 7.0;
+		//printf("Zoom:%.2f\n", Zoom);
 	}
 
 private:
@@ -100,6 +110,7 @@ private:
 	glm::mat4 GetModelMatrix()
 	{
 		glm::mat4 model = glm::mat4(1.0f);
+		//model = glm::scale(model, Vec3(Zoom));
 		model = glm::rotate(model, Yaw, Vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, Pitch, Vec3(1.0f, 0.0f, 0.0f));
 		model = glm::scale(model, Vec3(Zoom));
