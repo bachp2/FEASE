@@ -1,10 +1,27 @@
 #pragma once
 #include <shader.h>
+#include <set>
+#include "camera.h"
 #ifndef PI
 #define PI 3.14159265358979323846
 #define TAU 2*PI
 #endif // !PI
+struct Color {
+	float r, g, b;
+};
 
+inline static Color hexCodeToRGB(std::string input) {
+	if (input[0] == '#')
+		input.erase(0, 1);
+
+	unsigned int value = stoul(input, nullptr, 16);
+
+	Color color;
+	color.r = ((value >> 16) & 0xff) / 255.0;
+	color.g = ((value >> 8) & 0xff) / 255.0;
+	color.b = ((value >> 0) & 0xff) / 255.0;
+	return color;
+}
 
 const float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -96,6 +113,9 @@ const float cube_vertices[] = {
 		-0.5f,  0.5f, -0.5f,
 };
 
+//////////////////////////////
+//AXIS LINES ENTITY
+//////////////////////////////
 const float axis_vertices[] = {
 	0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 	1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -107,25 +127,60 @@ const float axis_vertices[] = {
 	0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
 };
 
+struct Axis {
+	unsigned int vbo, vao;
+	ArcBallCamera* cam;
 
-struct Color {
-	float r, g, b;
-};
+	inline void setup(ArcBallCamera *camera) {
+		cam = camera;
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
 
-inline static Color hexCodeToRGB(std::string input) {
-	if (input[0] == '#')
-		input.erase(0, 1);
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(axis_vertices), axis_vertices, GL_DYNAMIC_DRAW);
 
-	unsigned int value = stoul(input, nullptr, 16);
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+	}
 
-	Color color;
-	color.r = ((value >> 16) & 0xff) / 255.0;
-	color.g = ((value >> 8) & 0xff) / 255.0;
-	color.b = ((value >> 0) & 0xff) / 255.0;
-	return color;
-}
+	inline void render(Shader& shader, const int& scrWidth, const int& scrHeight) {
+		glDisable(GL_DEPTH_TEST);
+		shader.use();
+		int ww = 320;
+		glViewport(scrWidth - ww + 80, -100, ww, ww);
+		auto model = glm::mat4(1.0f);
+		model = glm::rotate(model, cam->Yaw, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, cam->Pitch, glm::vec3(1.0f, 0.0f, 0.0f));
+
+		auto view1 = glm::lookAt(glm::vec3(0.0f, 0.0f, 7.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f))*glm::inverse(model);
+
+		shader.setMat4("view", view1);
+
+		auto projection1 = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+		shader.setMat4("projection", projection1);
+
+		glBindVertexArray(vao);
+		glDrawArrays(GL_LINES, 0, 6);
+		glViewport(0, 0, scrWidth, scrHeight);
+		glEnable(GL_DEPTH_TEST);
+		Shader::reset();
+	}
+
+	inline void cleanup() {
+		glDeleteVertexArrays(1, &vao);
+		glDeleteBuffers(1, &vbo);
+	}
+} axisLines;
 
 
+//////////////////////////////
+//GRID ENTITY
+//////////////////////////////
 const float grid_vertices[] = {
 	0.5f, 0.0f,  0.5f, 1.0f, 1.0f,   // top right
 	0.5f, 0.0f, -0.5f, 0.0f, 1.0f,   // bottom right
@@ -189,5 +244,4 @@ struct Grid {
 		glDeleteBuffers(1, &vbo);
 		glDeleteBuffers(1, &ebo);
 	}
-	
 } grid;

@@ -129,21 +129,8 @@ int main()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	// cartesian axis
-	unsigned int VBO_axis, VAO_axis;
-	glGenVertexArrays(1, &VAO_axis);
-	glBindVertexArray(VAO_axis);
-
-	glGenBuffers(1, &VBO_axis);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_axis);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(axis_vertices), axis_vertices, GL_DYNAMIC_DRAW);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	// cartesian axis lines
+	axisLines.setup(&camera);
 
 	// point
 
@@ -152,7 +139,7 @@ int main()
 
 	glGenBuffers(1, &VBO_point);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_point);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_DYNAMIC_DRAW);
 
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -248,35 +235,10 @@ int main()
 			cubeShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-
-		/*model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
-		cubeShader.setMat4("model", model);*/
-		
 		model = glm::mat4(1.0f);
 		Shader::reset();
 
-		// Draw axis
-		glDisable(GL_DEPTH_TEST);
-		solidShader.use();
-		int ww = 320;
-		glViewport(scrWidth - ww + 80, -100, ww, ww);
-		model = glm::rotate(model, camera.Yaw, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, camera.Pitch, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		auto view1 = glm::lookAt(glm::vec3(0.0f, 0.0f, 7.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f))*glm::inverse(model);
-
-		solidShader.setMat4("view", view1);
-
-		auto projection1 = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
-		solidShader.setMat4("projection", projection1);
-
-		glBindVertexArray(VAO_axis);
-		glDrawArrays(GL_LINES, 0, 6);
-		glViewport(0, 0, scrWidth, scrHeight);
-		glEnable(GL_DEPTH_TEST);
-		Shader::reset();
-
+		axisLines.render(solidShader, scrWidth, scrHeight);
 		//Render ImGUI
 		ImGui::Render();
 
@@ -290,9 +252,6 @@ int main()
 	// ------------------------------------------------------------------------
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
-
-	glDeleteVertexArrays(1, &VAO_axis);
-	glDeleteBuffers(1, &VBO_axis);
 
 	grid.cleanup();
 
