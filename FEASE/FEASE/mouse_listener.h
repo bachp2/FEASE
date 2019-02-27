@@ -10,6 +10,7 @@ enum Mouse_State {
 	DRAG,
 	LIMBO //between Heaven and HEll !!
 };
+
 struct MouseListener {
 	//note to myself, validate state first
 	Mouse_State state = NIL;

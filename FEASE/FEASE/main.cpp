@@ -111,6 +111,7 @@ int main()
 	Shader texShader("texture.vs", "texture.fs");
 	Shader solidShader("solid.vs", "solid.fs");
 	Shader gridShader("grid.vs", "grid.fs");
+	Shader cubeShader("cube.vs", "cube.fs");
 
 	//cube
 	unsigned int VBO, VAO;
@@ -143,6 +144,19 @@ int main()
 	// color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	// point
+
+	unsigned int VBO_point;
+	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &VBO_point);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_point);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	//grid
 	
@@ -205,7 +219,7 @@ int main()
 
 		// Draw box
 		// bind textures on corresponding texture units
-		glActiveTexture(GL_TEXTURE0);
+		/*glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		texShader.use();
@@ -218,6 +232,28 @@ int main()
 		model = glm::mat4(1.0f);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		Shader::reset();*/
+
+		// Draw point
+		cubeShader.use();
+
+		cubeShader.setMat4("projection", projection);
+		cubeShader.setMat4("view", view);
+		glBindVertexArray(VAO);
+		for (const auto& i : pointsLoc) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, i);
+			model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+			cubeShader.setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		/*model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+		cubeShader.setMat4("model", model);*/
+		
+		model = glm::mat4(1.0f);
 		Shader::reset();
 
 		// Draw axis
@@ -301,7 +337,6 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim);
 bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
 
-bool firstMouse = true;
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS) {
@@ -316,7 +351,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	} 
 	else if (action == GLFW_RELEASE && mouseListener.state == DRAG) mouseListener.flag = true;
 
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	if (mouseListener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
 	{
 		double mouseX, mouseY;
 		//getting cursor position
@@ -333,11 +368,13 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 			if (selectGrid(coord, hit, lim))
 			{
 				printf("i: %d, j: %d\n", coord.x, coord.y);
+				pointsLoc.push_back(grid.step*Vec3(coord.x, 0.0f, coord.y));
 			}
 		}
 	}
 }
 
+bool firstMouse = true;
 static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
@@ -349,8 +386,6 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-	
-	//PRINT2F(xoffset, yoffset);
 	
 	if (mouseListener.flag) {
 		mouseListener.state = NIL;

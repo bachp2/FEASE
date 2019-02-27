@@ -153,6 +153,8 @@
     <ClInclude Include="vabo.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cube.fs" />
+    <None Include="cube.vs" />
     <None Include="grid.vs" />
     <None Include="solid.fs" />
     <None Include="solid.vs" />

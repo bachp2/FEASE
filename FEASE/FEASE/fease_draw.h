@@ -1,5 +1,10 @@
 #pragma once
 #include <shader.h>
+#ifndef PI
+#define PI 3.14159265358979323846
+#define TAU 2*PI
+#endif // !PI
+
 
 const float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -43,6 +48,52 @@ const float vertices[] = {
 	0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
+
+std::vector<glm::vec3> pointsLoc;
+// a cube is a point!
+const float cube_vertices[] = {
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
 };
 
 const float axis_vertices[] = {
@@ -92,6 +143,7 @@ struct Grid {
 	unsigned int vbo, vao, ebo;
 	unsigned int gnum; //number of grids
 	float gridThickness;
+	float step;
 	inline void setup(Shader* gridShader, const unsigned int scrWidth, const unsigned int scrHeight) {
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
@@ -123,7 +175,7 @@ struct Grid {
 
 		gridThickness = 0.02;
 		shader->setFloat("threshold", gridThickness);
-
+		step = 1.0f / gnum;
 		Shader::reset();
 	}
 
@@ -137,5 +189,5 @@ struct Grid {
 		glDeleteBuffers(1, &vbo);
 		glDeleteBuffers(1, &ebo);
 	}
+	
 } grid;
-

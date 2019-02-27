@@ -73,5 +73,11 @@
     <None Include="grid.vs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="cube.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cube.vs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
