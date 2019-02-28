@@ -52,8 +52,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void processInput(GLFWwindow *window);
 void create_texture(unsigned int* texture);
 
-int main()
-{
+inline static GLFWwindow* initApp() {
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
@@ -65,17 +64,12 @@ int main()
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-
-	// glfw window creation
-	// --------------------
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "FEASE", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
-		return -1;
 	}
-
 	ImGui_ImplGlfwGL3_Init(window, true);
 	
 	glfwMakeContextCurrent(window);
@@ -92,7 +86,6 @@ int main()
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
 	}
 
 	// configure global opengl state
@@ -105,6 +98,17 @@ int main()
 	////////////////////////////
 	imguiIO = ImGui::GetIOPtr();
 	imguiIO->Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 18.0f, NULL, NULL);
+	ImGui::GetStyle().WindowRounding = 2.0f;// <- Set this on init or use ImGui::PushStyleVar()
+	return window;
+}
+
+int main()
+{
+	// glfw window creation
+	// --------------------
+	GLFWwindow* window = initApp();
+
+	
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
 	
@@ -113,7 +117,7 @@ int main()
 	Shader gridShader("grid.vs", "grid.fs");
 	Shader cubeShader("cube.vs", "cube.fs");
 
-	//cube
+	//terry cube
 	unsigned int VBO, VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -144,7 +148,9 @@ int main()
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
+	cubeShader.use();
+	auto dotColor = hexCodeToRGB("#ea5a20");
+	cubeShader.setVec3("dotColor", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
 	//grid
 	
 	grid.setup(&gridShader, scrWidth, scrHeight);
@@ -165,17 +171,29 @@ int main()
 	// Render Loop
 	// -----------
 	float FPS_display(0.0f);
+	float Phi = 0.0f, Theta = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
 		// Textbox 
 		ImGui_ImplGlfwGL3_NewFrame();
+		
 		accumulate_deltaTime += deltaTime;
 		if (accumulate_deltaTime > 0.08f) {
 			FPS_display = imguiIO->Framerate;
 			accumulate_deltaTime = 0.0f;
 		}
+		ImGui::Begin("Toolbar");
+
 		ImGui::Text("FPS: %.1f", FPS_display);
-	
+		ImGui::Text("Dear ImGui says hello. (%s)", IMGUI_VERSION);
+		ImGui::InputFloat("Phi angle", &Phi, 2);
+		ImGui::InputFloat("Theta angle", &Theta, 2);
+		ImGui::Text("...in degrees");
+		if (ImGui::Button("Rotate Camera")) {
+			camera.rotateTo(glm::radians(Theta), glm::radians(-Phi));
+		}
+		//ImGui::Button("run")
+		ImGui::End();
 		// Per-frame time logic
 		// --------------------
 		float currentFrame = glfwGetTime();
@@ -188,7 +206,8 @@ int main()
 
 		// Render
 		// ------
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		auto backgroundColor = hexCodeToRGB("#004883");
+		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw grid
@@ -228,10 +247,10 @@ int main()
 		cubeShader.setMat4("projection", projection);
 		cubeShader.setMat4("view", view);
 		glBindVertexArray(VAO);
-		for (const auto& i : pointsLoc) {
+		for (const auto& i : nodes) {
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, i);
-			model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+			model = glm::scale(model, glm::vec3(0.007f));
 			cubeShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
@@ -252,7 +271,8 @@ int main()
 	// ------------------------------------------------------------------------
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
-
+	glDeleteBuffers(1, &VBO_point);
+	axisLines.cleanup();
 	grid.cleanup();
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
@@ -326,11 +346,29 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 			glm::ivec2 coord(0);
 			if (selectGrid(coord, hit, lim))
 			{
-				printf("i: %d, j: %d\n", coord.x, coord.y);
-				pointsLoc.push_back(grid.step*Vec3(coord.x, 0.0f, coord.y));
+				//printf("i: %d, j: %d\n", coord.x, coord.y);
+				auto  a = nodes.insert(grid.step*Vec3(coord.x, 0.0f, coord.y));
+				if (!a.second) {
+					// if insert failed, select that node
+					if (mouseListener.state != SELECT) {
+						Element ele;
+						ele.nodes[0] = &(*a.first);
+						elements.push_back(ele);
+						mouseListener.state = SELECT;
+					}
+					else {
+						auto it = elements.end();
+						it->nodes[1] = &(*a.first);
+						mouseListener.state = NIL;
+					}
+					return;
+				}
 			}
 		}
 	}
+	if (mouseListener.flag) mouseListener.flag = false;
+	if (mouseListener.state != LIMBO) mouseListener.resetState();
+	//printf("mouse flag %d in mouse action callback\n", mouseListener.flag);
 }
 
 bool firstMouse = true;
@@ -362,6 +400,7 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	
 	if (mouseListener.draggedBy(GLFW_MOUSE_BUTTON_LEFT) && !imguiIO->WantCaptureMouse)
 		camera.ProcessMouseMovement(xoffset, yoffset);
+	//printf("mouse flag %d in mouse position callback\n", mouseListener.flag);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

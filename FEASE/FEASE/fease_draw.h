@@ -2,10 +2,18 @@
 #include <shader.h>
 #include <set>
 #include "camera.h"
+
 #ifndef PI
 #define PI 3.14159265358979323846
 #define TAU 2*PI
 #endif // !PI
+
+//#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
+//#define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z);
+
+//////////////////////////////
+//COLOR STRUCT AND UTILS
+//////////////////////////////
 struct Color {
 	float r, g, b;
 };
@@ -23,6 +31,9 @@ inline static Color hexCodeToRGB(std::string input) {
 	return color;
 }
 
+//////////////////////////////
+//TERRY CUBE
+//////////////////////////////
 const float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -67,7 +78,10 @@ const float vertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-std::vector<glm::vec3> pointsLoc;
+//////////////////////////////
+//POINT ENTITY
+//////////////////////////////
+
 // a cube is a point!
 const float cube_vertices[] = {
 		-0.5f, -0.5f, -0.5f,
@@ -113,6 +127,23 @@ const float cube_vertices[] = {
 		-0.5f,  0.5f, -0.5f,
 };
 
+struct compareVec
+{
+	bool operator() (const glm::vec3& lhs, const glm::vec3& rhs) const
+	{
+		auto a = lhs - rhs;
+		return !(a.length() < 0.01);
+	}
+};
+
+using Node = glm::vec3;
+struct Element {
+	const Node* nodes[2];
+};
+
+std::set<glm::vec3, compareVec> nodes;
+std::vector<Element> elements;
+
 //////////////////////////////
 //AXIS LINES ENTITY
 //////////////////////////////
@@ -148,7 +179,7 @@ struct Axis {
 		glEnableVertexAttribArray(1);
 	}
 
-	inline void render(Shader& shader, const int& scrWidth, const int& scrHeight) {
+	inline void render(Shader& shader, const int scrWidth, const int scrHeight) {
 		glDisable(GL_DEPTH_TEST);
 		shader.use();
 		int ww = 320;
@@ -221,11 +252,11 @@ struct Grid {
 		shader = gridShader;
 		shader->use();
 		//Color major_color = hexCodeToRGB("#031641"); 
-		Color grid_color = hexCodeToRGB("#004883");
+		Color grid_color = hexCodeToRGB("#C0C0C0");
 		
 		shader->setVec4("gridColor", glm::vec4(grid_color.r, grid_color.g, grid_color.b, 1.0));
 
-		gnum = 10;
+		gnum = 20;
 		shader->setInt("multiplicationFactor", gnum);
 
 		gridThickness = 0.02;

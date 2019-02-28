@@ -8,6 +8,7 @@ enum Mouse_State {
 	NIL,//means the same as neutral but I'm too lazy to type such a long word!
 	CLICK,
 	DRAG,
+	SELECT,
 	LIMBO //between Heaven and HEll !!
 };
 
@@ -26,5 +27,5 @@ struct MouseListener {
 		if (button == btn && state == CLICK) return true;
 		return false;
 	}
-
+	inline void resetState() { state = NIL; }
 } mouseListener;

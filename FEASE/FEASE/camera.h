@@ -62,6 +62,12 @@ public:
 		return glm::lookAt(glm::vec3(0.0f, 0.0f, Radius), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f))*glm::inverse(model);
 	}
 	
+	void rotateTo(float dstYaw, float dstPitch)
+	{
+		Pitch = dstPitch;
+		Yaw = dstYaw;
+	}
+
 	glm::vec3 getPosition() 
 	{
 		return Vec3(
