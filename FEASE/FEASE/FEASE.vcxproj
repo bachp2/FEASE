@@ -137,10 +137,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\Desktop\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="..\..\dependencies\glad\glad.c" />
     <ClCompile Include="..\..\dependencies\imgui\imgui.cpp" />
-    <ClCompile Include="..\..\dependencies\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\..\dependencies\imgui\imgui_impl_glfw_gl3.cpp" />
+    <ClCompile Include="..\..\dependencies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\..\dependencies\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\..\dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
