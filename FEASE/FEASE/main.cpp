@@ -23,9 +23,18 @@
 #define GLFW_INCLUDE_GLU // for gluErrorString
 #include <GLFW/glfw3.h>
 
+// [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
+// To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
+// Your own project should not be affected, as you are likely to link with a newer binary of GLFW that is adequate for your version of Visual Studio.
+#if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
+#pragma comment(lib, "legacy_stdio_definitions")
+#endif
+
 #include <camera.h>
 #include <shader.h>
 #include <mouse_listener.h>
+
+ImGuiIO* imguiIO;
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -46,71 +55,15 @@ float deltaTime = 0.0f;	// time between current frame and last frame
 float accumulate_deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 void processInput(GLFWwindow *window);
 void create_texture(unsigned int* texture);
 void handleGUILogic();
 
-inline static GLFWwindow* initApp() {
-	// glfw: initialize and configure
-	// ------------------------------
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_SAMPLES, 4);
+GLFWwindow* initApp();
 
-#ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "FEASE", NULL, NULL);
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-	}
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	
-	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetMouseButtonCallback(window, mouse_button_callback);
-
-	// tell GLFW to capture our mouse
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-	// glad: load all OpenGL function pointers
-	// ---------------------------------------
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-	}
-
-	// configure global opengl state
-	// -----------------------------
-	glLineWidth(1.7f);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_MULTISAMPLE);
-	//glEnable(GL_CULL_FACE);
-
-	////////////////////////////
-	//imguiIO = ImGui::GetIO();
-	ImGui::GetIO().Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 18.0f, NULL, NULL);
-	ImGui::GetStyle().WindowRounding = 2.0f;// <- Set this on init or use ImGui::PushStyleVar()
-	return window;
-}
-
-int main()
+int main(int, char**)
 {
-	// glfw window creation
-	// --------------------
 	GLFWwindow* window = initApp();
-
-	
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
 	
@@ -178,43 +131,7 @@ int main()
 	static int normal_to = -1;
 	while (!glfwWindowShouldClose(window))
 	{
-		// IMGUI logic
-		//handleGUILogic();
-		ImGui_ImplGlfw_NewFrame();
-		
-		accumulate_deltaTime += deltaTime;
-		if (accumulate_deltaTime > 0.08f) {
-			FPS_display = ImGui::GetIO().Framerate;
-			accumulate_deltaTime = 0.0f;
-		}
-
-		ImGui::Begin("Toolbar");
-
-		ImGui::Text("FPS: %.1f", FPS_display);
-		ImGui::Text("Dear ImGui (%s)", IMGUI_VERSION);
-
-		ImGui::Text("Normal to:");
-		//ImGui::BulletText("Double-click on title bar to collapse window.");
-		ImGui::RadioButton("x", &normal_to, 0); ImGui::SameLine();
-		ImGui::RadioButton("y", &normal_to, 1); ImGui::SameLine();
-		ImGui::RadioButton("z", &normal_to, 2); ImGui::SameLine();
-		ImGui::RadioButton("nil", &normal_to, -1);
-
-		if (normal_to != -1) {
-			static const float phi_theta[6] = {
-				0, 0, 90, 0, 0, 90
-			};
-			camera.rotateTo(glm::radians(phi_theta[normal_to * 2 + 1]), glm::radians(-phi_theta[normal_to * 2]));
-		}
-
-		ImGui::Checkbox("fixed cam", &cam_is_fixed);
-
-		if (cam_is_fixed) camera.cameraState = CAM_FIXED; //allowed zooming
-		else camera.cameraState = CAM_FREE;
-
-		//ImGui::Button("run")
-		ImGui::End();
-
+		handleGUILogic();
 		// Per-frame time logic
 		// --------------------
 		float currentFrame = glfwGetTime();
@@ -281,10 +198,12 @@ int main()
 		axisLines.render(solidShader, scrWidth, scrHeight);
 		//Render ImGUI
 		ImGui::Render();
-
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
+		glfwMakeContextCurrent(window);
 		glfwSwapBuffers(window);
+
 		glfwPollEvents();
 	}
 
@@ -298,8 +217,13 @@ int main()
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
+	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	glfwDestroyWindow(window);
 	glfwTerminate();
+
 	return 0;
 }
 
@@ -510,11 +434,16 @@ inline static bool numCloseWithin(float num, float lim) {
 
 inline static void handleGUILogic() 
 {
-	ImGui_ImplGlfw_NewFrame();
 	static float FPS_display(0.0f);
 	static float phi = 0.0f, theta = 0.0f;
 	static bool cam_is_fixed = false;
 	static int normal_to = -1;
+	// Start the Dear ImGui frame
+	
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
 	accumulate_deltaTime += deltaTime;
 	if (accumulate_deltaTime > 0.08f) {
 		FPS_display = ImGui::GetIO().Framerate;
@@ -526,26 +455,104 @@ inline static void handleGUILogic()
 	ImGui::Text("FPS: %.1f", FPS_display);
 	ImGui::Text("Dear ImGui (%s)", IMGUI_VERSION);
 
-	ImGui::Text("Normal to:");
-	//ImGui::BulletText("Double-click on title bar to collapse window.");
-	ImGui::RadioButton("x", &normal_to, 0); ImGui::SameLine();
-	ImGui::RadioButton("y", &normal_to, 1); ImGui::SameLine();
-	ImGui::RadioButton("z", &normal_to, 2); ImGui::SameLine();
-	ImGui::RadioButton("nil", &normal_to, -1);
+	//ImGui::Text("Normal to:");
+	////ImGui::BulletText("Double-click on title bar to collapse window.");
+	//ImGui::RadioButton("x", &normal_to, 0); ImGui::SameLine();
+	//ImGui::RadioButton("y", &normal_to, 1); ImGui::SameLine();
+	//ImGui::RadioButton("z", &normal_to, 2); ImGui::SameLine();
+	//ImGui::RadioButton("nil", &normal_to, -1);
 
-	if (normal_to != -1) {
-		static const float phi_theta[6] = {
-			0, 0, 90, 0, 0, 90
-		};
-		camera.rotateTo(glm::radians(phi_theta[normal_to * 2 + 1]), glm::radians(-phi_theta[normal_to * 2]));
-	}
+	/*if (normal_to != -1) {
+	static const float phi_theta[6] = {
+	0, 0, 90, 0, 0, 90
+	};
+	camera.rotateTo(glm::radians(phi_theta[normal_to * 2 + 1]), glm::radians(-phi_theta[normal_to * 2]));
+	}*/
 
-	ImGui::Checkbox("fixed cam", &cam_is_fixed);
+	ImGui::Checkbox("lock cam to view", &cam_is_fixed);
 
 	if (cam_is_fixed) camera.cameraState = CAM_FIXED; //allowed zooming
 	else camera.cameraState = CAM_FREE;
 
-	//ImGui::Button("run")
+	////ImGui::Button("run")
 	ImGui::End();
 
+}
+
+static void glfw_error_callback(int error, const char* description)
+{
+	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+
+inline static GLFWwindow* initApp() {
+	// glfw window creation
+	// --------------------
+	//GLFWwindow* window = initApp();
+	// glfw: initialize and configure
+	// ------------------------------
+	glfwSetErrorCallback(glfw_error_callback);
+	glfwInit();
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "FEASE", NULL, NULL);
+	if (window == NULL)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+	}
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1); // Enable vsync
+
+	bool err = gladLoadGL() == 0;
+	if (err)
+	{
+		fprintf(stderr, "Failed to initialize OpenGL loader!\n");
+	}
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	imguiIO = ImGui::GetIOPtr();
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsClassic();
+
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init();
+
+	// set callback functions glfw
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+
+	// tell GLFW to capture our mouse
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+	// glad: load all OpenGL function pointers
+	// ---------------------------------------
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+	}
+
+	// configure global opengl state
+	// -----------------------------
+	glLineWidth(1.7f);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_CULL_FACE);
+
+	////////////////////////////
+	ImGui::GetIO().Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 12.0f, NULL, NULL);
+	ImGui::GetStyle().WindowRounding = 2.0f;// <- Set this on init or use ImGui::PushStyleVar()
+	return window;
 }
