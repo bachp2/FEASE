@@ -42,7 +42,6 @@ public:
 	Camera_State cameraState;
 	float Pitch;
 	float Yaw;
-	float Radius;
 	// Camera options
 	float MovementSpeed;
 	float MouseSensitivity;
@@ -75,9 +74,9 @@ public:
 	glm::vec3 getPosition() 
 	{
 		return Vec3(
-			Radius*sinf(PI/2 - Pitch)*sinf(Yaw),
-			-Radius*cosf(PI/2 - Pitch),
-			Radius*sinf(PI/2 - Pitch)*cosf(Yaw)
+			sinf(PI/2 - Pitch)*sinf(Yaw),
+			-cosf(PI/2 - Pitch),
+			sinf(PI/2 - Pitch)*cosf(Yaw)
 		);
 	}
 
@@ -128,6 +127,7 @@ private:
 		model = glm::scale(model, Vec3(Zoom));
 		return model;
 	}
+
 	glm::quat euler2quat_r(glm::vec3 eangles) {
 		glm::quat qPitch = glm::angleAxis(eangles[0], glm::vec3(1, 0, 0));
 		glm::quat qYaw = glm::angleAxis(eangles[1], glm::vec3(0, 1, 0));

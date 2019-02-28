@@ -1,7 +1,6 @@
 ﻿#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
 #define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z); 
 
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad/glad.h>
 
@@ -466,6 +465,7 @@ inline static void handleGUILogic()
 	static const float phi_theta[6] = {
 	0, 0, 90, 0, 0, 90
 	};
+
 	camera.rotateTo(glm::radians(phi_theta[normal_to * 2 + 1]), glm::radians(-phi_theta[normal_to * 2]));
 	}*/
 
