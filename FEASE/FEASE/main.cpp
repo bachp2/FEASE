@@ -104,7 +104,7 @@ int main(int, char**)
 	glEnableVertexAttribArray(0);
 
 	cubeShader.use();
-	auto dotColor = hexCodeToRGB("#ea5a20");
+	auto dotColor = hexCodeToRGB("#C0C0C0");
 	cubeShader.setVec3("dotColor", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
 	
 	//grid
@@ -140,7 +140,7 @@ int main(int, char**)
 
 		// Render
 		// ------
-		auto backgroundColor = hexCodeToRGB("#004883");
+		auto backgroundColor = hexCodeToRGB("#07254f");
 		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -184,7 +184,7 @@ int main(int, char**)
 		for (const auto& i : nodes) {
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, i);
-			model = glm::scale(model, glm::vec3(0.005f));
+			model = glm::scale(model, glm::vec3(0.01f));
 			cubeShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
@@ -302,7 +302,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		//std::cout << "Cursor Position at (" << mouseX << " : " << mouseY << ")" << std::endl;
 		glm::vec3 hit;
-		auto lim = 0.1;
+		auto lim = 0.3;
 		//auto r = getHitPtFromRaycastToGrid(hit, mouseX, mouseY);
 		//printf("hit? %d\n", r);
 		
@@ -587,3 +587,30 @@ inline static GLFWwindow* initApp() {
 	ImGui::GetStyle().WindowRounding = 2.0f;// <- Set this on init or use ImGui::PushStyleVar()
 	return window;
 }
+
+//#version 330 core
+//#extension GL_OES_standard_derivatives : enable
+//
+//precision highp float;
+//
+//uniform int multiplicationFactor;
+//uniform float threshold;
+//uniform vec4 gridColor;
+//uniform vec2 resolution;  // width and height of the viewport
+//						  //uniform float minthres = 0.000002;
+//						  //uniform float maxthres = 0.00005;
+//in vec2 vUV;
+//
+//void main() {
+//	//float m   = float(multiplicationFactor);
+//	vec2 t = vUV * multiplicationFactor;
+//	vec2 dist = abs(fract(t - 0.5) - 0.5) / resolution;
+//	vec2 th = threshold / resolution;
+//
+//	//th = clamp(th, minthres, maxthres);
+//
+//	if (dist.x > th.x  && dist.y > th.y)
+//		discard;
+//	//gl_FragColor = vec4(vec3(1.0 - min(line, 1.0)), 1.0);
+//	gl_FragColor = gridColor;
+//}

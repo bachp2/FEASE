@@ -283,15 +283,20 @@ struct Grid {
 		shader->use();
 		//Color major_color = hexCodeToRGB("#031641"); 
 		Color grid_color = hexCodeToRGB("#C0C0C0");
+		Color backgroundColor = hexCodeToRGB("#07254f");
 		
-		shader->setVec4("gridColor", glm::vec4(grid_color.r, grid_color.g, grid_color.b, 1.0));
+		shader->setVec3("gridColor", glm::vec3(grid_color.r, grid_color.g, grid_color.b));
+		shader->setVec3("backgroundColor", glm::vec3(backgroundColor.r, backgroundColor.g, backgroundColor.b));
 
 		gnum = 20;
-		shader->setInt("multiplicationFactor", gnum);
+		shader->setFloat("divisions", float(gnum));
 
-		gridThickness = 0.02;
-		shader->setFloat("threshold", gridThickness);
+		gridThickness = 0.03;
+		shader->setFloat("thickness", gridThickness);
+
 		step = 1.0f / gnum;
+
+		//shader->setVec2("resolution", glm::vec2(float(scrWidth), float(scrHeight)) );
 		Shader::reset();
 	}
 
