@@ -44,7 +44,7 @@ int scrWidth = SCR_WIDTH, scrHeight = SCR_HEIGHT;
 glm::mat4 projection, view, model;
 // camera
 
-ArcBallCamera camera(0.0f, 0.0f);
+ArcBallCamera camera(glm::radians(-30.0f), glm::radians(20.0f));
 
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -97,16 +97,17 @@ int main(int, char**)
 
 	glGenBuffers(1, &VBO_point);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_point);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
 	cubeShader.use();
 	auto dotColor = hexCodeToRGB("#ea5a20");
 	cubeShader.setVec3("dotColor", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
-	//grid
 	
+	//grid
 	grid.setup(&gridShader, scrWidth, scrHeight);
 	
 	// load and create a texture 
@@ -124,10 +125,6 @@ int main(int, char**)
 
 	// Render Loop
 	// -----------
-	static float FPS_display(0.0f);
-	static float phi = 0.0f, theta = 0.0f;
-	static bool cam_is_fixed = false;
-	static int normal_to = -1;
 	while (!glfwWindowShouldClose(window))
 	{
 		handleGUILogic();
@@ -187,10 +184,34 @@ int main(int, char**)
 		for (const auto& i : nodes) {
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, i);
-			model = glm::scale(model, glm::vec3(0.007f));
+			model = glm::scale(model, glm::vec3(0.005f));
 			cubeShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+
+		/*unsigned int VBO_element;
+		std::vector<glm::vec3> nodeElements;
+		for (const auto& i : elements) {
+			if (i.nodes[0] == nullptr) break;
+			nodeElements.push_back(*i.nodes[0]);
+			if (i.nodes[1] == nullptr) break;
+			nodeElements.push_back(*i.nodes[1]);
+		}
+
+		if (!nodeElements.empty())
+		{
+			glBindVertexArray(VAO);
+			glGenBuffers(1, &VBO_element);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*nodeElements.size(), &nodeElements[0], GL_DYNAMIC_DRAW);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_LINES, 0, nodeElements.size());
+		}*/
+		
+
 		model = glm::mat4(1.0f);
 		Shader::reset();
 
@@ -284,31 +305,33 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		auto lim = 0.1;
 		//auto r = getHitPtFromRaycastToGrid(hit, mouseX, mouseY);
 		//printf("hit? %d\n", r);
-		if (getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
+		
+		if (mouseListener.agenda == SELECT_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
+			glm::ivec2 coord(0);
+			if (selectGrid(coord, hit, lim))
+			{
+				//printf("i: %d, j: %d\n", coord.x, coord.y);
+				auto n = vector_find(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
+				if (n!=nullptr)
+				{
+					//printf("tes!!");
+					insert_by_unique_pair(elements, n);
+				}
+
+			}
+		}
+
+		if (mouseListener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
 		{
 			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
 			glm::ivec2 coord(0);
 			if (selectGrid(coord, hit, lim))
 			{
 				//printf("i: %d, j: %d\n", coord.x, coord.y);
-				auto  a = nodes.insert(grid.step*Vec3(coord.x, 0.0f, coord.y));
-				if (!a.second) {
-					// if insert failed, select that node
-					if (mouseListener.state != SELECT) {
-						Element ele;
-						ele.nodes[0] = &(*a.first);
-						elements.push_back(ele);
-						mouseListener.state = SELECT;
-					}
-					else {
-						auto it = elements.end();
-						it->nodes[1] = &(*a.first);
-						mouseListener.state = NIL;
-					}
-					return;
-				}
+				vector_insert(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
 			}
 		}
+
 	}
 	if (mouseListener.flag) mouseListener.flag = false;
 	if (mouseListener.state != LIMBO) mouseListener.resetState();
@@ -342,7 +365,7 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 	
-	if (mouseListener.draggedBy(GLFW_MOUSE_BUTTON_LEFT) && !ImGui::GetIO().WantCaptureMouse)
+	if (mouseListener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE) && !ImGui::GetIO().WantCaptureMouse)
 		camera.ProcessMouseMovement(xoffset, yoffset);
 	//printf("mouse flag %d in mouse position callback\n", mouseListener.flag);
 }
@@ -437,6 +460,8 @@ inline static void handleGUILogic()
 	static float phi = 0.0f, theta = 0.0f;
 	static bool cam_is_fixed = false;
 	static int normal_to = -1;
+	static int radio_select_once = -1;
+	static int mouse_agenda = ADD_NODE;
 	// Start the Dear ImGui frame
 	
 	ImGui_ImplOpenGL3_NewFrame();
@@ -454,25 +479,31 @@ inline static void handleGUILogic()
 	ImGui::Text("FPS: %.1f", FPS_display);
 	ImGui::Text("Dear ImGui (%s)", IMGUI_VERSION);
 
-	//ImGui::Text("Normal to:");
-	////ImGui::BulletText("Double-click on title bar to collapse window.");
-	//ImGui::RadioButton("x", &normal_to, 0); ImGui::SameLine();
-	//ImGui::RadioButton("y", &normal_to, 1); ImGui::SameLine();
-	//ImGui::RadioButton("z", &normal_to, 2); ImGui::SameLine();
-	//ImGui::RadioButton("nil", &normal_to, -1);
+	ImGui::Text("Normal to:");
+	ImGui::RadioButton("x", &normal_to, 0); ImGui::SameLine();
+	ImGui::RadioButton("y", &normal_to, 1); ImGui::SameLine();
+	ImGui::RadioButton("z", &normal_to, 2);
 
-	/*if (normal_to != -1) {
-	static const float phi_theta[6] = {
-	0, 0, 90, 0, 0, 90
-	};
+	if (normal_to != radio_select_once) {
+		radio_select_once = normal_to;
+		static const float phi_theta[6] = {
+			0, 0, 90, 0, 0, 90
+		};
+		camera.rotateTo(glm::radians(phi_theta[normal_to * 2 + 1]), glm::radians(-phi_theta[normal_to * 2]));
+	}
 
-	camera.rotateTo(glm::radians(phi_theta[normal_to * 2 + 1]), glm::radians(-phi_theta[normal_to * 2]));
-	}*/
-
-	ImGui::Checkbox("lock cam to view", &cam_is_fixed);
-
+	ImGui::Checkbox("lock camera to view", &cam_is_fixed);
 	if (cam_is_fixed) camera.cameraState = CAM_FIXED; //allowed zooming
 	else camera.cameraState = CAM_FREE;
+
+	ImGui::RadioButton("Add Node", &mouse_agenda, ADD_NODE);
+	ImGui::RadioButton("Connect Ele.", &mouse_agenda, CONNECT_ELE);
+	ImGui::RadioButton("Select Node", &mouse_agenda, SELECT_NODE);
+
+	mouseListener.agenda = Mouse_Agenda(mouse_agenda);
+
+	ImGui::Text("element count: %d", elements.size());
+	ImGui::Text("node count: %d", nodes.size());
 
 	////ImGui::Button("run")
 	ImGui::End();

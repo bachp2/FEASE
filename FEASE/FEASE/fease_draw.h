@@ -127,22 +127,52 @@ const float cube_vertices[] = {
 		-0.5f,  0.5f, -0.5f,
 };
 
-struct compareVec
-{
-	bool operator() (const glm::vec3& lhs, const glm::vec3& rhs) const
-	{
-		auto a = lhs - rhs;
-		return !(a.length() < 0.01);
-	}
-};
-
 using Node = glm::vec3;
-struct Element {
-	const Node* nodes[2];
-};
 
-std::set<glm::vec3, compareVec> nodes;
-std::vector<Element> elements;
+std::vector<Node> nodes;
+std::vector<Node> elements;
+
+inline void vector_insert(std::vector<Node>& nv, Node n) {
+	if (nv.empty()) {
+		nv.push_back(n); 
+		return;
+	}
+	for (const auto &i : nv) {
+		auto a = glm::length(i - n) < 0.0001;
+		if (a) return;
+	}
+	nv.push_back(n);
+}
+
+inline Node* vector_find(std::vector<Node>& nv, Node n) {
+	Node* r;
+	for (auto &i : nv) {
+		auto a = glm::length(i - n) < 0.0001;
+		/*PRINT3F(i.x, i.y, i.z);
+		PRINT3F(n.x, n.y, n.z);*/
+		if (a) return r = &i;
+	}
+	//printf("\n");
+	return nullptr;
+}
+
+inline bool insert_by_unique_pair(std::vector<Node>& c, Node* n1) {
+	auto t = c.size() % 2;
+	if (t == 0) {
+		c.push_back(*n1);
+	}
+	else {
+		auto n2 = c.back();
+		auto span = c.size() - 1;
+		for (auto i = 0; i < span; i += 2) {
+			if (glm::length(c[i] - *n1) < 0.0001 || glm::length(c[i+1] - n2) < 0.0001) return false;
+			if (glm::length(c[i+1] - *n1) < 0.0001 || glm::length(c[i] - n2) < 0.0001) return false;
+		}
+		//printf("test\n");
+		c.push_back(*n1);
+	}
+	return true;
+}
 
 //////////////////////////////
 //AXIS LINES ENTITY
