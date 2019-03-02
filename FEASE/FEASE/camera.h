@@ -111,8 +111,8 @@ public:
 	{
 		//if (cameraState == CAM_FIXED) return;
 		Zoom -= ScrollSensitivity*yoffset;
-		if (Zoom < 0.1f) Zoom = 0.1f;
-		if (Zoom > 7.0f) Zoom = 7.0;
+		if (Zoom < 0.2f) Zoom = 0.2f;
+		if (Zoom > 3.0f) Zoom = 3.0;
 		//printf("Zoom:%.2f\n", Zoom);
 	}
 

@@ -104,7 +104,7 @@ int main(int, char**)
 	glEnableVertexAttribArray(0);
 
 	cubeShader.use();
-	auto dotColor = hexCodeToRGB("#C0C0C0");
+	auto dotColor = hexCodeToRGB("#4286f4");
 	cubeShader.setVec3("dotColor", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
 	
 	//grid
@@ -181,35 +181,33 @@ int main(int, char**)
 		cubeShader.setMat4("projection", projection);
 		cubeShader.setMat4("view", view);
 		glBindVertexArray(VAO);
-		for (const auto& i : nodes) {
+		for (auto& i : nodes) {
+			/*i.x += 0.5;
+			i.y += 0.5;*/
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, i);
-			model = glm::scale(model, glm::vec3(0.01f));
+			model = glm::scale(model, glm::vec3(0.005f));
 			cubeShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		Shader::reset();
 
-		/*unsigned int VBO_element;
-		std::vector<glm::vec3> nodeElements;
-		for (const auto& i : elements) {
-			if (i.nodes[0] == nullptr) break;
-			nodeElements.push_back(*i.nodes[0]);
-			if (i.nodes[1] == nullptr) break;
-			nodeElements.push_back(*i.nodes[1]);
-		}
-
-		if (!nodeElements.empty())
+		cubeShader.use();
+		if (!elements.empty() && elements.size() % 2 == 0)
 		{
-			glBindVertexArray(VAO);
+			unsigned int VBO_element, VAO_element;
+			glGenVertexArrays(1, &VAO_element);
+			glBindVertexArray(VAO_element);
 			glGenBuffers(1, &VBO_element);
 			glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*nodeElements.size(), &nodeElements[0], GL_DYNAMIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
+			
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(0);
 
-			glBindVertexArray(VAO);
-			glDrawArrays(GL_LINES, 0, nodeElements.size());
-		}*/
+			glBindVertexArray(VAO_element);
+			glDrawArrays(GL_LINES, 0, elements.size());
+		}
 		
 
 		model = glm::mat4(1.0f);
@@ -305,8 +303,9 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		auto lim = 0.3;
 		//auto r = getHitPtFromRaycastToGrid(hit, mouseX, mouseY);
 		//printf("hit? %d\n", r);
-		
+		//assert(mouseListener.agenda == SELECT_NODE);
 		if (mouseListener.agenda == SELECT_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
+			//printf("select node success");
 			glm::ivec2 coord(0);
 			if (selectGrid(coord, hit, lim))
 			{
@@ -324,10 +323,11 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		if (mouseListener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
 		{
 			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
+			//printf("add node success");
 			glm::ivec2 coord(0);
 			if (selectGrid(coord, hit, lim))
 			{
-				//printf("i: %d, j: %d\n", coord.x, coord.y);
+				printf("i: %d, j: %d\n", coord.x, coord.y);
 				vector_insert(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
 			}
 		}
@@ -439,6 +439,8 @@ inline static bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim
 	auto grid_step = grid_halft_size_after_scaling * 2 / grid.gnum;
 	auto a = hit.x / grid_step;
 	auto b = hit.z / grid_step;
+	//PRINT2F(a, b);
+	//auto halfgrid = grid_step / 2;
 	if (!numCloseWithin(a, lim) || !numCloseWithin(b, lim))
 		return false; //can't select a grid coordinate near its vicinity
 	a = round(a);
@@ -588,29 +590,22 @@ inline static GLFWwindow* initApp() {
 	return window;
 }
 
+
+
 //#version 330 core
-//#extension GL_OES_standard_derivatives : enable
+//uniform int divisions;
+//uniform lowp float thickness;
+//uniform vec3 gridColor;
 //
-//precision highp float;
-//
-//uniform int multiplicationFactor;
-//uniform float threshold;
-//uniform vec4 gridColor;
-//uniform vec2 resolution;  // width and height of the viewport
-//						  //uniform float minthres = 0.000002;
-//						  //uniform float maxthres = 0.00005;
 //in vec2 vUV;
 //
 //void main() {
-//	//float m   = float(multiplicationFactor);
-//	vec2 t = vUV * multiplicationFactor;
-//	vec2 dist = abs(fract(t - 0.5) - 0.5) / resolution;
-//	vec2 th = threshold / resolution;
+//	// multiplicationFactor scales the number of stripes
+//	vec2 t = vUV *divisions;
 //
-//	//th = clamp(th, minthres, maxthres);
-//
-//	if (dist.x > th.x  && dist.y > th.y)
+//	// the threshold constant defines the with of the lines
+//	if (abs(t.x - round(t.x)) <= thickness || abs(t.y - round(t.y)) < thickness)
+//		gl_FragColor = vec4(gridColor, 1.0);
+//	else
 //		discard;
-//	//gl_FragColor = vec4(vec3(1.0 - min(line, 1.0)), 1.0);
-//	gl_FragColor = gridColor;
 //}
