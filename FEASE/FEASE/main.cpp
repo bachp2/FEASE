@@ -6,7 +6,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <vabo.h>
+#include <obj_loader.h>
 #include <file_system.h>
 #include "fease_draw.h"
 #include <iostream>
@@ -146,8 +146,12 @@ int main(int, char**)
 
 		// Draw grid
 		gridShader.use();
+		float a = float(scrWidth)/scrHeight;
+		projection = glm::ortho(-a, a, -1.0f, 1.0f, -1.0f, 1.0f);
+		//projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
+		//glm::vec3 eye = glm::vec3(1.0f);
 
-		projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
+		//projection = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
 		
 		gridShader.setMat4("projection", projection);
@@ -582,7 +586,7 @@ inline static GLFWwindow* initApp() {
 	glLineWidth(1.7f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 
 	////////////////////////////
 	ImGui::GetIO().Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 12.0f, NULL, NULL);

@@ -61,7 +61,7 @@ public:
 	glm::mat4 GetViewMatrix()
 	{	
 		auto model = GetModelMatrix();
-		return glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f))*glm::inverse(model);
+		return LookAtMat*glm::inverse(model);
 	}
 	
 	void rotateTo(float dstYaw, float dstPitch)
@@ -117,7 +117,8 @@ public:
 	}
 
 private:
-
+	//glm::mat4 LookAtMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 LookAtMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 GetModelMatrix()
 	{
 		glm::mat4 model = glm::mat4(1.0f);
@@ -126,42 +127,5 @@ private:
 		model = glm::rotate(model, Pitch, Vec3(1.0f, 0.0f, 0.0f));
 		model = glm::scale(model, Vec3(Zoom));
 		return model;
-	}
-
-	glm::quat euler2quat_r(glm::vec3 eangles) {
-		glm::quat qPitch = glm::angleAxis(eangles[0], glm::vec3(1, 0, 0));
-		glm::quat qYaw = glm::angleAxis(eangles[1], glm::vec3(0, 1, 0));
-		glm::quat qRoll = glm::angleAxis(eangles[2], glm::vec3(0, 0, 1));
-		return qYaw *qPitch * qRoll;
-	}
-
-	float get_fixed_rotation_angle_from_2_vector(const glm::vec3& u, const glm::vec3& v)
-	{
-		return acos(dot(u, v) / glm::length(u) / glm::length(v));
-	}
-
-	glm::quat euler2quat_d(glm::vec3 eangles) {
-		glm::radians(eangles);
-		glm::quat qPitch = glm::angleAxis(eangles[0], glm::vec3(1, 0, 0));
-		glm::quat qYaw = glm::angleAxis(eangles[1], glm::vec3(0, 1, 0));
-		glm::quat qRoll = glm::angleAxis(eangles[2], glm::vec3(0, 0, 1));
-		return qYaw *qPitch * qRoll;
-	}
-
-	glm::quat euler2quat_r(float pitch, float yaw, float roll) {
-		glm::quat qPitch = glm::angleAxis(pitch, glm::vec3(1, 0, 0));
-		glm::quat qYaw = glm::angleAxis(yaw, glm::vec3(0, 1, 0));
-		glm::quat qRoll = glm::angleAxis(roll, glm::vec3(0, 0, 1));
-		return qYaw *qPitch * qRoll;
-	}
-
-	glm::quat euler2quat_d(float pitch, float yaw, float roll) {
-		pitch = glm::radians(pitch);
-		yaw = glm::radians(yaw);
-		roll = glm::radians(roll);
-		glm::quat qPitch = glm::angleAxis(pitch, glm::vec3(1, 0, 0));
-		glm::quat qYaw = glm::angleAxis(yaw, glm::vec3(0, 1, 0));
-		glm::quat qRoll = glm::angleAxis(roll, glm::vec3(0, 0, 1));
-		return qYaw *qPitch * qRoll;
 	}
 };
