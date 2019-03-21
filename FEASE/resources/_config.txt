@@ -1,0 +1,4 @@
+dot           #FF002D
+background    #07254f
+gridline      #C0C0C0
+

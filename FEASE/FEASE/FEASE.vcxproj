@@ -143,12 +143,15 @@
     <ClCompile Include="..\..\dependencies\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\..\dependencies\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\..\dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="color_config.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="color_config.h" />
     <ClInclude Include="fease_draw.h" />
     <ClInclude Include="file_system.h" />
+    <ClInclude Include="color.h" />
     <ClInclude Include="mouse_listener.h" />
     <ClInclude Include="obj_loader.h" />
     <ClInclude Include="shader.h" />

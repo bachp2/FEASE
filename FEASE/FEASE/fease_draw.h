@@ -2,6 +2,8 @@
 #include <shader.h>
 #include <set>
 #include "camera.h"
+#include "color.h"
+#include "color_config.h"
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -10,26 +12,6 @@
 
 //#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
 //#define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z);
-
-//////////////////////////////
-//COLOR STRUCT AND UTILS
-//////////////////////////////
-struct Color {
-	float r, g, b;
-};
-
-inline static Color hexCodeToRGB(std::string input) {
-	if (input[0] == '#')
-		input.erase(0, 1);
-
-	unsigned int value = stoul(input, nullptr, 16);
-
-	Color color;
-	color.r = ((value >> 16) & 0xff) / 255.0;
-	color.g = ((value >> 8) & 0xff) / 255.0;
-	color.b = ((value >> 0) & 0xff) / 255.0;
-	return color;
-}
 
 //////////////////////////////
 //TERRY CUBE
@@ -254,6 +236,8 @@ const unsigned int grid_indices[] = {
 	1, 2, 3    // second triangle
 };
 
+
+ColorConfig colorConfig;
 struct Grid {
 	Shader* shader;
 	unsigned int vbo, vao, ebo;
@@ -282,8 +266,8 @@ struct Grid {
 		shader = gridShader;
 		shader->use();
 		//Color major_color = hexCodeToRGB("#031641"); 
-		Color grid_color = hexCodeToRGB("#C0C0C0");
-		Color backgroundColor = hexCodeToRGB("#07254f");
+		Color grid_color = colorConfig.pallete["gridline"];
+		Color backgroundColor = colorConfig.pallete["background"];
 		
 		shader->setVec3("gridColor", glm::vec3(grid_color.r, grid_color.g, grid_color.b));
 		shader->setVec3("backgroundColor", glm::vec3(backgroundColor.r, backgroundColor.g, backgroundColor.b));

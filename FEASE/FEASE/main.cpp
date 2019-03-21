@@ -31,7 +31,8 @@
 
 #include <camera.h>
 #include <shader.h>
-#include <mouse_listener.h>
+#include "mouse_listener.h"
+
 
 ImGuiIO* imguiIO;
 // settings
@@ -66,6 +67,8 @@ int main(int, char**)
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
 	
+	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
+
 	Shader texShader("texture.vs", "texture.fs");
 	Shader solidShader("solid.vs", "solid.fs");
 	Shader gridShader("grid.vs", "grid.fs");
@@ -104,7 +107,7 @@ int main(int, char**)
 	glEnableVertexAttribArray(0);
 
 	cubeShader.use();
-	auto dotColor = hexCodeToRGB("#FF002D");
+	auto dotColor = colorConfig.pallete["dot"];
 	cubeShader.setVec3("dotColor", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
 	
 	//grid
@@ -140,7 +143,7 @@ int main(int, char**)
 
 		// Render
 		// ------
-		auto backgroundColor = hexCodeToRGB("#07254f");
+		auto backgroundColor = colorConfig.pallete["background"];
 		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
