@@ -142,17 +142,17 @@ inline bool insert_by_unique_pair(std::vector<Node>& c, Node* n1) {
 	auto t = c.size() % 2;
 	if (t == 0) {
 		c.push_back(*n1);
+		return true;
 	}
-	else {
-		auto n2 = c.back();
-		auto span = c.size() - 1;
-		for (auto i = 0; i < span; i += 2) {
-			if (glm::length(c[i] - *n1) < 0.0001 || glm::length(c[i+1] - n2) < 0.0001) return false;
-			if (glm::length(c[i+1] - *n1) < 0.0001 || glm::length(c[i] - n2) < 0.0001) return false;
-		}
-		//printf("test\n");
-		c.push_back(*n1);
+
+	auto n2 = c.back();
+	auto span = c.size() - 1;
+	for (auto i = 0; i < span; i += 2) {
+		if (glm::length(c[i] - *n1) < 0.0001 || glm::length(c[i+1] - n2) < 0.0001) return false;
+		if (glm::length(c[i+1] - *n1) < 0.0001 || glm::length(c[i] - n2) < 0.0001) return false;
 	}
+	//printf("test\n");
+	c.push_back(*n1);
 	return true;
 }
 
@@ -200,8 +200,8 @@ struct Axis {
 		model = glm::rotate(model, cam->Yaw, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, cam->Pitch, glm::vec3(1.0f, 0.0f, 0.0f));
 
-		auto view1 = glm::lookAt(glm::vec3(0.0f, 0.0f, 7.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f))*glm::inverse(model);
-
+		auto view1 = glm::lookAt(glm::vec3(0.0f, 0.0f, 8.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f))*glm::inverse(model);
+		//auto view1 = glm::lookAt(glm::vec3(0.0f, 0.0f, 7.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
 		shader.setMat4("view", view1);
 
 		auto projection1 = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
@@ -267,10 +267,9 @@ struct Grid {
 		shader->use();
 		//Color major_color = hexCodeToRGB("#031641"); 
 		Color grid_color = colorConfig.pallete["gridline"];
-		Color backgroundColor = colorConfig.pallete["background"];
+		//Color backgroundColor = colorConfig.pallete["background"];
 		
 		shader->setVec3("gridColor", glm::vec3(grid_color.r, grid_color.g, grid_color.b));
-		shader->setVec3("backgroundColor", glm::vec3(backgroundColor.r, backgroundColor.g, backgroundColor.b));
 
 		gnum = 20; //has to an even number!
 		shader->setFloat("divisions", float(gnum));
@@ -280,7 +279,7 @@ struct Grid {
 
 		step = 1.0f / gnum;
 
-		//shader->setVec2("resolution", glm::vec2(float(scrWidth), float(scrHeight)) );
+		shader->setVec2("resolution", glm::vec2(float(scrWidth), float(scrHeight)) );
 		Shader::reset();
 	}
 

@@ -125,7 +125,12 @@ int main(int, char**)
 	texShader.use();
 	texShader.setInt("texture1", 0);
 	
-
+	elements.push_back(Vec3(0.0f, 0.0f, 0.0f));
+	elements.push_back(Vec3(0.6f, 0.2f, 4.0f));
+	elements.push_back(Vec3(1.0f, 0.0f, 0.0f));
+	elements.push_back(Vec3(0.0f, 5.0f, 0.0f));
+	elements.push_back(Vec3(0.0f, 2.0f, 0.0f));
+	elements.push_back(Vec3(0.6f, 0.0f, 0.5f));
 	// Render Loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -167,7 +172,7 @@ int main(int, char**)
 
 		// Draw box
 		// bind textures on corresponding texture units
-		glActiveTexture(GL_TEXTURE0);
+		/*glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		texShader.use();
@@ -181,9 +186,9 @@ int main(int, char**)
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		Shader::reset();
+		Shader::reset();*/
 
-		// Draw point
+		// Draw points
 		cubeShader.use();
 
 		cubeShader.setMat4("projection", projection);
@@ -194,34 +199,53 @@ int main(int, char**)
 			i.y += 0.5;*/
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, i);
-			model = glm::scale(model, glm::vec3(0.005f));
+			model = glm::scale(model, glm::vec3(0.01f));
 			cubeShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		Shader::reset();
 
+		// Draw lines
 		cubeShader.use();
-		if (!elements.empty() && elements.size() % 2 == 0)
-		{
-			unsigned int VBO_element, VAO_element;
-			glGenVertexArrays(1, &VAO_element);
-			glBindVertexArray(VAO_element);
-			glGenBuffers(1, &VBO_element);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
-			
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(0);
+		unsigned int VBO_element, VAO_element;
+		
+		glGenVertexArrays(1, &VAO_element);
+		glBindVertexArray(VAO_element);
+		glGenBuffers(1, &VBO_element);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
 
-			glBindVertexArray(VAO_element);
-			glDrawArrays(GL_LINES, 0, elements.size());
-		}
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		glBindVertexArray(VAO_element);
+		glDrawArrays(GL_LINES, 0, elements.size());
+
+		//if (!elements.empty() && elements.size() % 2 == 0)
+		//{
+		//	/*for (auto e : elements) {
+		//		PRINT3F(e.x, e.y, e.z);
+		//	}*/
+		//	unsigned int VBO_element, VAO_element;
+		//	glGenVertexArrays(1, &VAO_element);
+		//	glBindVertexArray(VAO_element);
+		//	glGenBuffers(1, &VBO_element);
+		//	glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
+		//	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
+		//	
+		//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		//	glEnableVertexAttribArray(0);
+
+		//	glBindVertexArray(VAO_element);
+		//	glDrawArrays(GL_LINES, 0, elements.size());
+		//}
 		
 
-		model = glm::mat4(1.0f);
 		Shader::reset();
 
+		model = glm::mat4(1.0f);
 		axisLines.render(solidShader, scrWidth, scrHeight);
+
 		//Render ImGUI
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -598,8 +622,6 @@ inline static GLFWwindow* initApp() {
 	return window;
 }
 
-
-
 //#version 330 core
 //uniform int divisions;
 //uniform lowp float thickness;
@@ -608,12 +630,56 @@ inline static GLFWwindow* initApp() {
 //in vec2 vUV;
 //
 //void main() {
-//	// multiplicationFactor scales the number of stripes
-//	vec2 t = vUV *divisions;
+	//// multiplicationFactor scales the number of stripes
+	//vec2 t = vUV *divisions;
+
+	//// the threshold constant defines the with of the lines
+	//if (abs(t.x - round(t.x)) <= thickness || abs(t.y - round(t.y)) < thickness)
+	//	gl_FragColor = vec4(gridColor, 1.0);
+	//else
+	//	discard;
+//}
+
+//float x = fract(vUV.x * divisions);
+//x = min(x, 1.0 - x);
 //
-//	// the threshold constant defines the with of the lines
-//	if (abs(t.x - round(t.x)) <= thickness || abs(t.y - round(t.y)) < thickness)
-//		gl_FragColor = vec4(gridColor, 1.0);
-//	else
+//float xdelta = fwidth(x);
+//x = smoothstep(x - xdelta, x + xdelta, thickness);
+//
+//float y = fract(vUV.y * divisions);
+//y = min(y, 1.0 - y);
+//
+//float ydelta = fwidth(y);
+//y = smoothstep(y - ydelta, y + ydelta, thickness);
+//
+//float r = clamp(x + y, backgroundColor.x, gridColor.x);
+//float g = clamp(x + y, backgroundColor.y, gridColor.y);
+//float b = clamp(x + y, backgroundColor.z, gridColor.z);
+//gl_FragColor = vec4(r, g, b, 1.0);
+
+//#version 330 core
+//#extension GL_OES_standard_derivatives : enable
+//
+//precision highp float;
+//
+//uniform int multiplicationFactor;
+//uniform float threshold;
+//uniform vec4 gridColor;
+//uniform vec2 resolution;  // width and height of the viewport
+//						  //uniform float minthres = 0.000002;
+//						  //uniform float maxthres = 0.00005;
+//in vec2 vUV;
+//
+//void main() {
+//	//float m   = float(multiplicationFactor);
+//	vec2 t = vUV * multiplicationFactor;
+//	vec2 dist = abs(fract(t - 0.5) - 0.5) / resolution;
+//	vec2 th = threshold / resolution;
+//
+//	//th = clamp(th, minthres, maxthres);
+//
+//	if (dist.x > th.x  && dist.y > th.y)
 //		discard;
+//	//gl_FragColor = vec4(vec3(1.0 - min(line, 1.0)), 1.0);
+//	gl_FragColor = gridColor;
 //}
