@@ -288,7 +288,7 @@ struct Grid {
 		shader->setVec3("gridColor", glm::vec3(grid_color.r, grid_color.g, grid_color.b));
 		shader->setVec3("backgroundColor", glm::vec3(backgroundColor.r, backgroundColor.g, backgroundColor.b));
 
-		gnum = 40; //has to an even number!
+		gnum = 20; //has to an even number!
 		shader->setFloat("divisions", float(gnum));
 
 		gridThickness = 0.03;

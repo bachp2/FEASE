@@ -104,7 +104,7 @@ int main(int, char**)
 	glEnableVertexAttribArray(0);
 
 	cubeShader.use();
-	auto dotColor = hexCodeToRGB("#4286f4");
+	auto dotColor = hexCodeToRGB("#FF002D");
 	cubeShader.setVec3("dotColor", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
 	
 	//grid
@@ -146,9 +146,10 @@ int main(int, char**)
 
 		// Draw grid
 		gridShader.use();
-		float a = float(scrWidth)/scrHeight;
-		projection = glm::ortho(-a, a, -1.0f, 1.0f, -1.0f, 1.0f);
-		//projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
+		//float a = float(scrWidth)/scrHeight;
+		//projection = glm::ortho(-a, a, -1.0f, 1.0f, -1000.0f, 1000.0f);
+		
+		projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 		//glm::vec3 eye = glm::vec3(1.0f);
 
 		//projection = glm::mat4(1.0f);
@@ -163,7 +164,7 @@ int main(int, char**)
 
 		// Draw box
 		// bind textures on corresponding texture units
-		/*glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		texShader.use();
@@ -177,7 +178,7 @@ int main(int, char**)
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		Shader::reset();*/
+		Shader::reset();
 
 		// Draw point
 		cubeShader.use();
@@ -586,7 +587,7 @@ inline static GLFWwindow* initApp() {
 	glLineWidth(1.7f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	////////////////////////////
 	ImGui::GetIO().Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 12.0f, NULL, NULL);
