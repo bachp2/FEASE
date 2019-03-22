@@ -211,31 +211,27 @@ int main(int, char**)
 		
 		cubeShader.setMat4("model", glm::mat4(1.0f));
 		glLineWidth(5.0f);
-		if (!elements.empty() && elements.size() % 2 == 0)
-		{
-			/*for (auto e : elements) {
-				PRINT3F(e.x, e.y, e.z);
-			}*/
-			unsigned int VBO_element, VAO_element;
-			glGenVertexArrays(1, &VAO_element);
-			glBindVertexArray(VAO_element);
-			glGenBuffers(1, &VBO_element);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-			if(elements.size() % 2 == 0)
-				glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
-			else
-				glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*(elements.size()-1), &elements[0], GL_DYNAMIC_DRAW);
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(0);
+		unsigned int VBO_element, VAO_element;
+		glGenVertexArrays(1, &VAO_element);
+		glBindVertexArray(VAO_element);
+		glGenBuffers(1, &VBO_element);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
+		if(elements.size() % 2 == 0)
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
+		else
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*(elements.size()-1), &elements[0], GL_DYNAMIC_DRAW);
 
-			glBindVertexArray(VAO_element);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
 
-			if(elements.size() % 2 == 0)
-				glDrawArrays(GL_LINES, 0, elements.size());
-			else
-				glDrawArrays(GL_LINES, 0, elements.size() - 1);
-		}
+		glBindVertexArray(VAO_element);
+
+		if(elements.size() % 2 == 0)
+			glDrawArrays(GL_LINES, 0, elements.size());
+		else
+			glDrawArrays(GL_LINES, 0, elements.size() - 1);
+
 		glLineWidth(1.7f);
 		Shader::reset();
 
