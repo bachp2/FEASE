@@ -88,10 +88,10 @@
     <None Include="grid.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="cube.fs">
+    <None Include="object.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="cube.vs">
+    <None Include="object.fs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

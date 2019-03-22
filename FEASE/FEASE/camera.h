@@ -64,6 +64,12 @@ public:
 		return LookAtMat*glm::inverse(model);
 	}
 	
+	glm::mat4 getDefaultViewMatrix() {
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::scale(model, Vec3(1 / Zoom));
+		return LookAtMat*model;
+	}
+
 	void rotateTo(float dstYaw, float dstPitch)
 	{
 		if (cameraState == CAM_FIXED) return;

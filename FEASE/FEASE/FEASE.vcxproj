@@ -158,8 +158,8 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cube.fs" />
-    <None Include="cube.vs" />
+    <None Include="object.fs" />
+    <None Include="object.vs" />
     <None Include="grid.vs" />
     <None Include="solid.fs" />
     <None Include="solid.vs" />

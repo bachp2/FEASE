@@ -72,7 +72,7 @@ int main(int, char**)
 	Shader texShader("texture.vs", "texture.fs");
 	Shader solidShader("solid.vs", "solid.fs");
 	Shader gridShader("grid.vs", "grid.fs");
-	Shader cubeShader("cube.vs", "cube.fs");
+	Shader cubeShader("object.vs", "object.fs");
 
 	//terry cube
 	unsigned int VBO, VAO;
@@ -125,12 +125,12 @@ int main(int, char**)
 	texShader.use();
 	texShader.setInt("texture1", 0);
 	
-	elements.push_back(Vec3(0.0f, 0.0f, 0.0f));
-	elements.push_back(Vec3(0.6f, 0.2f, 4.0f));
+	/*elements.push_back(Vec3(0.0f, 0.0f, 0.0f));
+	elements.push_back(Vec3(0.6f, 1.2f, 4.0f));
 	elements.push_back(Vec3(1.0f, 0.0f, 0.0f));
 	elements.push_back(Vec3(0.0f, 5.0f, 0.0f));
 	elements.push_back(Vec3(0.0f, 2.0f, 0.0f));
-	elements.push_back(Vec3(0.6f, 0.0f, 0.5f));
+	elements.push_back(Vec3(0.6f, 0.0f, 0.5f));*/
 	// Render Loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -190,6 +190,7 @@ int main(int, char**)
 
 		// Draw points
 		cubeShader.use();
+		//view = camera.getDefaultViewMatrix();
 
 		cubeShader.setMat4("projection", projection);
 		cubeShader.setMat4("view", view);
@@ -198,49 +199,44 @@ int main(int, char**)
 			/*i.x += 0.5;
 			i.y += 0.5;*/
 			model = glm::mat4(1.0f);
+			
 			model = glm::translate(model, i);
 			model = glm::scale(model, glm::vec3(0.01f));
+
 			cubeShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-		Shader::reset();
 
 		// Draw lines
-		cubeShader.use();
-		unsigned int VBO_element, VAO_element;
 		
-		glGenVertexArrays(1, &VAO_element);
-		glBindVertexArray(VAO_element);
-		glGenBuffers(1, &VBO_element);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
+		cubeShader.setMat4("model", glm::mat4(1.0f));
+		glLineWidth(5.0f);
+		if (!elements.empty() && elements.size() % 2 == 0)
+		{
+			/*for (auto e : elements) {
+				PRINT3F(e.x, e.y, e.z);
+			}*/
+			unsigned int VBO_element, VAO_element;
+			glGenVertexArrays(1, &VAO_element);
+			glBindVertexArray(VAO_element);
+			glGenBuffers(1, &VBO_element);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
+			if(elements.size() % 2 == 0)
+				glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
+			else
+				glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*(elements.size()-1), &elements[0], GL_DYNAMIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
 
-		glBindVertexArray(VAO_element);
-		glDrawArrays(GL_LINES, 0, elements.size());
+			glBindVertexArray(VAO_element);
 
-		//if (!elements.empty() && elements.size() % 2 == 0)
-		//{
-		//	/*for (auto e : elements) {
-		//		PRINT3F(e.x, e.y, e.z);
-		//	}*/
-		//	unsigned int VBO_element, VAO_element;
-		//	glGenVertexArrays(1, &VAO_element);
-		//	glBindVertexArray(VAO_element);
-		//	glGenBuffers(1, &VBO_element);
-		//	glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-		//	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
-		//	
-		//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		//	glEnableVertexAttribArray(0);
-
-		//	glBindVertexArray(VAO_element);
-		//	glDrawArrays(GL_LINES, 0, elements.size());
-		//}
-		
-
+			if(elements.size() % 2 == 0)
+				glDrawArrays(GL_LINES, 0, elements.size());
+			else
+				glDrawArrays(GL_LINES, 0, elements.size() - 1);
+		}
+		glLineWidth(1.7f);
 		Shader::reset();
 
 		model = glm::mat4(1.0f);
@@ -365,6 +361,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		}
 
 	}
+
 	if (mouseListener.flag) mouseListener.flag = false;
 	if (mouseListener.state != LIMBO) mouseListener.resetState();
 	//printf("mouse flag %d in mouse action callback\n", mouseListener.flag);
