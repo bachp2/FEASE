@@ -217,20 +217,17 @@ int main(int, char**)
 		glBindVertexArray(VAO_element);
 		glGenBuffers(1, &VBO_element);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-		if(elements.size() % 2 == 0)
-			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elements.size(), &elements[0], GL_DYNAMIC_DRAW);
-		else
-			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*(elements.size()-1), &elements[0], GL_DYNAMIC_DRAW);
+
+		int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size()-1;
+		
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elementsSize, &elements[0], GL_DYNAMIC_DRAW);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
 		glBindVertexArray(VAO_element);
 
-		if(elements.size() % 2 == 0)
-			glDrawArrays(GL_LINES, 0, elements.size());
-		else
-			glDrawArrays(GL_LINES, 0, elements.size() - 1);
+		glDrawArrays(GL_LINES, 0, elementsSize);
 
 		glLineWidth(1.7f);
 		Shader::reset();
