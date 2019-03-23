@@ -160,10 +160,8 @@
   <ItemGroup>
     <None Include="object.fs" />
     <None Include="object.vs" />
-    <None Include="grid.vs" />
     <None Include="solid.fs" />
     <None Include="solid.vs" />
-    <None Include="grid.fs" />
     <None Include="texture.fs" />
     <None Include="texture.vs" />
   </ItemGroup>

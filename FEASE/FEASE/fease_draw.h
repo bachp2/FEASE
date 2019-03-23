@@ -60,59 +60,18 @@ const float vertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
+ColorConfig colorConfig;
+
 //////////////////////////////
 //POINT ENTITY
 //////////////////////////////
-
-// a cube is a point!
-const float cube_vertices[] = {
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-
-		-0.5f, -0.5f,  0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
-
-		-0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-};
 
 using Node = glm::vec3;
 
 std::vector<Node> nodes;
 std::vector<Node> elements;
+
+unsigned int VBO_point, VAO_point;
 
 inline void vector_insert(std::vector<Node>& nv, Node n) {
 	if (nv.empty()) {
@@ -124,6 +83,32 @@ inline void vector_insert(std::vector<Node>& nv, Node n) {
 		if (a) return;
 	}
 	nv.push_back(n);
+}
+
+inline void static points_setup() {
+	// set point size
+	glPointSize(5.0f);
+
+	glGenVertexArrays(1, &VAO_point);
+	glBindVertexArray(VAO_point);
+
+	glGenBuffers(1, &VBO_point);
+}
+
+inline void static render_points(Shader* shader) {
+
+	auto dotColor = colorConfig.pallete["dot"];
+	shader->setVec3("color", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
+
+	glBindVertexArray(VAO_point);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_point);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vec3)*nodes.size(), &nodes[0], GL_DYNAMIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glDrawArrays(GL_POINTS, 0, nodes.size());
 }
 
 inline Node* vector_find(std::vector<Node>& nv, Node n) {
@@ -226,7 +211,7 @@ struct Axis {
 //GRID ENTITY
 //////////////////////////////
 
-ColorConfig colorConfig;
+
 struct Grid {
 	Shader* shader;
 	unsigned int vbo, vao, ebo;
