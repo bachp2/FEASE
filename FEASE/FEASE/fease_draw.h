@@ -195,6 +195,7 @@ struct Axis {
 		glDisable(GL_DEPTH_TEST);
 		shader.use();
 		int ww = 320;
+		glLineWidth(1.7f);
 		glViewport(scrWidth - ww + 80, -100, ww, ww);
 		auto model = glm::mat4(1.0f);
 		model = glm::rotate(model, cam->Yaw, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -224,68 +225,57 @@ struct Axis {
 //////////////////////////////
 //GRID ENTITY
 //////////////////////////////
-const float grid_vertices[] = {
-	0.5f, 0.0f,  0.5f, 1.0f, 1.0f,   // top right
-	0.5f, 0.0f, -0.5f, 0.0f, 1.0f,   // bottom right
-	-0.5f, 0.0f, -0.5f, 0.0f, 0.0f,  // bottom left
-	-0.5f, 0.0f, 0.5f, 1.0f, 0.0f   // top left 
-};
-
-const unsigned int grid_indices[] = {
-	0, 1, 3,   // first triangle
-	1, 2, 3    // second triangle
-};
-
 
 ColorConfig colorConfig;
 struct Grid {
 	Shader* shader;
 	unsigned int vbo, vao, ebo;
 	unsigned int gnum; //number of grids
+	std::vector<Vec3> grid_vertices;
 	float gridThickness;
 	float step;
-	inline void setup(Shader* gridShader, const unsigned int scrWidth, const unsigned int scrHeight) {
+
+	inline void setup(Shader* gridShader, unsigned int grid_num = 20) {
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
 
 		glGenBuffers(1, &vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(grid_vertices), grid_vertices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-
-		// texture coord attribute
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-
-		glGenBuffers(1, &ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(grid_indices), grid_indices, GL_STATIC_DRAW);
-		
-		shader = gridShader;
-		shader->use();
-		//Color major_color = hexCodeToRGB("#031641"); 
-		Color grid_color = colorConfig.pallete["gridline"];
-		//Color backgroundColor = colorConfig.pallete["background"];
-		
-		shader->setVec3("gridColor", glm::vec3(grid_color.r, grid_color.g, grid_color.b));
-
-		gnum = 20; //has to an even number!
-		shader->setFloat("divisions", float(gnum));
-
-		gridThickness = 0.03;
-		shader->setFloat("thickness", gridThickness);
-
+		gnum = grid_num;
 		step = 1.0f / gnum;
 
-		shader->setVec2("resolution", glm::vec2(float(scrWidth), float(scrHeight)) );
-		Shader::reset();
-	}
+		for (float i = -0.5; i < 0.51; i += step)
+		{
+			//vertical lines
+			grid_vertices.push_back(Vec3(i, 0.0f, -0.5f));
+			grid_vertices.push_back(Vec3(i, 0.0f, 0.5f)); 
+			
+			// horizontal lines
+			grid_vertices.push_back(Vec3(-0.5f, 0.0f, i));
+			grid_vertices.push_back(Vec3(0.5f, 0.0f, i));
+		}
 
-	inline void render() {
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vec3)*grid_vertices.size(), &grid_vertices[0], GL_STATIC_DRAW);
+
+		
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		shader = gridShader;
+	}
+	typedef glm::mat4 Mat4;
+	inline void render(Mat4& view, Mat4& proj) {
+		shader->use();
+		shader->setMat4("projection", proj);
+		shader->setMat4("view", view);
+		shader->setMat4("model", glm::mat4(1.0f));
+		auto grid_color = colorConfig.pallete["gridline"];
+		shader->setVec3("color", grid_color.r, grid_color.g, grid_color.b);
+		glLineWidth(0.5f);
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_LINES, 0, grid_vertices.size());
+		Shader::reset();
 	}
 
 	inline void cleanup() {

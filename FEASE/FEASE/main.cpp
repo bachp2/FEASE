@@ -71,8 +71,7 @@ int main(int, char**)
 
 	Shader texShader("texture.vs", "texture.fs");
 	Shader solidShader("solid.vs", "solid.fs");
-	Shader gridShader("grid.vs", "grid.fs");
-	Shader cubeShader("object.vs", "object.fs");
+	Shader objectShader("object.vs", "object.fs");
 
 	//terry cube
 	unsigned int VBO, VAO;
@@ -106,12 +105,8 @@ int main(int, char**)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	cubeShader.use();
-	auto dotColor = colorConfig.pallete["dot"];
-	cubeShader.setVec3("dotColor", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
-	
 	//grid
-	grid.setup(&gridShader, scrWidth, scrHeight);
+	grid.setup(&objectShader);
 	
 	// load and create a texture 
 	// -------------------------
@@ -125,12 +120,6 @@ int main(int, char**)
 	texShader.use();
 	texShader.setInt("texture1", 0);
 	
-	/*elements.push_back(Vec3(0.0f, 0.0f, 0.0f));
-	elements.push_back(Vec3(0.6f, 1.2f, 4.0f));
-	elements.push_back(Vec3(1.0f, 0.0f, 0.0f));
-	elements.push_back(Vec3(0.0f, 5.0f, 0.0f));
-	elements.push_back(Vec3(0.0f, 2.0f, 0.0f));
-	elements.push_back(Vec3(0.6f, 0.0f, 0.5f));*/
 	// Render Loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -152,23 +141,19 @@ int main(int, char**)
 		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Draw grid
-		gridShader.use();
+		// View Projection Model matrices
+
 		//float a = float(scrWidth)/scrHeight;
 		//projection = glm::ortho(-a, a, -1.0f, 1.0f, -1000.0f, 1000.0f);
-		
+
 		projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-		//glm::vec3 eye = glm::vec3(1.0f);
-
-		//projection = glm::mat4(1.0f);
 		view = camera.GetViewMatrix();
+
+		// Draw grid
 		
-		gridShader.setMat4("projection", projection);
-		gridShader.setMat4("view", view);
 
-		grid.render();
+		grid.render(view, projection);
 
-		Shader::reset();
 
 		// Draw box
 		// bind textures on corresponding texture units
@@ -189,11 +174,11 @@ int main(int, char**)
 		Shader::reset();*/
 
 		// Draw points
-		cubeShader.use();
-		//view = camera.getDefaultViewMatrix();
+		objectShader.use();
 
-		cubeShader.setMat4("projection", projection);
-		cubeShader.setMat4("view", view);
+		auto dotColor = colorConfig.pallete["dot"];
+		objectShader.setVec3("color", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
+
 		glBindVertexArray(VAO);
 		for (auto& i : nodes) {
 			/*i.x += 0.5;
@@ -203,14 +188,14 @@ int main(int, char**)
 			model = glm::translate(model, i);
 			model = glm::scale(model, glm::vec3(0.01f));
 
-			cubeShader.setMat4("model", model);
+			objectShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
 		// Draw lines
 		
-		cubeShader.setMat4("model", glm::mat4(1.0f));
-		glLineWidth(5.0f);
+		objectShader.setMat4("model", glm::mat4(1.0f));
+		glLineWidth(1.0f);
 
 		unsigned int VBO_element, VAO_element;
 		glGenVertexArrays(1, &VAO_element);
@@ -229,7 +214,6 @@ int main(int, char**)
 
 		glDrawArrays(GL_LINES, 0, elementsSize);
 
-		glLineWidth(1.7f);
 		Shader::reset();
 
 		model = glm::mat4(1.0f);
