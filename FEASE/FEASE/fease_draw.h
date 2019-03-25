@@ -96,9 +96,7 @@ inline void static points_setup() {
 }
 
 inline void static render_points(Shader* shader) {
-
-	auto dotColor = colorConfig.pallete["dot"];
-	shader->setVec3("color", glm::vec3(dotColor.r, dotColor.g, dotColor.b));
+	shader->setColor("color", colorConfig.pallete["dot"]);
 
 	glBindVertexArray(VAO_point);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_point);
@@ -249,14 +247,14 @@ struct Grid {
 
 		shader = gridShader;
 	}
-	typedef glm::mat4 Mat4;
+
+
 	inline void render(Mat4& view, Mat4& proj) {
 		shader->use();
 		shader->setMat4("projection", proj);
 		shader->setMat4("view", view);
 		shader->setMat4("model", glm::mat4(1.0f));
-		auto grid_color = colorConfig.pallete["gridline"];
-		shader->setVec3("color", grid_color.r, grid_color.g, grid_color.b);
+		shader->setColor("color", colorConfig.pallete["gridline"]);
 		glLineWidth(0.5f);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_LINES, 0, grid_vertices.size());

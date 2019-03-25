@@ -13,6 +13,7 @@
 
 typedef glm::vec3 Vec3;
 typedef glm::quat Quat;
+typedef glm::mat4 Mat4;
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {

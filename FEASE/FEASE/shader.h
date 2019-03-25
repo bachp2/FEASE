@@ -1,6 +1,6 @@
 #pragma once
 #include <glad/glad.h>
-
+#include "color.h"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -157,6 +157,17 @@ public:
 			std::cout << "OpenGL error: " << error << std::endl;
 		}
 	}
+
+	void setColor(const std::string &name, const Color &value) const
+	{
+		float c[] = {value.r, value.g, value.b};
+		glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &c[0]);
+		GLenum error = GL_NO_ERROR;
+		while ((error = glGetError()) != GL_NO_ERROR) {
+			std::cout << "OpenGL error: " << error << std::endl;
+		}
+	}
+
 	void setVec3(const std::string &name, float x, float y, float z) const
 	{
 		glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
@@ -210,7 +221,7 @@ public:
 		}
 		
 	}
-
+	
 private:
 	// utility function for checking shader compilation/linking errors.
 	// ------------------------------------------------------------------------

@@ -56,7 +56,7 @@ float accumulate_deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 void processInput(GLFWwindow *window);
-void create_texture(unsigned int* texture);
+void create_texture(unsigned int* texture, const char * filepath);
 void handleGUILogic();
 
 GLFWwindow* initApp();
@@ -101,16 +101,13 @@ int main(int, char**)
 	// load and create a texture 
 	// -------------------------
 	unsigned int texture;
-	create_texture(&texture);
-
-	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-	// -------------------------------------------------------------------------------------------
-
-
+	create_texture(&texture, FPATH(resources/terry.jpg));
 	texShader.use();
 	texShader.setInt("texture1", 0);
 	
-
+	unsigned int font_atlas_texture;
+	create_texture(&texture, FPATH(resources/Bisasam.png));
+	
 	// Render Loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -135,7 +132,7 @@ int main(int, char**)
 		// View Projection Model matrices
 
 		//float a = float(scrWidth)/scrHeight;
-		//projection = glm::ortho(-a, a, -1.0f, 1.0f, -1000.0f, 1000.0f);
+		//projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
 
 		projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
@@ -172,6 +169,8 @@ int main(int, char**)
 		// Draw lines
 		glLineWidth(1.0f);
 
+		objectShader.setColor("color", colorConfig.pallete["line"]);
+
 		unsigned int VBO_element, VAO_element;
 		glGenVertexArrays(1, &VAO_element);
 		glBindVertexArray(VAO_element);
@@ -191,6 +190,7 @@ int main(int, char**)
 
 		Shader::reset();
 
+		// draw axis lines
 		model = glm::mat4(1.0f);
 		axisLines.render(solidShader, scrWidth, scrHeight);
 
@@ -358,7 +358,7 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	camera.ProcessMouseScroll(yoffset);
 }
 
-static void create_texture(unsigned int* texture) {
+static void create_texture(unsigned int* texture, const char* filepath) {
 	glGenTextures(1, texture);
 	glBindTexture(GL_TEXTURE_2D, *texture);
 	// set the texture wrapping parameters
@@ -371,7 +371,7 @@ static void create_texture(unsigned int* texture) {
 	// load image, create texture and generate mipmaps
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load(FPATH(resources/terry.jpg), &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load(filepath, &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
