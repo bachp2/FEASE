@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "color.h"
 #include "color_config.h"
+//#include <stb_image.h>
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -267,3 +268,106 @@ struct Grid {
 		glDeleteBuffers(1, &ebo);
 	}
 } grid;
+
+
+//////////////////////////////
+//TEXT ENTITY
+//////////////////////////////
+
+//static void create_texture(unsigned int* texture, const char* filepath) {
+//	glGenTextures(1, texture);
+//	glBindTexture(GL_TEXTURE_2D, *texture);
+//	// set the texture wrapping parameters
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//	// set texture filtering parameters
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	// load image, create texture and generate mipmaps
+//	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+//	int width, height, nrChannels;
+//	unsigned char *data = stbi_load(filepath, &width, &height, &nrChannels, 0);
+//	if (data)
+//	{
+//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+//		glGenerateMipmap(GL_TEXTURE_2D);
+//	}
+//	else
+//	{
+//		std::cout << "Failed to load texture" << std::endl;
+//	}
+//	stbi_image_free(data);
+//}
+
+unsigned int quad_indices[] = {
+	0, 1, 3, // first triangle
+	1, 2, 3  // second triangle
+};
+struct Text {
+	unsigned int vbo, vao, ebo;
+	int font_size;
+	Shader* shader;
+	unsigned int font_atlas_id;
+	inline void init(Shader* s) {
+		shader = s;
+		font_size = 16;
+		/*create_texture(&font_atlas_id, FPATH(resources/Bisasam.png));
+		shader->setInt("texture1", 0);*/
+	}
+
+	inline void printLineToSceen(std::string str, int scrW, int scrH) {
+		std::vector<float[5]> text_dat;
+		glGenVertexArrays(1, &vao);
+		glGenBuffers(1, &vbo);
+		glGenBuffers(1, &ebo);
+
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		
+		float x = 0; float y = 0;
+		float char_width = 16 / scrW*1.0f;
+		float char_height = 16 / scrH*1.0f;
+		float font_step = 16.0f / 256;
+		for (int i = 0; i < 16; ++i)
+		{
+			float char_pos = i*font_step;
+			float block1[5] = {x + char_width, y + char_height, 0.0f, char_pos+font_step, char_pos+font_step}; // top right
+			text_dat.push_back(block1);
+			
+			float block2[5] = { x + char_width, -(y + char_height), 0.0f, char_pos + font_step, char_pos }; // bottom right
+			text_dat.push_back(block2);
+
+			float block3[5] = { -x - char_width, -(y + char_height), 0.0f, char_pos, char_pos}; // bottom left
+			text_dat.push_back(block3);
+
+			float block4[5] = { -x - char_width, y + char_height, 0.0f, char_pos, char_pos+font_step}; // top left
+			text_dat.push_back(block4);
+
+			x += char_width;
+		}
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*5* text_dat.size(), &text_dat[0], GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_DYNAMIC_DRAW);
+
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// texture coord attribute
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, font_atlas_id);
+		
+		shader->use();
+		glBindVertexArray(vao);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		Shader::reset();
+	}
+} text;
+
+

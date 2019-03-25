@@ -100,14 +100,15 @@ int main(int, char**)
 	
 	// load and create a texture 
 	// -------------------------
-	unsigned int texture;
-	create_texture(&texture, FPATH(resources/terry.jpg));
+	//unsigned int texture;
+	//create_texture(&texture, FPATH(resources/terry.jpg));
 	texShader.use();
+	//texShader.setInt("texture1", 0);
+	
+	text.init(&texShader);
+	create_texture(&text.font_atlas_id, FPATH(resources/Bisasam.png));
 	texShader.setInt("texture1", 0);
-	
-	unsigned int font_atlas_texture;
-	create_texture(&texture, FPATH(resources/Bisasam.png));
-	
+
 	// Render Loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -193,6 +194,9 @@ int main(int, char**)
 		// draw axis lines
 		model = glm::mat4(1.0f);
 		axisLines.render(solidShader, scrWidth, scrHeight);
+
+		// reder text
+		text.printLineToSceen("", scrWidth, scrHeight);
 
 		//Render ImGUI
 		ImGui::Render();
