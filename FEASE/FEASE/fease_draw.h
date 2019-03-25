@@ -4,7 +4,8 @@
 #include "camera.h"
 #include "color.h"
 #include "color_config.h"
-//#include <stb_image.h>
+#include <stb_image.h>
+#include <array>
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -317,7 +318,7 @@ struct Text {
 	}
 
 	inline void printLineToSceen(std::string str, int scrW, int scrH) {
-		std::vector<float[5]> text_dat;
+		std::vector<std::array<float,5>> text_dat;
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
 		glGenBuffers(1, &ebo);
@@ -332,17 +333,22 @@ struct Text {
 		for (int i = 0; i < 16; ++i)
 		{
 			float char_pos = i*font_step;
-			float block1[5] = {x + char_width, y + char_height, 0.0f, char_pos+font_step, char_pos+font_step}; // top right
-			text_dat.push_back(block1);
+			std::array<float, 5> block = {
+				x + char_width, 
+				y + char_height, 0.0f, 
+				char_pos+font_step, 
+				char_pos+font_step}; // top right
+
+			text_dat.push_back(block);
 			
-			float block2[5] = { x + char_width, -(y + char_height), 0.0f, char_pos + font_step, char_pos }; // bottom right
-			text_dat.push_back(block2);
+			block = { x + char_width, -(y + char_height), 0.0f, char_pos + font_step, char_pos }; // bottom right
+			text_dat.push_back(block);
 
-			float block3[5] = { -x - char_width, -(y + char_height), 0.0f, char_pos, char_pos}; // bottom left
-			text_dat.push_back(block3);
+			block = { -x - char_width, -(y + char_height), 0.0f, char_pos, char_pos}; // bottom left
+			text_dat.push_back(block);
 
-			float block4[5] = { -x - char_width, y + char_height, 0.0f, char_pos, char_pos+font_step}; // top left
-			text_dat.push_back(block4);
+			block = { -x - char_width, y + char_height, 0.0f, char_pos, char_pos+font_step}; // top left
+			text_dat.push_back(block);
 
 			x += char_width;
 		}
