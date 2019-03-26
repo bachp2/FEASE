@@ -1,15 +1,17 @@
 #include "text_render.h"
 
-inline RenderText::RenderText(Shader * s, Color c, unsigned int cfont_size) {
+RenderText::RenderText() {}
+
+RenderText::RenderText(Shader * s, Color c, unsigned int cfont_size) {
 	shader = s;
 	font_size = cfont_size;
 	shader->use();
 	shader->setColor("textColor", c);
-	create_texture(&font_atlas_id, FPATH(resources / Bisasam.png));
+	create_texture(&font_atlas_id, FPATH(resources/Bisasam.png));
 	shader->setInt("texture1", 0);
 }
 
-inline void RenderText::render(std::string str, float char_size) {
+void RenderText::render(std::string str, float char_size) {
 	std::vector<std::array<float, 5>> text_dat;
 	std::vector<std::array<unsigned int, 3>> text_indices;
 	glGenVertexArrays(1, &vao);

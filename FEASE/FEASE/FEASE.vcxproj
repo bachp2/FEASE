@@ -146,7 +146,7 @@
     <ClCompile Include="color_config.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="TextClass.cpp" />
+    <ClCompile Include="text_render.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
@@ -159,7 +159,7 @@
     <ClInclude Include="obj_loader.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="TextClass.h" />
+    <ClInclude Include="text_render.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="object.fs" />

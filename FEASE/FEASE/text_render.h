@@ -12,10 +12,10 @@ class RenderText {
 	Shader* shader;
 	unsigned int font_atlas_id;
 public:
-	RenderText() {}
+	RenderText();
 
 	RenderText(Shader* s, Color c, unsigned int cfont_size = 16);
 
-	inline void render(std::string str, float char_size);
+	void render(std::string str, float char_size);
 };
 
