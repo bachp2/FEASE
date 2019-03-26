@@ -57,6 +57,7 @@ void processInput(GLFWwindow *window);
 void create_texture(unsigned int* texture, const char * filepath);
 void handleGUILogic();
 void render_scene();
+void setup_scene();
 GLFWwindow* initApp();
 
 RenderText text;
@@ -66,48 +67,9 @@ Shader textShader, solidShader, objectShader;
 int main(int, char**)
 {
 	GLFWwindow* window = initApp();
-	// set up vertex data (and buffer(s)) and configure vertex attributes
+	// set up scene
 	// ------------------------------------------------------------------
-	
-	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
-
-	textShader = Shader(FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
-	solidShader= Shader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
-	objectShader = Shader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
-
-	//terry cube
-	unsigned int VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// texture coord attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	// cartesian axis lines
-	axisLines.setup(&camera);
-
-	// points 
-	points_setup();
-
-	//grid
-	grid.setup(&objectShader);
-	
-	// load and create a texture 
-	// -------------------------
-	//unsigned int texture;
-	//create_texture(&texture, FPATH(resources/terry.jpg));
-	textShader.use();
-	//texShader.setInt("texture1", 0);
-	
-	text = RenderText(&textShader, colorConfig.pallete["text"]);
+	setup_scene();
 	
 	// Render Loop
 	// -----------
@@ -157,6 +119,48 @@ int main(int, char**)
 	glfwTerminate();
 
 	return 0;
+}
+
+inline static void setup_scene() {
+	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
+
+	textShader = Shader(FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
+	solidShader = Shader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
+	objectShader = Shader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
+
+	//terry cube
+	unsigned int VBO, VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// texture coord attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	// cartesian axis lines
+	axisLines.setup(&camera);
+
+	// points 
+	points_setup();
+
+	//grid
+	grid.setup(&objectShader);
+
+	// load and create a texture 
+	// -------------------------
+	//unsigned int texture;
+	//create_texture(&texture, FPATH(resources/terry.jpg));
+	textShader.use();
+	//texShader.setInt("texture1", 0);
+
+	text = RenderText(&textShader, colorConfig.pallete["text"]);
 }
 
 static inline void render_scene() {
