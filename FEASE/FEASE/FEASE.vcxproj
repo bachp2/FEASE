@@ -163,6 +163,7 @@
     <None Include="object.vs" />
     <None Include="solid.fs" />
     <None Include="solid.vs" />
+    <None Include="text.fs" />
     <None Include="texture.fs" />
     <None Include="texture.vs" />
   </ItemGroup>

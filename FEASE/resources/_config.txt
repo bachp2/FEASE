@@ -2,4 +2,4 @@ dot           #FF002D
 background    #07254f
 gridline      #C0C0C0
 line	      #995c0d
-
+text	      #C0C0C0

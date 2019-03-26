@@ -91,5 +91,8 @@
     <None Include="object.fs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="text.fs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

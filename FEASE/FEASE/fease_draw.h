@@ -303,8 +303,11 @@ struct Grid {
 
 unsigned int quad_indices[] = {
 	0, 1, 3, // first triangle
-	1, 2, 3  // second triangle
+	1, 2, 3,  // second triangle
+	7, 4, 5,
+	6, 7, 5
 };
+
 struct Text {
 	unsigned int vbo, vao, ebo;
 	int font_size;
@@ -313,12 +316,15 @@ struct Text {
 	inline void init(Shader* s) {
 		shader = s;
 		font_size = 16;
+		shader->use();
+		shader->setColor("textColor", colorConfig.pallete["text"]);
 		/*create_texture(&font_atlas_id, FPATH(resources/Bisasam.png));
 		shader->setInt("texture1", 0);*/
 	}
 
 	inline void printLineToSceen(std::string str, int scrW, int scrH) {
 		std::vector<std::array<float,5>> text_dat;
+		std::vector<std::array<unsigned int, 3>> text_indices;
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
 		glGenBuffers(1, &ebo);
@@ -327,51 +333,62 @@ struct Text {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		
 		float x = 0; float y = 0;
-		float char_width = 16 / scrW*1.0f;
-		float char_height = 16 / scrH*1.0f;
-		float font_step = 16.0f / 256;
+		float char_height = 16*2.0f/scrH;
+		float font_step = 16*1.0f/256;
 		for (int i = 0; i < 16; ++i)
 		{
+			std::array<float, 5> block;
 			float char_pos = i*font_step;
-			std::array<float, 5> block = {
-				x + char_width, 
-				y + char_height, 0.0f, 
-				char_pos+font_step, 
-				char_pos+font_step}; // top right
+			if (i == 0) {
+				block = { x, y, 0.0f, char_pos, 0.0f }; // bottom left
+				text_dat.push_back(block);
 
+				block = { x, y + char_height, 0.0f, char_pos, font_step }; // top left
+				text_dat.push_back(block);
+			}
+
+			block = { x + char_height, y, 0.0f, char_pos + font_step, 0.0f }; // bottom right
 			text_dat.push_back(block);
 			
-			block = { x + char_width, -(y + char_height), 0.0f, char_pos + font_step, char_pos }; // bottom right
+			block = {x + char_height, y + char_height, 0.0f, char_pos+font_step, font_step}; // top right
 			text_dat.push_back(block);
-
-			block = { -x - char_width, -(y + char_height), 0.0f, char_pos, char_pos}; // bottom left
-			text_dat.push_back(block);
-
-			block = { -x - char_width, y + char_height, 0.0f, char_pos, char_pos+font_step}; // top left
-			text_dat.push_back(block);
-
-			x += char_width;
+			
+			x += char_height;
 		}
-
+		
+		//printf("text_dat size: %d\n", text_dat.size());
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*5* text_dat.size(), &text_dat[0], GL_DYNAMIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_DYNAMIC_DRAW);
+		
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_DYNAMIC_DRAW);
 
 		// position attribute
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 		// texture coord attribute
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(2);
-		
+		glEnableVertexAttribArray(1);
 
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+		for (unsigned int i = 0; i < 16*2; i += 2) {
+			std::array<unsigned int, 3> a;
+			a = {i,i+1,i+2};
+			text_indices.push_back(a);
+
+			a = {i+1,i+3,i+2};
+			text_indices.push_back(a);
+		}
+
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*3*text_indices.size(), &text_indices[0], GL_DYNAMIC_DRAW);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_DYNAMIC_DRAW);
+		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, font_atlas_id);
 		
 		shader->use();
+
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6* text_indices.size()/2, GL_UNSIGNED_INT, 0);
 		Shader::reset();
 	}
 } text;

@@ -66,25 +66,25 @@ int main(int, char**)
 	
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
-	Shader texShader("texture.vs", "texture.fs");
+	Shader textShader("texture.vs", "text.fs");
 	Shader solidShader("solid.vs", "solid.fs");
 	Shader objectShader("object.vs", "object.fs");
 
 	//terry cube
-	/*unsigned int VBO, VAO;
+	unsigned int VBO, VAO;
 	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);*/
+	glBindVertexArray(VAO);
 
-	//glGenBuffers(1, &VBO);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	//// position attribute
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	//glEnableVertexAttribArray(0);
-	//// texture coord attribute
-	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	//glEnableVertexAttribArray(1);
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// texture coord attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// cartesian axis lines
 	axisLines.setup(&camera);
@@ -99,12 +99,12 @@ int main(int, char**)
 	// -------------------------
 	//unsigned int texture;
 	//create_texture(&texture, FPATH(resources/terry.jpg));
-	texShader.use();
+	textShader.use();
 	//texShader.setInt("texture1", 0);
 	
-	text.init(&texShader);
+	text.init(&textShader);
 	create_texture(&text.font_atlas_id, FPATH(resources/Bisasam.png));
-	texShader.setInt("texture1", 0);
+	textShader.setInt("texture1", 0);
 
 	// Render Loop
 	// -----------
@@ -143,21 +143,21 @@ int main(int, char**)
 
 		// Draw box
 		// bind textures on corresponding texture units
-		/*glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, text.font_atlas_id);
 
-		texShader.use();
-		texShader.setMat4("projection", projection);
-		texShader.setMat4("view", view);
+		textShader.use();
+		textShader.setMat4("projection", projection);
+		textShader.setMat4("view", view);
 		
-		model = glm::mat4(1.0f);
+		/*model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
 		texShader.setMat4("model", model);
 		model = glm::mat4(1.0f);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
-		Shader::reset();*/
+		Shader::reset();
 
 		// Draw points
 		
@@ -193,8 +193,14 @@ int main(int, char**)
 		axisLines.render(solidShader, scrWidth, scrHeight);
 
 		// reder text
+		textShader.use();
+		textShader.setMat4("model", Mat4(1.0f));
+		textShader.setMat4("view", Mat4(1.0f));
+		float a = float(scrWidth)/scrHeight;
+		projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
+		textShader.setMat4("projection", projection);
 		text.printLineToSceen("", scrWidth, scrHeight);
-
+		
 		//Render ImGUI
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -564,6 +570,8 @@ inline static GLFWwindow* initApp() {
 	glLineWidth(1.7f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glEnable(GL_CULL_FACE);
 
 	////////////////////////////
