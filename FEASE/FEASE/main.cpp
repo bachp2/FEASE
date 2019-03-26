@@ -256,6 +256,14 @@ static inline void render_scene() {
 	model = glm::mat4(1.0f);
 	axisLines.render(solidShader, scrWidth, scrHeight);
 
+	// render obj mesh
+	objectShader.use();
+	glBindVertexArray(sphere.vao);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glDrawElements(GL_TRIANGLES, 6 * sphere.indices.size() / 2, GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
+	Shader::reset();
+
 	// render text
 	textShader.use();
 	textShader.setMat4("model", Mat4(1.0f));
@@ -264,13 +272,7 @@ static inline void render_scene() {
 	projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
 	textShader.setMat4("projection", projection);
 	text.render("", 16 * 2.0f / scrHeight);
-
-	// render obj mesh
-	objectShader.use();
-	glBindVertexArray(sphere.vao);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glDrawElements(GL_TRIANGLES, 6 * sphere.indices.size() / 2, GL_UNSIGNED_INT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
+	Shader::reset();
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
