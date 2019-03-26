@@ -10,6 +10,7 @@ class RenderText {
 	unsigned int vbo, vao, ebo;
 	int font_size;
 	Shader* shader;
+	float char_size;
 	unsigned int font_atlas_id;
 public:
 	RenderText();
@@ -17,5 +18,6 @@ public:
 	RenderText(Shader* s, Color c, unsigned int cfont_size = 16);
 
 	void render(std::string str, float char_size);
+	void setCharacterSize(float a);
 };
 

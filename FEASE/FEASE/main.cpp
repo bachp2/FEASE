@@ -164,11 +164,6 @@ inline static void setup_scene() {
 
 	text = RenderText(&textShader, colorConfig.pallete["text"]);
 
-
-	// Read our .obj file
-	std::vector< glm::vec2 > uvs;
-	std::vector< glm::vec3 > normals; // Won't be used at the moment.
-
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	sphere = OBJModel(FPATH(resources/assets/suzanne.obj)).ToIndexedModel();
 	//PRINTBOOL(checkIfFileExist(FPATH(resources/assets/lowpoly_sphere.obj)));
@@ -202,7 +197,6 @@ static inline void render_scene() {
 	view = camera.GetViewMatrix();
 
 	// Draw grid
-
 
 	grid.render(view, projection);
 
@@ -257,12 +251,12 @@ static inline void render_scene() {
 	axisLines.render(solidShader, scrWidth, scrHeight);
 
 	// render obj mesh
-	objectShader.use();
-	glBindVertexArray(sphere.vao);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glDrawElements(GL_TRIANGLES, 6 * sphere.indices.size() / 2, GL_UNSIGNED_INT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
-	Shader::reset();
+	//objectShader.use();
+	//glBindVertexArray(sphere.vao);
+	////glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glDrawElements(GL_TRIANGLES, 6 * sphere.indices.size() / 2, GL_UNSIGNED_INT, 0);
+	////glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
+	//Shader::reset();
 
 	// render text
 	textShader.use();
@@ -271,7 +265,7 @@ static inline void render_scene() {
 	float a = float(scrWidth) / scrHeight;
 	projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
 	textShader.setMat4("projection", projection);
-	text.render("", 16 * 2.0f / scrHeight);
+	text.render("sup /g/", 16 * 2.0f / scrHeight);
 	Shader::reset();
 }
 
