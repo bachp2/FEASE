@@ -9,6 +9,7 @@
 #include <obj_loader.h>
 #include <file_system.h>
 #include "fease_draw.h"
+#include "text_render.h"
 #include <iostream>
 
 #include <imgui/imgui.h>
@@ -58,6 +59,8 @@ void handleGUILogic();
 
 GLFWwindow* initApp();
 
+RenderText text;
+
 int main(int, char**)
 {
 	GLFWwindow* window = initApp();
@@ -102,10 +105,8 @@ int main(int, char**)
 	textShader.use();
 	//texShader.setInt("texture1", 0);
 	
-	text.init(&textShader);
-	create_texture(&text.font_atlas_id, FPATH(resources/Bisasam.png));
-	textShader.setInt("texture1", 0);
-
+	text = RenderText(&textShader, colorConfig.pallete["text"]);
+	
 	// Render Loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -143,9 +144,7 @@ int main(int, char**)
 
 		// Draw box
 		// bind textures on corresponding texture units
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, text.font_atlas_id);
-
+		
 		textShader.use();
 		textShader.setMat4("projection", projection);
 		textShader.setMat4("view", view);
@@ -199,7 +198,7 @@ int main(int, char**)
 		float a = float(scrWidth)/scrHeight;
 		projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
 		textShader.setMat4("projection", projection);
-		text.printLineToSceen("", scrWidth, scrHeight);
+		text.render("", 16*2.0f/scrHeight);
 		
 		//Render ImGUI
 		ImGui::Render();
@@ -363,32 +362,6 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll(yoffset);
-}
-
-static void create_texture(unsigned int* texture, const char* filepath) {
-	glGenTextures(1, texture);
-	glBindTexture(GL_TEXTURE_2D, *texture);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	// load image, create texture and generate mipmaps
-	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load(filepath, &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
 }
 
 inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim) {

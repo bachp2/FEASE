@@ -146,10 +146,12 @@
     <ClCompile Include="color_config.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="TextClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="color_config.h" />
+    <ClInclude Include="create_texture.h" />
     <ClInclude Include="fease_draw.h" />
     <ClInclude Include="file_system.h" />
     <ClInclude Include="color.h" />
@@ -157,6 +159,7 @@
     <ClInclude Include="obj_loader.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="TextClass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="object.fs" />
