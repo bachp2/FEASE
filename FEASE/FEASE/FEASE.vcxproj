@@ -162,13 +162,14 @@
     <ClInclude Include="text_render.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="object.fs" />
-    <None Include="object.vs" />
-    <None Include="solid.fs" />
-    <None Include="solid.vs" />
-    <None Include="text.fs" />
-    <None Include="texture.fs" />
-    <None Include="texture.vs" />
+    <None Include="..\resources\shaders\grid.vs" />
+    <None Include="..\resources\shaders\object.fs" />
+    <None Include="..\resources\shaders\object.vs" />
+    <None Include="..\resources\shaders\solid.fs" />
+    <None Include="..\resources\shaders\solid.vs" />
+    <None Include="..\resources\shaders\text.fs" />
+    <None Include="..\resources\shaders\texture.fs" />
+    <None Include="..\resources\shaders\texture.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

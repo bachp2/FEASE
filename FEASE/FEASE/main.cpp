@@ -69,9 +69,9 @@ int main(int, char**)
 	
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
-	Shader textShader("texture.vs", "text.fs");
-	Shader solidShader("solid.vs", "solid.fs");
-	Shader objectShader("object.vs", "object.fs");
+	Shader textShader(FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
+	Shader solidShader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
+	Shader objectShader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
 
 	//terry cube
 	unsigned int VBO, VAO;

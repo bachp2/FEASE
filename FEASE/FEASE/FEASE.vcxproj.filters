@@ -82,25 +82,28 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="solid.vs">
+    <None Include="..\resources\shaders\texture.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="solid.fs">
+    <None Include="..\resources\shaders\object.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="texture.fs">
+    <None Include="..\resources\shaders\object.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="texture.vs">
+    <None Include="..\resources\shaders\solid.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="object.vs">
+    <None Include="..\resources\shaders\grid.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="object.fs">
+    <None Include="..\resources\shaders\solid.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="text.fs">
+    <None Include="..\resources\shaders\text.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\resources\shaders\texture.fs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
