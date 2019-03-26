@@ -6,6 +6,7 @@
 
 #define FPATH(X) pathTo(#X).c_str()
 
+//work only for Windows system
 static const std::string pathTo(std::string path)
 {
 	const std::string root = "C:\\Users\\bachp2\\Documents\\IFEM\\FEASE\\FEASE";

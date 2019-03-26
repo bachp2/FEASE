@@ -145,6 +145,7 @@
     <ClCompile Include="..\..\dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="color_config.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="obj_loader.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="text_render.cpp" />
   </ItemGroup>

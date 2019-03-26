@@ -17,7 +17,6 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-
 #define GLFW_INCLUDE_GLU // for gluErrorString
 #include <GLFW/glfw3.h>
 
@@ -123,6 +122,9 @@ int main(int, char**)
 	return 0;
 }
 
+//terry cube
+unsigned int VBO, VAO;
+IndexedModel sphere;
 inline static void setup_scene() {
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
@@ -130,8 +132,6 @@ inline static void setup_scene() {
 	solidShader = Shader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
 	objectShader = Shader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
 
-	//terry cube
-	unsigned int VBO, VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -169,13 +169,23 @@ inline static void setup_scene() {
 	std::vector< glm::vec2 > uvs;
 	std::vector< glm::vec3 > normals; // Won't be used at the moment.
 
-	bool res = loadOBJ(FPATH(resources/assets/lowpoly_sphere.obj), obj_vertices, uvs, normals);
+	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
+	sphere = OBJModel(FPATH(resources/assets/suzanne.obj)).ToIndexedModel();
 	//PRINTBOOL(checkIfFileExist(FPATH(resources/assets/lowpoly_sphere.obj)));
 
-	glBindVertexArray(VAO);
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, obj_vertices.size() * sizeof(glm::vec3), &obj_vertices[0], GL_STATIC_DRAW);
+	glGenVertexArrays(1, &sphere.vao);
+	glBindVertexArray(sphere.vao);
+	glGenBuffers(1, &sphere.vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, sphere.vbo);
+
+	glBufferData(GL_ARRAY_BUFFER, sphere.positions.size() * sizeof(glm::vec3), &sphere.positions[0], GL_STATIC_DRAW);
+	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	
+	glGenBuffers(1, &sphere.ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * sphere.indices.size(), &sphere.indices[0], GL_DYNAMIC_DRAW);
 }
 
 static inline void render_scene() {
@@ -257,8 +267,10 @@ static inline void render_scene() {
 
 	// render obj mesh
 	objectShader.use();
-	glDrawArrays(GL_TRIANGLES, 0, obj_vertices.size());
-
+	glBindVertexArray(sphere.vao);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glDrawElements(GL_TRIANGLES, 6 * sphere.indices.size() / 2, GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
