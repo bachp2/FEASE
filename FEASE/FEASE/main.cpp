@@ -1,5 +1,6 @@
 ﻿#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
 #define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z); 
+#define PRINTBOOL(X) std::cout << #X << ": " << std::boolalpha << X << std::endl;
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad/glad.h>
@@ -63,6 +64,7 @@ GLFWwindow* initApp();
 RenderText text;
 Shader textShader, solidShader, objectShader;
 
+std::vector< glm::vec3 > obj_vertices;
 
 int main(int, char**)
 {
@@ -161,6 +163,19 @@ inline static void setup_scene() {
 	//texShader.setInt("texture1", 0);
 
 	text = RenderText(&textShader, colorConfig.pallete["text"]);
+
+
+	// Read our .obj file
+	std::vector< glm::vec2 > uvs;
+	std::vector< glm::vec3 > normals; // Won't be used at the moment.
+
+	bool res = loadOBJ(FPATH(resources/assets/lowpoly_sphere.obj), obj_vertices, uvs, normals);
+	//PRINTBOOL(checkIfFileExist(FPATH(resources/assets/lowpoly_sphere.obj)));
+
+	glBindVertexArray(VAO);
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, obj_vertices.size() * sizeof(glm::vec3), &obj_vertices[0], GL_STATIC_DRAW);
 }
 
 static inline void render_scene() {
@@ -231,7 +246,7 @@ static inline void render_scene() {
 	model = glm::mat4(1.0f);
 	axisLines.render(solidShader, scrWidth, scrHeight);
 
-	// reder text
+	// render text
 	textShader.use();
 	textShader.setMat4("model", Mat4(1.0f));
 	textShader.setMat4("view", Mat4(1.0f));
@@ -239,6 +254,11 @@ static inline void render_scene() {
 	projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
 	textShader.setMat4("projection", projection);
 	text.render("", 16 * 2.0f / scrHeight);
+
+	// render obj mesh
+	objectShader.use();
+	glDrawArrays(GL_TRIANGLES, 0, obj_vertices.size());
+
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

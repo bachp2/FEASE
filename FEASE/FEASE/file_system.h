@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <sys/stat.h>
 #include <sstream>
 #include <vector>
 
@@ -26,4 +27,9 @@ static const std::string pathTo(std::string path)
 		new_path.append(i);
 	}
 	return new_path;
+}
+
+inline bool checkIfFileExist(const char *name) {
+	struct stat buffer;
+	return (stat(name, &buffer) == 0);
 }
