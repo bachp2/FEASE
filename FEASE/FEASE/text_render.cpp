@@ -11,7 +11,7 @@ RenderText::RenderText(Shader * s, Color c, unsigned int cfont_size) {
 	shader->setInt("texture1", 0);
 }
 
-void RenderText::render(std::string str, float char_size) {
+void RenderText::render(std::string str) {
 	std::vector<std::array<float, 5>> text_vertices;
 	std::vector<std::array<unsigned int, 3>> text_indices;
 	glGenVertexArrays(1, &vao);

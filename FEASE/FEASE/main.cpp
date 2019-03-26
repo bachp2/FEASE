@@ -181,6 +181,8 @@ inline static void setup_scene() {
 	glGenBuffers(1, &sphere.ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * sphere.indices.size(), &sphere.indices[0], GL_DYNAMIC_DRAW);
+
+	text.setCharacterSize(16 * 2.0f / scrHeight);
 }
 
 static inline void render_scene() {
@@ -265,7 +267,7 @@ static inline void render_scene() {
 	float a = float(scrWidth) / scrHeight;
 	projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
 	textShader.setMat4("projection", projection);
-	text.render("sup /g/", 16 * 2.0f / scrHeight);
+	text.render("sup /g/");
 	Shader::reset();
 }
 
@@ -293,6 +295,7 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
+	text.setCharacterSize(16 * 2.0f / scrHeight);
 	glViewport(0, 0, width, height);
 }
 
@@ -534,7 +537,7 @@ inline static GLFWwindow* initApp() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "FEASE", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "FEASE :: Finite Element Analysis Sandbox for Engineers", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;

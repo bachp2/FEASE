@@ -17,7 +17,9 @@ public:
 
 	RenderText(Shader* s, Color c, unsigned int cfont_size = 16);
 
-	void render(std::string str, float char_size);
-	void setCharacterSize(float a);
+	void render(std::string str);
+	void setCharacterSize(float a){
+		char_size = a;
+	};
 };
 
