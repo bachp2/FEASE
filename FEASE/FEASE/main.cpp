@@ -56,10 +56,12 @@ float lastFrame = 0.0f;
 void processInput(GLFWwindow *window);
 void create_texture(unsigned int* texture, const char * filepath);
 void handleGUILogic();
-
+void render_scene();
 GLFWwindow* initApp();
 
 RenderText text;
+Shader textShader, solidShader, objectShader;
+
 
 int main(int, char**)
 {
@@ -69,9 +71,9 @@ int main(int, char**)
 	
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
-	Shader textShader(FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
-	Shader solidShader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
-	Shader objectShader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
+	textShader = Shader(FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
+	solidShader= Shader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
+	objectShader = Shader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
 
 	//terry cube
 	unsigned int VBO, VAO;
@@ -122,84 +124,10 @@ int main(int, char**)
 		// -----
 		processInput(window);
 
-		// Render
+		// Render Scene
 		// ------
-		auto backgroundColor = colorConfig.pallete["background"];
-		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		render_scene();
 
-		// View Projection Model matrices
-
-		//float a = float(scrWidth)/scrHeight;
-		//projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
-
-		projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-		view = camera.GetViewMatrix();
-
-		// Draw grid
-		
-
-		grid.render(view, projection);
-
-
-		// Draw box
-		// bind textures on corresponding texture units
-		
-		textShader.use();
-		textShader.setMat4("projection", projection);
-		textShader.setMat4("view", view);
-		
-		/*model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
-		texShader.setMat4("model", model);
-		model = glm::mat4(1.0f);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);*/
-
-		Shader::reset();
-
-		// Draw points
-		
-		objectShader.use();
-		render_points(&objectShader);
-
-		// Draw lines
-		glLineWidth(1.0f);
-
-		objectShader.setColor("color", colorConfig.pallete["line"]);
-
-		unsigned int VBO_element, VAO_element;
-		glGenVertexArrays(1, &VAO_element);
-		glBindVertexArray(VAO_element);
-		glGenBuffers(1, &VBO_element);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-
-		int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size()-1;
-		
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elementsSize, &elements[0], GL_DYNAMIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-
-		glBindVertexArray(VAO_element);
-
-		glDrawArrays(GL_LINES, 0, elementsSize);
-
-		Shader::reset();
-
-		// draw axis lines
-		model = glm::mat4(1.0f);
-		axisLines.render(solidShader, scrWidth, scrHeight);
-
-		// reder text
-		textShader.use();
-		textShader.setMat4("model", Mat4(1.0f));
-		textShader.setMat4("view", Mat4(1.0f));
-		float a = float(scrWidth)/scrHeight;
-		projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
-		textShader.setMat4("projection", projection);
-		text.render("", 16*2.0f/scrHeight);
-		
 		//Render ImGUI
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -231,9 +159,87 @@ int main(int, char**)
 	return 0;
 }
 
+static inline void render_scene() {
+	auto backgroundColor = colorConfig.pallete["background"];
+	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// View Projection Model matrices
+
+	//float a = float(scrWidth)/scrHeight;
+	//projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
+
+	projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
+	view = camera.GetViewMatrix();
+
+	// Draw grid
+
+
+	grid.render(view, projection);
+
+
+	// Draw box
+	// bind textures on corresponding texture units
+
+	textShader.use();
+	textShader.setMat4("projection", projection);
+	textShader.setMat4("view", view);
+
+	/*model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
+	texShader.setMat4("model", model);
+	model = glm::mat4(1.0f);
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);*/
+
+	Shader::reset();
+
+	// Draw points
+
+	objectShader.use();
+	render_points(&objectShader);
+
+	// Draw lines
+	glLineWidth(1.0f);
+
+	objectShader.setColor("color", colorConfig.pallete["line"]);
+
+	unsigned int VBO_element, VAO_element;
+	glGenVertexArrays(1, &VAO_element);
+	glBindVertexArray(VAO_element);
+	glGenBuffers(1, &VBO_element);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
+
+	int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size() - 1;
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elementsSize, &elements[0], GL_DYNAMIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(VAO_element);
+
+	glDrawArrays(GL_LINES, 0, elementsSize);
+
+	Shader::reset();
+
+	// draw axis lines
+	model = glm::mat4(1.0f);
+	axisLines.render(solidShader, scrWidth, scrHeight);
+
+	// reder text
+	textShader.use();
+	textShader.setMat4("model", Mat4(1.0f));
+	textShader.setMat4("view", Mat4(1.0f));
+	float a = float(scrWidth) / scrHeight;
+	projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
+	textShader.setMat4("projection", projection);
+	text.render("", 16 * 2.0f / scrHeight);
+}
+
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-static void processInput(GLFWwindow *window)
+static inline void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -250,7 +256,7 @@ static void processInput(GLFWwindow *window)
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+static inline void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
@@ -265,7 +271,7 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim);
 bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+void inline mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS) {
 		mouseListener.button = button;
@@ -326,7 +332,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 bool firstMouse = true;
-static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
 	{
@@ -359,7 +365,7 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+static inline void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll(yoffset);
 }
@@ -473,7 +479,7 @@ inline static void handleGUILogic()
 
 }
 
-static void glfw_error_callback(int error, const char* description)
+inline static void glfw_error_callback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }

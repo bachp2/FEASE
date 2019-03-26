@@ -250,7 +250,6 @@ struct Grid {
 		shader = gridShader;
 	}
 
-
 	inline void render(Mat4& view, Mat4& proj) {
 		shader->use();
 		shader->setMat4("projection", proj);
