@@ -78,26 +78,20 @@ void OBJModel::CreateOBJFace(const std::string& line)
 {
 	std::vector<std::string> tokens = SplitString(line, ' ');
 
-	this->OBJIndices.push_back(ParseOBJIndex(tokens[1], &this->hasUVs, &this->hasNormals));
-	this->OBJIndices.push_back(ParseOBJIndex(tokens[2], &this->hasUVs, &this->hasNormals));
-	this->OBJIndices.push_back(ParseOBJIndex(tokens[3], &this->hasUVs, &this->hasNormals));
+	this->OBJIndices.push_back(ParseOBJIndex(tokens[1]));
+	this->OBJIndices.push_back(ParseOBJIndex(tokens[2]));
+	this->OBJIndices.push_back(ParseOBJIndex(tokens[3]));
 
 	if((int)tokens.size() > 4)
 	{
-		this->OBJIndices.push_back(ParseOBJIndex(tokens[1], &this->hasUVs, &this->hasNormals));
-		this->OBJIndices.push_back(ParseOBJIndex(tokens[3], &this->hasUVs, &this->hasNormals));
-		this->OBJIndices.push_back(ParseOBJIndex(tokens[4], &this->hasUVs, &this->hasNormals));
+		this->OBJIndices.push_back(ParseOBJIndex(tokens[1]));
+		this->OBJIndices.push_back(ParseOBJIndex(tokens[3]));
+		this->OBJIndices.push_back(ParseOBJIndex(tokens[4]));
 	}
 }
 
-OBJIndex OBJModel::ParseOBJIndex(const std::string& token, bool* hasUVs, bool* hasNormals)
+OBJIndex OBJModel::ParseOBJIndex(const std::string& token)
 {
-	//unsigned int tokenLength = token.length();
-	//const char* tokenString = token.c_str();
-
-	/*unsigned int vertIndexStart = 0;
-	unsigned int vertIndexEnd = FindNextChar(vertIndexStart, tokenString, tokenLength, '/');*/
-	//printf("%s\n", token.c_str());
 	OBJIndex result;
 	result.vertexIndex = 0;
 	result.uvIndex = 0;
@@ -123,28 +117,6 @@ OBJIndex OBJModel::ParseOBJIndex(const std::string& token, bool* hasUVs, bool* h
 	result.vertexIndex = buf[0];
 	result.uvIndex = buf[1];
 	result.normalIndex = buf[2];
-
-	/*result.vertexIndex = ParseOBJIndexValue(token, vertIndexStart, vertIndexEnd);
-	result.uvIndex = 0;
-	result.normalIndex = 0;*/
-
-	/*if(vertIndexEnd >= tokenLength)
-		return result;
-
-	vertIndexStart = vertIndexEnd + 1;
-	vertIndexEnd = FindNextChar(vertIndexStart, tokenString, tokenLength, '/');
-
-	result.uvIndex = ParseOBJIndexValue(token, vertIndexStart, vertIndexEnd);
-	*hasUVs = true;
-
-	if(vertIndexEnd >= tokenLength)
-		return result;
-
-	vertIndexStart = vertIndexEnd + 1;
-	vertIndexEnd = FindNextChar(vertIndexStart, tokenString, tokenLength, '/');
-
-	result.normalIndex = ParseOBJIndexValue(token, vertIndexStart, vertIndexEnd);
-	*hasNormals = true;*/
 
 	return result;
 }

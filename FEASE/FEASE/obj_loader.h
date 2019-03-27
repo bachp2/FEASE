@@ -39,7 +39,7 @@ private:
 
 	glm::vec2 ParseOBJVec2(const std::string& line);
 	glm::vec3 ParseOBJVec3(const std::string& line);
-	OBJIndex ParseOBJIndex(const std::string& token, bool* hasUVs, bool* hasNormals);
+	OBJIndex ParseOBJIndex(const std::string& token);
 	
 };
 
