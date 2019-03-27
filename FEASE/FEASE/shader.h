@@ -108,9 +108,11 @@ public:
 	// ------------------------------------------------------------------------
 	void use()
 	{
+		Shader::reset();
 		glUseProgram(ID);
 	}
-	static void reset()
+
+	inline static void reset()
 	{
 		glUseProgram(0);
 	}

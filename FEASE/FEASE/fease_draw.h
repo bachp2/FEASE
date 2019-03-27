@@ -197,7 +197,6 @@ struct Axis {
 		glDrawArrays(GL_LINES, 0, 6);
 		glViewport(0, 0, scrWidth, scrHeight);
 		glEnable(GL_DEPTH_TEST);
-		Shader::reset();
 	}
 
 	inline void cleanup() {
@@ -259,7 +258,6 @@ struct Grid {
 		glLineWidth(0.5f);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_LINES, 0, grid_vertices.size());
-		Shader::reset();
 	}
 
 	inline void cleanup() {

@@ -47,7 +47,7 @@ OBJModel::OBJModel(const std::string& fileName)
 				CreateOBJFace(line);
 				break;
 			case 'l':
-
+				CreateOBJLine(line);
 				break;
 			default: break;
 			};
@@ -60,192 +60,18 @@ OBJModel::OBJModel(const std::string& fileName)
 	if (uvs.size() != 0) hasUVs = true;
 	if (normals.size() != 0) hasNormals = true;
 
+	for(auto& c : OBJIndices){
+		face_indices.push_back(c.vertexIndex);
+		normal_indices.push_back(c.normalIndex);
+		uv_indices.push_back(c.uvIndex);
+	}
 }
 
-void IndexedModel::CalcNormals()
+void OBJModel::CreateOBJLine(const std::string& line)
 {
-	for(unsigned int i = 0; i < indices.size(); i += 3)
-	{
-		int i0 = indices[i];
-		int i1 = indices[i + 1];
-		int i2 = indices[i + 2];
-
-		glm::vec3 v1 = positions[i1] - positions[i0];
-		glm::vec3 v2 = positions[i2] - positions[i0];
-
-		glm::vec3 normal = glm::normalize(glm::cross(v1, v2));
-
-		normals[i0] += normal;
-		normals[i1] += normal;
-		normals[i2] += normal;
-	}
-
-	for(unsigned int i = 0; i < positions.size(); i++)
-		normals[i] = glm::normalize(normals[i]);
-}
-
-IndexedModel OBJModel::ToIndexedModel()
-{
-	IndexedModel result;
-	IndexedModel normalModel;
-
-	unsigned int numIndices = OBJIndices.size();
-
-	std::vector<OBJIndex*> indexLookup;
-
-	for(unsigned int i = 0; i < numIndices; i++)
-		indexLookup.push_back(&OBJIndices[i]);
-
-	std::sort(indexLookup.begin(), indexLookup.end(), CompareOBJIndexPtr);
-
-	std::map<OBJIndex, unsigned int> normalModelIndexMap;
-	std::map<unsigned int, unsigned int> indexMap;
-
-	for(unsigned int i = 0; i < numIndices; i++)
-	{
-		OBJIndex* currentIndex = &OBJIndices[i];
-
-		glm::vec3 currentPosition = vertices[currentIndex->vertexIndex];
-		glm::vec2 currentTexCoord;
-		glm::vec3 currentNormal;
-
-		if(hasUVs)
-			currentTexCoord = uvs[currentIndex->uvIndex];
-		else
-			currentTexCoord = glm::vec2(0,0);
-
-		if(hasNormals)
-			currentNormal = normals[currentIndex->normalIndex];
-		else
-			currentNormal = glm::vec3(0,0,0);
-
-		unsigned int normalModelIndex;
-		unsigned int resultModelIndex;
-
-		//Create model to properly generate normals on
-		std::map<OBJIndex, unsigned int>::iterator it = normalModelIndexMap.find(*currentIndex);
-		if(it == normalModelIndexMap.end())
-		{
-			normalModelIndex = normalModel.positions.size();
-
-			normalModelIndexMap.insert(std::pair<OBJIndex, unsigned int>(*currentIndex, normalModelIndex));
-			normalModel.positions.push_back(currentPosition);
-			normalModel.texCoords.push_back(currentTexCoord);
-			normalModel.normals.push_back(currentNormal);
-		}
-		else
-			normalModelIndex = it->second;
-
-		//Create model which properly separates texture coordinates
-		unsigned int previousVertexLocation = FindLastVertexIndex(indexLookup, currentIndex, result);
-
-		if(previousVertexLocation == (unsigned int)-1)
-		{
-			resultModelIndex = result.positions.size();
-
-			result.positions.push_back(currentPosition);
-			result.texCoords.push_back(currentTexCoord);
-			result.normals.push_back(currentNormal);
-		}
-		else
-			resultModelIndex = previousVertexLocation;
-
-		normalModel.indices.push_back(normalModelIndex);
-		result.indices.push_back(resultModelIndex);
-		indexMap.insert(std::pair<unsigned int, unsigned int>(resultModelIndex, normalModelIndex));
-	}
-
-	if(!hasNormals)
-	{
-		normalModel.CalcNormals();
-
-		for(unsigned int i = 0; i < result.positions.size(); i++)
-			result.normals[i] = normalModel.normals[indexMap[i]];
-	}
-	return result;
-};
-
-unsigned int OBJModel::FindLastVertexIndex(const std::vector<OBJIndex*>& indexLookup, const OBJIndex* currentIndex, const IndexedModel& result)
-{
-	unsigned int start = 0;
-	unsigned int end = indexLookup.size();
-	unsigned int current = (end - start) / 2 + start;
-	unsigned int previous = start;
-
-	while(current != previous)
-	{
-		OBJIndex* testIndex = indexLookup[current];
-
-		if(testIndex->vertexIndex == currentIndex->vertexIndex)
-		{
-			unsigned int countStart = current;
-
-			for(unsigned int i = 0; i < current; i++)
-			{
-				OBJIndex* possibleIndex = indexLookup[current - i];
-
-				if(possibleIndex == currentIndex)
-					continue;
-
-				if(possibleIndex->vertexIndex != currentIndex->vertexIndex)
-					break;
-
-				countStart--;
-			}
-
-			for(unsigned int i = countStart; i < indexLookup.size() - countStart; i++)
-			{
-				OBJIndex* possibleIndex = indexLookup[current + i];
-
-				if(possibleIndex == currentIndex)
-					continue;
-
-				if(possibleIndex->vertexIndex != currentIndex->vertexIndex)
-					break;
-				else if((!hasUVs || possibleIndex->uvIndex == currentIndex->uvIndex) 
-					&& (!hasNormals || possibleIndex->normalIndex == currentIndex->normalIndex))
-				{
-					glm::vec3 currentPosition = vertices[currentIndex->vertexIndex];
-					glm::vec2 currentTexCoord;
-					glm::vec3 currentNormal;
-
-					if(hasUVs)
-						currentTexCoord = uvs[currentIndex->uvIndex];
-					else
-						currentTexCoord = glm::vec2(0,0);
-
-					if(hasNormals)
-						currentNormal = normals[currentIndex->normalIndex];
-					else
-						currentNormal = glm::vec3(0,0,0);
-
-					for(unsigned int j = 0; j < result.positions.size(); j++)
-					{
-						if(currentPosition == result.positions[j] 
-							&& ((!hasUVs || currentTexCoord == result.texCoords[j])
-								&& (!hasNormals || currentNormal == result.normals[j])))
-						{
-							return j;
-						}
-					}
-				}
-			}
-
-			return -1;
-		}
-		else
-		{
-			if(testIndex->vertexIndex < currentIndex->vertexIndex)
-				start = current;
-			else
-				end = current;
-		}
-
-		previous = current;
-		current = (end - start) / 2 + start;
-	}
-
-	return -1;
+	std::vector<std::string> tokens = SplitString(line, ' ');
+	line_indices.push_back(ParseOBJIndexValue(tokens[1]));
+	line_indices.push_back(ParseOBJIndexValue(tokens[2]));
 }
 
 void OBJModel::CreateOBJFace(const std::string& line)
@@ -283,9 +109,8 @@ OBJIndex OBJModel::ParseOBJIndex(const std::string& token, bool* hasUVs, bool* h
 	for(const char& c : token) 
 	{
 		if(c == '/'){
-			//
 			buf[i] = ParseOBJIndexValue(buff);
-			printf("%d -- %d\n", i,buf[i]);
+			//printf("%d -- %d\n", i, buf[i]);
 			i++;
 			buff.clear();
 		}

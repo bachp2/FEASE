@@ -124,7 +124,8 @@ int main(int, char**)
 
 //terry cube
 unsigned int VBO, VAO;
-IndexedModel sphere;
+//IndexedModel sphere;
+OBJModel sphere;
 inline static void setup_scene() {
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
@@ -165,23 +166,36 @@ inline static void setup_scene() {
 	text = RenderText(&textShader, colorConfig.pallete["text"]);
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
-	auto model = OBJModel(FPATH(resources/assets/arrow.obj));
-	sphere = model.ToIndexedModel();
-	//PRINTBOOL(checkIfFileExist(FPATH(resources/assets/lowpoly_sphere.obj)));
+	auto model = OBJModel(FPATH(resources/assets/suzanne.obj));
+	//sphere = model.ToIndexedModel();
+	sphere = model;
 
-	glGenVertexArrays(1, &sphere.vao);
-	glBindVertexArray(sphere.vao);
 	glGenBuffers(1, &sphere.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, sphere.vbo);
+	glBufferData(GL_ARRAY_BUFFER, sphere.vertices.size() * sizeof(glm::vec3), &sphere.vertices[0], GL_STATIC_DRAW);
 
-	glBufferData(GL_ARRAY_BUFFER, sphere.positions.size() * sizeof(glm::vec3), &sphere.positions[0], GL_STATIC_DRAW);
-	
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glGenVertexArrays(1, &sphere.face_vao);
+	glBindVertexArray(sphere.face_vao);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	
-	glGenBuffers(1, &sphere.ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * sphere.indices.size(), &sphere.indices[0], GL_DYNAMIC_DRAW);
+	glGenBuffers(1, &sphere.face_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.face_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*sphere.face_indices.size(), &sphere.face_indices[0], GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &sphere.line_vao);
+	glBindVertexArray(sphere.line_vao);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	glGenBuffers(1, &sphere.line_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.line_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*sphere.line_indices.size(), &sphere.line_indices[0], GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+	/*glGenBuffers(1, &sphere.line_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.line_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 2 * sphere.line_indices.size(), &sphere.line_indices[0], GL_STATIC_DRAW);*/
 
 	text.setCharacterSize(16 * 2.0f / scrHeight);
 }
@@ -218,7 +232,7 @@ static inline void render_scene() {
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
-	Shader::reset();
+	
 
 	// Draw points
 
@@ -247,7 +261,7 @@ static inline void render_scene() {
 
 	glDrawArrays(GL_LINES, 0, elementsSize);
 
-	Shader::reset();
+	
 
 	// draw axis lines
 	model = glm::mat4(1.0f);
@@ -255,21 +269,29 @@ static inline void render_scene() {
 
 	// render obj mesh
 	objectShader.use();
-	glBindVertexArray(sphere.vao);
+	objectShader.setColor("color", colorConfig.pallete["arrow_force"]);
+	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	glBindVertexArray(sphere.face_vao);
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glDrawElements(GL_TRIANGLES, 6 * sphere.indices.size() / 2, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, sphere.face_indices.size(), GL_UNSIGNED_INT, 0);
+
+	glBindVertexArray(sphere.line_vao);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	objectShader.setColor("color", colorConfig.pallete["arrow_line"]);
+	glDrawElements(GL_LINES, sphere.line_indices.size(), GL_UNSIGNED_INT, 0);
+
 	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
-	Shader::reset();
+	//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	
 
 	// render text
 	textShader.use();
-	textShader.setMat4("model", Mat4(1.0f));
-	textShader.setMat4("view", Mat4(1.0f));
+	//textShader.setMat4("model", Mat4(1.0f));
+	//textShader.setMat4("view", Mat4(1.0f));
 	float a = float(scrWidth) / scrHeight;
-	projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
-	textShader.setMat4("projection", projection);
-	text.render("sup /g/");
-	Shader::reset();
+	//projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
+	textShader.setMat4("projection", glm::ortho<float>(-a, a, -1, 1,-100, 100));
+	text.render("sup /dpt/");
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

@@ -14,39 +14,33 @@ struct OBJIndex
 	bool operator<(const OBJIndex& r) const { return vertexIndex < r.vertexIndex; }
 };
 
-class IndexedModel
-{
-public:
-	std::vector<glm::vec3> positions;
-	std::vector<glm::vec2> texCoords;
-	std::vector<glm::vec3> normals;
-	std::vector<unsigned int> indices;
-	unsigned int vbo, vao, ebo;
-	void CalcNormals();
-};
-
 class OBJModel
 {
 public:
 	std::vector<OBJIndex> OBJIndices;
-	std::vector<unsigned int> lines;
 	std::vector<glm::vec3> vertices;
+
+	std::vector<unsigned int> face_indices;
+	std::vector<unsigned int> normal_indices;
+	std::vector<unsigned int> uv_indices;
+	std::vector<unsigned int> line_indices;
+
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 	bool hasUVs;
 	bool hasNormals;
+	unsigned int vbo, face_vao, face_ebo, line_vao, line_ebo;
 	//unsigned int vbo, vao, ebo;
+	OBJModel(){};
 	OBJModel(const std::string& fileName);
-
-	IndexedModel ToIndexedModel();
 private:
-	unsigned int FindLastVertexIndex(const std::vector<OBJIndex*>& indexLookup, const OBJIndex* currentIndex, const IndexedModel& result);
 	void CreateOBJFace(const std::string& line);
+	void CreateOBJLine(const std::string& line);
 
 	glm::vec2 ParseOBJVec2(const std::string& line);
 	glm::vec3 ParseOBJVec3(const std::string& line);
 	OBJIndex ParseOBJIndex(const std::string& token, bool* hasUVs, bool* hasNormals);
-
+	
 };
 
 

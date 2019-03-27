@@ -3,3 +3,5 @@ background    #07254f
 gridline      #C0C0C0
 line	      #995c0d
 text	      #C0C0C0
+arrow_force   #5aa0ce
+arrow_line    #995c0d
