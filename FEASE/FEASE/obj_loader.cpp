@@ -8,6 +8,7 @@
 static bool CompareOBJIndexPtr(const OBJIndex* a, const OBJIndex* b);
 static inline unsigned int FindNextChar(unsigned int start, const char* str, unsigned int length, char token);
 static inline unsigned int ParseOBJIndexValue(const std::string& token, unsigned int start, unsigned int end);
+unsigned int ParseOBJIndexValue(const std::string& token);
 static inline float ParseOBJFloatValue(const std::string& token, unsigned int start, unsigned int end);
 static inline std::vector<std::string> SplitString(const std::string &s, char delim);
 
@@ -45,6 +46,9 @@ OBJModel::OBJModel(const std::string& fileName)
 			case 'f':
 				CreateOBJFace(line);
 				break;
+			case 'l':
+
+				break;
 			default: break;
 			};
 		}
@@ -53,8 +57,9 @@ OBJModel::OBJModel(const std::string& fileName)
 	{
 		std::cerr << "Unable to load mesh: " << fileName << std::endl;
 	}
-	if (uvs.size() == 0) hasUVs = false;
-	if (normals.size() == 0) hasNormals = false;
+	if (uvs.size() != 0) hasUVs = true;
+	if (normals.size() != 0) hasNormals = true;
+
 }
 
 void IndexedModel::CalcNormals()
@@ -261,18 +266,44 @@ void OBJModel::CreateOBJFace(const std::string& line)
 
 OBJIndex OBJModel::ParseOBJIndex(const std::string& token, bool* hasUVs, bool* hasNormals)
 {
-	unsigned int tokenLength = token.length();
-	const char* tokenString = token.c_str();
+	//unsigned int tokenLength = token.length();
+	//const char* tokenString = token.c_str();
 
-	unsigned int vertIndexStart = 0;
-	unsigned int vertIndexEnd = FindNextChar(vertIndexStart, tokenString, tokenLength, '/');
-
+	/*unsigned int vertIndexStart = 0;
+	unsigned int vertIndexEnd = FindNextChar(vertIndexStart, tokenString, tokenLength, '/');*/
+	//printf("%s\n", token.c_str());
 	OBJIndex result;
-	result.vertexIndex = ParseOBJIndexValue(token, vertIndexStart, vertIndexEnd);
+	result.vertexIndex = 0;
 	result.uvIndex = 0;
 	result.normalIndex = 0;
 
-	if(vertIndexEnd >= tokenLength)
+	std::string buff;
+	int i = 0;
+	unsigned int buf[3];
+	for(const char& c : token) 
+	{
+		if(c == '/'){
+			//
+			buf[i] = ParseOBJIndexValue(buff);
+			printf("%d -- %d\n", i,buf[i]);
+			i++;
+			buff.clear();
+		}
+		else buff += c;
+	}
+	if(i == 3) std::cerr << "invalid face format" << std::endl;
+	buf[i] = ParseOBJIndexValue(buff);
+
+
+	result.vertexIndex = buf[0];
+	result.uvIndex = buf[1];
+	result.normalIndex = buf[2];
+
+	/*result.vertexIndex = ParseOBJIndexValue(token, vertIndexStart, vertIndexEnd);
+	result.uvIndex = 0;
+	result.normalIndex = 0;*/
+
+	/*if(vertIndexEnd >= tokenLength)
 		return result;
 
 	vertIndexStart = vertIndexEnd + 1;
@@ -288,7 +319,7 @@ OBJIndex OBJModel::ParseOBJIndex(const std::string& token, bool* hasUVs, bool* h
 	vertIndexEnd = FindNextChar(vertIndexStart, tokenString, tokenLength, '/');
 
 	result.normalIndex = ParseOBJIndexValue(token, vertIndexStart, vertIndexEnd);
-	*hasNormals = true;
+	*hasNormals = true;*/
 
 	return result;
 }
@@ -365,6 +396,7 @@ static inline unsigned int FindNextChar(unsigned int start, const char* str, uns
 		result++;
 		if(str[result] == token)
 			break;
+		//if(str[result-1] == token && )
 	}
 
 	return result;
@@ -373,6 +405,13 @@ static inline unsigned int FindNextChar(unsigned int start, const char* str, uns
 static inline unsigned int ParseOBJIndexValue(const std::string& token, unsigned int start, unsigned int end)
 {
 	return atoi(token.substr(start, end - start).c_str()) - 1;
+}
+
+static inline unsigned int ParseOBJIndexValue(const std::string& token)
+{
+	unsigned int a = atoi(token.c_str());
+	if (a == 0) return 0;
+	return a - 1;
 }
 
 static inline float ParseOBJFloatValue(const std::string& token, unsigned int start, unsigned int end)

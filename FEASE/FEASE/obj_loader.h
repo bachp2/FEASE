@@ -29,11 +29,13 @@ class OBJModel
 {
 public:
 	std::vector<OBJIndex> OBJIndices;
+	std::vector<unsigned int> lines;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 	bool hasUVs;
 	bool hasNormals;
+	//unsigned int vbo, vao, ebo;
 	OBJModel(const std::string& fileName);
 
 	IndexedModel ToIndexedModel();
