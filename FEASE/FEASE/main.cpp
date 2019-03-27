@@ -165,7 +165,8 @@ inline static void setup_scene() {
 	text = RenderText(&textShader, colorConfig.pallete["text"]);
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
-	sphere = OBJModel(FPATH(resources/assets/suzanne.obj)).ToIndexedModel();
+	auto model = OBJModel(FPATH(resources/assets/arrow.obj));
+	sphere = model.ToIndexedModel();
 	//PRINTBOOL(checkIfFileExist(FPATH(resources/assets/lowpoly_sphere.obj)));
 
 	glGenVertexArrays(1, &sphere.vao);
@@ -253,12 +254,12 @@ static inline void render_scene() {
 	axisLines.render(solidShader, scrWidth, scrHeight);
 
 	// render obj mesh
-	//objectShader.use();
-	//glBindVertexArray(sphere.vao);
-	////glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//glDrawElements(GL_TRIANGLES, 6 * sphere.indices.size() / 2, GL_UNSIGNED_INT, 0);
-	////glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
-	//Shader::reset();
+	objectShader.use();
+	glBindVertexArray(sphere.vao);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glDrawElements(GL_TRIANGLES, 6 * sphere.indices.size() / 2, GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
+	Shader::reset();
 
 	// render text
 	textShader.use();

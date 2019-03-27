@@ -53,6 +53,8 @@ OBJModel::OBJModel(const std::string& fileName)
 	{
 		std::cerr << "Unable to load mesh: " << fileName << std::endl;
 	}
+	if (uvs.size() == 0) hasUVs = false;
+	if (normals.size() == 0) hasNormals = false;
 }
 
 void IndexedModel::CalcNormals()
@@ -155,7 +157,6 @@ IndexedModel OBJModel::ToIndexedModel()
 		for(unsigned int i = 0; i < result.positions.size(); i++)
 			result.normals[i] = normalModel.normals[indexMap[i]];
 	}
-
 	return result;
 };
 
