@@ -172,6 +172,7 @@
     <None Include="..\resources\shaders\text.fs" />
     <None Include="..\resources\shaders\texture.fs" />
     <None Include="..\resources\shaders\texture.vs" />
+    <None Include="text_billboarding.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
