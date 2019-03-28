@@ -453,6 +453,7 @@ void IMGUI_StyleLightGreen(ImGuiStyle* dst)
 	colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);
 }
 
+// code borrowed from github user @Derydoca in this thread https://github.com/ocornut/imgui/issues/707
 void IMGUI_StyleDark()
 {
 	ImGuiStyle* style = &ImGui::GetStyle();
@@ -599,5 +600,6 @@ inline static GLFWwindow* initApp() {
 	////////////////////////////
 	ImGui::GetIO().Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 12.0f, NULL, NULL);
 	IMGUI_StyleLightGreen(nullptr);
+	//IMGUI_StyleDark();
 	return window;
 }

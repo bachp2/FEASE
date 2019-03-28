@@ -132,11 +132,38 @@ inline bool insert_by_unique_pair(std::vector<Node>& c, Node* n1) {
 
 	auto n2 = c.back();
 	auto span = c.size() - 1;
-	for (auto i = 0; i < span; i += 2) {
-		if (glm::length(c[i] - *n1) < 0.0001 && glm::length(c[i+1] - n2) < 0.0001) return false;
-		if (glm::length(c[i+1] - *n1) < 0.0001 && glm::length(c[i] - n2) < 0.0001) return false;
+
+	if(c.size() == 1 && glm::length(n2 - *n1) < 0.0001)
+	{
+		// entered this condition only when a pair is selected
+		// deselect node and fall through
+		c.pop_back();
+		return false;
 	}
-	//printf("test\n");
+
+	for (auto i = 0; i < span; i += 2) {
+		if (glm::length(c[i] - *n1) < 0.0001 && glm::length(c[i+1] - n2) < 0.0001)
+		{
+			// entered this condition only when a pair is selected
+			// deselect node and fall through
+			c.pop_back();
+			return false;
+		}
+		if (glm::length(c[i+1] - *n1) < 0.0001 && glm::length(c[i] - n2) < 0.0001)
+		{
+			// entered this condition only when a pair is selected
+			// deselect node and fall through
+			c.pop_back();
+			return false;
+		}
+		if (glm::length(n2 - *n1) < 0.0001)
+		{
+			// entered this condition only when a pair is selected
+			// deselect node and fall through
+			c.pop_back();
+			return false;
+		} 
+	}
 	c.push_back(*n1);
 	return true;
 }
