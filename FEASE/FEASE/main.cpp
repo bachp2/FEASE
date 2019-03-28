@@ -2,6 +2,17 @@
 #define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z); 
 #define PRINTBOOL(X) std::cout << #X << ": " << std::boolalpha << X << std::endl;
 
+extern "C"
+{
+#include <lua535\include\lua.h>
+#include <lua535\include\lauxlib.h>
+#include <lua535\include\lualib.h>
+}
+
+#ifdef _WIN32
+#pragma comment(lib, "lua535/liblua53.a")
+#endif
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad/glad.h>
 
@@ -12,7 +23,7 @@
 #include "fease_draw.h"
 #include "text_render.h"
 #include <iostream>
-
+#include "render_scene.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -40,7 +51,8 @@ int scrWidth = SCR_WIDTH, scrHeight = SCR_HEIGHT;
 
 //ImGuiIO* imguiIO;
 
-glm::mat4 projection, view, model;
+glm::mat4 perspective_projection, view, model, orthogonal_projection;
+
 // camera
 
 ArcBallCamera camera(glm::radians(-30.0f), glm::radians(20.0f));
@@ -48,6 +60,11 @@ ArcBallCamera camera(glm::radians(-30.0f), glm::radians(20.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 
+Shader textShader, solidShader, objectShader;
+RenderText text;
+
+unsigned int VBO, VAO;
+OBJModel sphere;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float accumulate_deltaTime = 0.0f;
@@ -59,9 +76,6 @@ void handleGUILogic();
 void render_scene();
 void setup_scene();
 GLFWwindow* initApp();
-
-RenderText text;
-Shader textShader, solidShader, objectShader;
 
 std::vector< glm::vec3 > obj_vertices;
 
@@ -122,178 +136,6 @@ int main(int, char**)
 	return 0;
 }
 
-//terry cube
-unsigned int VBO, VAO;
-//IndexedModel sphere;
-OBJModel sphere;
-inline static void setup_scene() {
-	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
-
-	textShader = Shader(FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
-	solidShader = Shader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
-	objectShader = Shader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
-
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// texture coord attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	// cartesian axis lines
-	axisLines.setup(&camera);
-
-	// points 
-	points_setup();
-
-	//grid
-	grid.setup(&objectShader);
-
-	// load and create a texture 
-	// -------------------------
-	//unsigned int texture;
-	//create_texture(&texture, FPATH(resources/terry.jpg));
-	textShader.use();
-	//texShader.setInt("texture1", 0);
-
-	text = RenderText(&textShader, colorConfig.pallete["text"]);
-
-	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
-	auto model = OBJModel(FPATH(resources/assets/suzanne.obj));
-	//sphere = model.ToIndexedModel();
-	sphere = model;
-
-	glGenBuffers(1, &sphere.vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, sphere.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sphere.vertices.size() * sizeof(glm::vec3), &sphere.vertices[0], GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &sphere.face_vao);
-	glBindVertexArray(sphere.face_vao);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	
-	glGenBuffers(1, &sphere.face_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.face_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*sphere.face_indices.size(), &sphere.face_indices[0], GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &sphere.line_vao);
-	glBindVertexArray(sphere.line_vao);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glGenBuffers(1, &sphere.line_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.line_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*sphere.line_indices.size(), &sphere.line_indices[0], GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-	/*glGenBuffers(1, &sphere.line_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.line_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 2 * sphere.line_indices.size(), &sphere.line_indices[0], GL_STATIC_DRAW);*/
-
-	text.setCharacterSize(16 * 2.0f / scrHeight);
-}
-
-static inline void render_scene() {
-	auto backgroundColor = colorConfig.pallete["background"];
-	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// View Projection Model matrices
-
-	//float a = float(scrWidth)/scrHeight;
-	//projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
-
-	projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-	view = camera.GetViewMatrix();
-
-	// Draw grid
-
-	grid.render(view, projection);
-
-
-	// Draw box
-	// bind textures on corresponding texture units
-
-	textShader.use();
-	textShader.setMat4("projection", projection);
-	textShader.setMat4("view", view);
-
-	/*model = glm::mat4(1.0f);
-	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
-	texShader.setMat4("model", model);
-	model = glm::mat4(1.0f);
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);*/
-
-	
-
-	// Draw points
-
-	objectShader.use();
-	render_points(&objectShader);
-
-	// Draw lines
-	glLineWidth(1.0f);
-
-	objectShader.setColor("color", colorConfig.pallete["line"]);
-
-	unsigned int VBO_element, VAO_element;
-	glGenVertexArrays(1, &VAO_element);
-	glBindVertexArray(VAO_element);
-	glGenBuffers(1, &VBO_element);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-
-	int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size() - 1;
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elementsSize, &elements[0], GL_DYNAMIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(VAO_element);
-
-	glDrawArrays(GL_LINES, 0, elementsSize);
-
-	
-
-	// draw axis lines
-	model = glm::mat4(1.0f);
-	axisLines.render(solidShader, scrWidth, scrHeight);
-
-	// render obj mesh
-	objectShader.use();
-	objectShader.setColor("color", colorConfig.pallete["arrow_force"]);
-	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-	glBindVertexArray(sphere.face_vao);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glDrawElements(GL_TRIANGLES, sphere.face_indices.size(), GL_UNSIGNED_INT, 0);
-
-	glBindVertexArray(sphere.line_vao);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	objectShader.setColor("color", colorConfig.pallete["arrow_line"]);
-	glDrawElements(GL_LINES, sphere.line_indices.size(), GL_UNSIGNED_INT, 0);
-
-	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
-	//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-	
-
-	// render text
-	textShader.use();
-	//textShader.setMat4("model", Mat4(1.0f));
-	//textShader.setMat4("view", Mat4(1.0f));
-	float a = float(scrWidth) / scrHeight;
-	//projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
-	textShader.setMat4("projection", glm::ortho<float>(-a, a, -1, 1,-100, 100));
-	text.render("sup /dpt/");
-}
-
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 static inline void processInput(GLFWwindow *window)
@@ -319,6 +161,8 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	// height will be significantly larger than specified on retina displays.
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
 	text.setCharacterSize(16 * 2.0f / scrHeight);
+	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
+	orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
 	glViewport(0, 0, width, height);
 }
 
@@ -434,7 +278,7 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 	float z = 1.0f;
 	glm::vec3 ray_nds(x, y, z);
 	glm::vec4 ray_clip(ray_nds.x, ray_nds.y, -1.0, 1.0);
-	glm::vec4 ray_eye = glm::inverse(projection) * ray_clip;
+	glm::vec4 ray_eye = glm::inverse(perspective_projection) * ray_clip;
 	ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
 	glm::vec3 ray_wor = (glm::inverse(view) * ray_eye);
 	ray_wor = glm::normalize(ray_wor);

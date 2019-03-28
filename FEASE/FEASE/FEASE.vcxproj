@@ -158,6 +158,7 @@
     <ClInclude Include="color.h" />
     <ClInclude Include="mouse_listener.h" />
     <ClInclude Include="obj_loader.h" />
+    <ClInclude Include="render_scene.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="text_render.h" />

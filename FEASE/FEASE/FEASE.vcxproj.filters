@@ -83,6 +83,9 @@
     <ClInclude Include="text_render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render_scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\shaders\texture.vs">

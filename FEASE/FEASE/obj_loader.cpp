@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <map>
 
-// BennyQBD's code : https://github.com/BennyQBD/ModernOpenGLTutorial
+// Inspired from BennyQBD's obj loader code : https://github.com/BennyQBD/ModernOpenGLTutorial/blob/master/shader.cpp
 static bool CompareOBJIndexPtr(const OBJIndex* a, const OBJIndex* b);
 static inline unsigned int FindNextChar(unsigned int start, const char* str, unsigned int length, char token);
 static inline unsigned int ParseOBJIndexValue(const std::string& token, unsigned int start, unsigned int end);
@@ -112,7 +112,6 @@ OBJIndex OBJModel::ParseOBJIndex(const std::string& token)
 	}
 	if(i == 3) std::cerr << "invalid face format" << std::endl;
 	buf[i] = ParseOBJIndexValue(buff);
-
 
 	result.vertexIndex = buf[0];
 	result.uvIndex = buf[1];

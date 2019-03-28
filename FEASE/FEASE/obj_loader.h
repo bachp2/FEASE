@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 
+// Inspired from BennyQBD's obj loader code : https://github.com/BennyQBD/ModernOpenGLTutorial/blob/master/obj_loader.h
 struct OBJIndex
 {
 	unsigned int vertexIndex;
