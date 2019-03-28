@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 class ArcBallCamera;
 class Shader;
 extern ArcBallCamera camera;
@@ -82,7 +82,7 @@ inline static void setup_scene() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.line_ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 2 * sphere.line_indices.size(), &sphere.line_indices[0], GL_STATIC_DRAW);*/
 
-	text.setCharacterSize(16 * 2.0f / scrHeight);
+	text.setCharacterSize(16 * 1.5f / scrHeight);
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
@@ -105,19 +105,19 @@ static inline void render_scene() {
 	grid.render(view, perspective_projection);
 
 
-	// Draw box
-	// bind textures on corresponding texture units
+	//// Draw box
+	//// bind textures on corresponding texture units
 
-	textShader.use();
-	textShader.setMat4("projection", perspective_projection);
-	textShader.setMat4("view", view);
+	//textShader.use();
+	//textShader.setMat4("projection", perspective_projection);
+	//textShader.setMat4("view", view);
 
-	/*model = glm::mat4(1.0f);
-	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
-	texShader.setMat4("model", model);
-	model = glm::mat4(1.0f);
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);*/
+	///*model = glm::mat4(1.0f);
+	//model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
+	//texShader.setMat4("model", model);
+	//model = glm::mat4(1.0f);
+	//glBindVertexArray(VAO);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
 	// Draw points
 
@@ -147,15 +147,10 @@ static inline void render_scene() {
 	glDrawArrays(GL_LINES, 0, elementsSize);
 
 
-
-	// draw axis lines
-	model = glm::mat4(1.0f);
-	axisLines.render(solidShader, scrWidth, scrHeight);
-
-	// render obj mesh
+	//// render obj mesh
 	objectShader.use();
 	objectShader.setColor("color", colorConfig.pallete["arrow_force"]);
-	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glBindVertexArray(sphere.face_vao);
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glDrawElements(GL_TRIANGLES, sphere.face_indices.size(), GL_UNSIGNED_INT, 0);
@@ -166,13 +161,17 @@ static inline void render_scene() {
 	glDrawElements(GL_LINES, sphere.line_indices.size(), GL_UNSIGNED_INT, 0);
 
 	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
-	//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	glBindVertexArray(0);
 
-
-	// render text
+	//render text
 	textShader.use();
 	//textShader.setMat4("model", Mat4(1.0f));
 	//textShader.setMat4("view", Mat4(1.0f));
 	textShader.setMat4("projection", orthogonal_projection);
-	text.render("sup /dpt/");
+	text.render("Sup dpt");
+
+	// draw axis lines
+	model = glm::mat4(1.0f);
+	axisLines.render(solidShader, scrWidth, scrHeight);
 }
