@@ -21,7 +21,7 @@ void RenderText::render(std::string str) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-	float x = -1.3; float y = -1;
+	float x = 0; float y = 0.0;
 
 	float font_step = 16 * 1.0f / 256;
 	for (char& c : str)
@@ -30,24 +30,24 @@ void RenderText::render(std::string str) {
 		float currcol = (c%16)*font_step;
 		float currrow = (15-c/16)*font_step;
 
-		block = { x, y, 1.0f, currcol, currrow }; // bottom left
+		block = { x, y, 0.0f, currcol, currrow }; // bottom left
 		text_vertices.push_back(block);
 
-		block = { x, y + char_size, 1.0f, currcol, currrow+font_step }; // top left
+		block = { x, y + char_size, 0.0f, currcol, currrow+font_step }; // top left
 		text_vertices.push_back(block);
 
-		block = { x + char_size, y, 1.0f, currcol+font_step, currrow }; // bottom right
+		block = { x + char_size, y, 0.0f, currcol+font_step, currrow }; // bottom right
 		text_vertices.push_back(block);
 
-		block = { x + char_size, y + char_size, 1.0f, currcol+font_step, currrow+font_step }; // top right
+		block = { x + char_size, y + char_size, 0.0f, currcol+font_step, currrow+font_step }; // top right
 		text_vertices.push_back(block);
 
 		x += char_size;
 
-		if(x > 1.0f){
+		/*if(x > 1.0f){
 			x = -1.2;
 			y -= char_size;
-		}
+		}*/
 	}
 
 	//printf("text_dat size: %d\n", text_dat.size());
@@ -82,6 +82,4 @@ void RenderText::render(std::string str) {
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6 * text_indices.size() / 2, GL_UNSIGNED_INT, 0);
-
-	Shader::reset();
 }

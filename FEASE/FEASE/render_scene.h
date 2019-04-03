@@ -15,6 +15,7 @@ inline static void setup_scene() {
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
 	textShader = Shader(FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
+	//textShader = Shader(FPATH(resources/shaders/text_billboarding.vs), FPATH(resources/shaders/text.fs));
 	solidShader = Shader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
 	objectShader = Shader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
 
@@ -88,9 +89,13 @@ inline static void setup_scene() {
 	orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
 }
 
+
 static inline void render_scene() {
-	auto backgroundColor = colorConfig.pallete["background"];
-	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
+	auto background = colorConfig.pallete["background"];
+	//auto bot = colorConfig.pallete["background"];
+	//auto top = hexCodeToRGB("#F97B13");
+	//mygl_GradientBackground(bot.r, bot.g, bot.b, 1.0f, top.r, top.g, top.b, 1.0f);
+	glClearColor(background.r, background.g, background.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// View Projection Model matrices
@@ -166,12 +171,78 @@ static inline void render_scene() {
 
 	//render text
 	textShader.use();
-	//textShader.setMat4("model", Mat4(1.0f));
-	//textShader.setMat4("view", Mat4(1.0f));
-	textShader.setMat4("projection", orthogonal_projection);
-	text.render("Sup dpt");
+	textShader.setMat4("model", Mat4(1.0f));
+	textShader.setMat4("view", view);
+	textShader.setMat4("projection", perspective_projection);
+	text.render("Applying the");
 
 	// draw axis lines
 	model = glm::mat4(1.0f);
 	axisLines.render(solidShader, scrWidth, scrHeight);
+}
+
+static void mygl_GradientBackground( float top_r, float top_g, float top_b, float top_a,
+	float bot_r, float bot_g, float bot_b, float bot_a )
+{
+	glDisable(GL_DEPTH_TEST);
+
+	static GLuint background_vao = 0;
+	static GLuint background_shader = 0;
+
+	if (background_vao == 0)
+	{
+		glGenVertexArrays(1, &background_vao);
+
+		const char* vs_src = (char*) STR(
+			#version 330 core
+			out vec2 v_ub;
+		void main()
+		{
+			uint idx = gl_VertexID;
+			gl_Positions = vec4( idx & 1, idx >> 1, 0.0, 0.5 ) * 4.0 - 1.0;
+			v_uv = vec2( gl_Position.xy * 0.5 + 0.5 );
+		}
+
+		);
+
+		char* fs_src = (char*) STR(
+			#version 330 core
+			uniform vec4 top_color;
+		uniform vec4 bot_color;
+		in vec2 v_uv;
+		out vec4 frag_color;
+
+		void main()
+		{
+			frag_color = bot_color * (1 - uv.y) + top_color * uv.y;
+		}
+
+		);
+		GLuint vs_id, fs_id;
+		vs_id = glCreateShader( GL_VERTEX_SHADER );
+		fs_id = glCreateShader( GL_FRAGMENT_SHADER );
+		glShaderSource(vs_id, 1, &vs_src, NULL);
+		glShaderSource(fs_id, 1, &fs_src, NULL);
+		glCompileShader(vs_id);
+		glCompileShader(fs_id);
+		background_shader = glCreateProgram();
+		glAttachShader(background_shader, vs_id );
+		glAttachShader(background_shader, fs_id );
+		glLinkProgram(background_shader);
+
+		glDeleteShader( fs_id );
+		glDeleteShader( vs_id );
+	}
+
+	glUseProgram( background_shader );
+	GLuint top_color_loc = glGetUniformLocation( background_shader, "top_color" );
+	GLuint bot_color_loc = glGetUniformLocation( background_shader, "bot_color" );
+	glUniform4f( top_color_loc, top_r, top_g, top_b, top_a );
+	glUniform4f( bot_color_loc, bot_r, bot_g, bot_b, bot_a );
+
+	glBindVertexArray( background_vao );
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindVertexArray(0);
+
+	glEnable(GL_DEPTH_TEST);
 }
