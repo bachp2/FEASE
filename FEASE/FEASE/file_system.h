@@ -13,19 +13,19 @@
 std::string GetFulProjectlPath(const char * partialPath);
 static const std::string pathTo(std::string path)
 {
+	using namespace std;
 	//const std::string root = "C:\\Users\\bachp2\\Documents\\IFEM\\FEASE\\FEASE";
-	std::string root = GetFulProjectlPath( "..\\" );
+	string root = GetFulProjectlPath( "..\\" );
 	//root = "C:\\Users\\bachp2\\Documents\\IFEM\\FEASE\\FEASE\\";
 
-	std::vector<std::string> vect;
-	std::stringstream ss(path);
+	vector<string> vect;
+	stringstream ss(path);
 
 	while (ss.good())
 	{
-		std::string substr;
+		string substr;
 		getline(ss, substr, '/');
-		vect.push_back(substr);
-			
+		vect.push_back(substr);	
 	}
 
 	auto new_path = root;
@@ -44,7 +44,7 @@ inline static std::string GetFulProjectlPath( const char * partialPath )
 	char full[_MAX_PATH];
 	if( _fullpath( full, partialPath, _MAX_PATH ) != NULL )
 	{
-		printf( "Full path is: %s\n", full );
+		//printf( "Full path is: %s\n", full );
 		return full;
 	}
 	printf( "Invalid path\n" );
