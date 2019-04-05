@@ -11,9 +11,6 @@ extern unsigned int VBO, VAO;
 //IndexedModel sphere;
 extern OBJModel sphere;
 
-#define SHADER_HEADER "#version 330 core\n"
-#define SHADER_STR(x) #x
-
 //#define STR(x) #x
 inline static void setup_scene() {
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
@@ -96,11 +93,11 @@ inline static void setup_scene() {
 static void GradientBackground(float top_r, float top_g, float top_b, float top_a, float bot_r, float bot_g, float bot_b, float bot_a);
 
 static inline void render_scene() {
-	auto background = colorConfig.pallete["background"];
+	//auto background = colorConfig.pallete["background"];
 	//auto bot = colorConfig.pallete["background"];
 	//auto top = hexCodeToRGB("#F97B13");
 	//mygl_GradientBackground(bot.r, bot.g, bot.b, 1.0f, top.r, top.g, top.b, 1.0f);
-	glClearColor(background.r, background.g, background.b, 1.0f);
+	glClearColor(1.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	GradientBackground( 0.6, 0.8, 0.3, 1.0, 0.3, 0.0, 0.6, 1.0 );
 
@@ -187,7 +184,9 @@ static inline void render_scene() {
 	axisLines.render(solidShader, scrWidth, scrHeight);
 }
 
-static void GradientBackground( float top_r, float top_g, float top_b, float top_a, 
+#define SHADER_HEADER "#version 330 core\n"
+#define SHADER_STR(x) #x
+inline static void GradientBackground( float top_r, float top_g, float top_b, float top_a, 
 	float bot_r, float bot_g, float bot_b, float bot_a )
 {
 	glDisable(GL_DEPTH_TEST);
@@ -202,25 +201,25 @@ static void GradientBackground( float top_r, float top_g, float top_b, float top
 		const char* vs_src = (const char*) SHADER_HEADER SHADER_STR
 			(
 				out vec2 v_uv;
-		void main()
-		{
-			uint idx = uint(gl_VertexID);
-			gl_Position = vec4( idx & 1U, idx >> 1U, 0.0, 0.5 ) * 4.0 - 1.0;
-			v_uv = vec2( gl_Position.xy * 0.5 + 0.5 );
-		}
+				void main()
+				{
+					uint idx = uint(gl_VertexID);
+					gl_Position = vec4( idx & 1U, idx >> 1U, 0.0, 0.5 ) * 4.0 - 1.0;
+					v_uv = vec2( gl_Position.xy * 0.5 + 0.5 );
+				}
 		);
 
 		const char* fs_src = (const char*) SHADER_HEADER SHADER_STR
 			(
 				uniform vec4 top_color;
-		uniform vec4 bot_color;
-		in vec2 v_uv;
-		out vec4 frag_color;
+				uniform vec4 bot_color;
+				in vec2 v_uv;
+				out vec4 frag_color;
 
-		void main()
-		{
-			frag_color = bot_color * (1 - v_uv.y) + top_color * v_uv.y;
-		}
+				void main()
+				{
+					frag_color = bot_color * (1 - v_uv.y) + top_color * v_uv.y;
+				}
 		);
 		GLuint vs_id, fs_id;
 		vs_id = glCreateShader( GL_VERTEX_SHADER );
