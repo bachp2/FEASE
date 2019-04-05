@@ -79,8 +79,30 @@ GLFWwindow* initApp();
 
 std::vector< glm::vec3 > obj_vertices;
 
+bool CheckLua(lua_State *L, int r){
+	if(r != LUA_OK)
+	{
+		std::string errormsg = lua_tostring(L, -1);
+		printf("%s\n", errormsg.c_str());
+		return false;
+	}
+	return true;
+}
+
 int main(int, char**)
 {
+	std::string cmd = "a = 7+11*math.sin(10);";
+	lua_State *L = luaL_newstate();
+	luaL_openlibs(L);
+
+	if(CheckLua(L, luaL_dostring(L, cmd.c_str()))){
+		lua_getglobal(L, "a");
+		if(lua_isnumber(L, -1)){
+			float a = (float)lua_tonumber(L, -1);
+			printf("a is %.3f\n", a);
+		}
+	}
+
 	GLFWwindow* window = initApp();
 	// set up scene
 	// ------------------------------------------------------------------
@@ -630,6 +652,7 @@ static void ShowExampleAppMainMenuBar()
 {
 	if (ImGui::BeginMainMenuBar())
 	{
+		//ImGui::ImageButton
 		if (ImGui::BeginMenu("File"))
 		{
 			ShowExampleMenuFile();

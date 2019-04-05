@@ -205,6 +205,7 @@ struct Axis {
 
 	inline void render(Shader& shader, const int scrWidth, const int scrHeight) {
 		glDisable(GL_DEPTH_TEST);
+
 		shader.use();
 		int ww = 320;
 		glLineWidth(1.7f);

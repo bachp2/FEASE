@@ -21,7 +21,7 @@ void RenderText::render(std::string str) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-	float x = 0; float y = 0.0;
+	float x = 0; float y = 0;
 
 	float font_step = 16 * 1.0f / 256;
 	for (char& c : str)
