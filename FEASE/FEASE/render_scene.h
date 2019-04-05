@@ -11,6 +11,7 @@ extern unsigned int VBO, VAO;
 //IndexedModel sphere;
 extern OBJModel sphere;
 
+#define STR(x) #x
 inline static void setup_scene() {
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
@@ -246,3 +247,4 @@ static void mygl_GradientBackground( float top_r, float top_g, float top_b, floa
 
 	glEnable(GL_DEPTH_TEST);
 }
+
