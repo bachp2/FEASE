@@ -9,14 +9,14 @@ RenderText::RenderText(Shader * s, Color c, unsigned int cfont_size) {
 	shader->setColor("textColor", c);
 	create_texture(&font_atlas_id, FPATH(resources/Bisasam.png));
 	shader->setInt("texture1", 0);
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ebo);
 }
 
 void RenderText::render(std::string str) {
 	std::vector<std::array<float, 5>> text_vertices;
 	std::vector<std::array<unsigned int, 3>> text_indices;
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-	glGenBuffers(1, &ebo);
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);

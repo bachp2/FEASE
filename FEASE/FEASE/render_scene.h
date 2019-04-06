@@ -158,11 +158,11 @@ static inline void render_scene() {
 	glBindVertexArray(0);
 
 	//render text
-	/*textShader.use();
+	textShader.use();
 	textShader.setMat4("model", Mat4(1.0f));
 	textShader.setMat4("view", view);
 	textShader.setMat4("projection", perspective_projection);
-	text.render("Applying the");*/
+	text.render("Applying the");
 
 	// draw axis lines
 	model = glm::mat4(1.0f);
