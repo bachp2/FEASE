@@ -99,7 +99,7 @@ inline void static points_setup() {
 
 inline void static render_points(Shader* shader) {
 	glDisable(GL_DEPTH_TEST);
-
+	shader->use();
 	shader->setColor("color", colorConfig.pallete["dot"]);
 	
 	glBindVertexArray(VAO_point);
@@ -170,6 +170,42 @@ inline bool insert_by_unique_pair(std::vector<Node>& c, Node* n1) {
 	}
 	c.push_back(*n1);
 	return true;
+}
+
+//////////////////////////////
+//LINE ENTITY
+//////////////////////////////
+
+unsigned int VBO_element, VAO_element;
+
+inline static void setup_lines(){
+	glGenVertexArrays(1, &VAO_element);
+
+	glBindVertexArray(VAO_element);
+	glGenBuffers(1, &VBO_element);
+}
+
+inline static void render_lines(Shader* shader){
+	shader->use();
+
+	glDisable(GL_DEPTH_TEST);
+	
+	glLineWidth(1.0f);
+
+	shader->setColor("color", colorConfig.pallete["line"]);
+
+	int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size() - 1;
+
+	glBindVertexArray(VAO_element);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elementsSize, &elements[0], GL_DYNAMIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glDrawArrays(GL_LINES, 0, elementsSize);
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 //////////////////////////////

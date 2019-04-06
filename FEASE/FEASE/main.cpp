@@ -91,11 +91,10 @@ bool CheckLua(lua_State *L, int r){
 
 int main(int, char**)
 {
-	std::string cmd = "a = 7+11*math.sin(10);";
 	lua_State *L = luaL_newstate();
 	luaL_openlibs(L);
 
-	if(CheckLua(L, luaL_dostring(L, cmd.c_str()))){
+	if( CheckLua(L, luaL_dofile(L, FPATH(resources/config.lua))) ){
 		lua_getglobal(L, "a");
 		if(lua_isnumber(L, -1)){
 			float a = (float)lua_tonumber(L, -1);

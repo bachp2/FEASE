@@ -40,6 +40,9 @@ inline static void setup_scene() {
 	// points 
 	points_setup();
 
+	// lines
+	setup_lines();
+
 	//grid
 	grid.setup(&objectShader);
 
@@ -128,34 +131,10 @@ static inline void render_scene() {
 	//glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
 	// Draw lines
-	glDisable(GL_DEPTH_TEST);
-
-	glLineWidth(1.0f);
-
-	objectShader.setColor("color", colorConfig.pallete["line"]);
-
-	unsigned int VBO_element, VAO_element;
-	glGenVertexArrays(1, &VAO_element);
-	glBindVertexArray(VAO_element);
-	glGenBuffers(1, &VBO_element);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_element);
-
-	int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size() - 1;
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*elementsSize, &elements[0], GL_DYNAMIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(VAO_element);
-
-	glDrawArrays(GL_LINES, 0, elementsSize);
-
-	glEnable(GL_DEPTH_TEST);
+	render_lines(&objectShader);
 
 	// Draw points
 
-	objectShader.use();
 	render_points(&objectShader);
 
 	//// render obj mesh
@@ -166,21 +145,24 @@ static inline void render_scene() {
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glDrawElements(GL_TRIANGLES, sphere.face_indices.size(), GL_UNSIGNED_INT, 0);
 
-	glBindVertexArray(sphere.line_vao);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	objectShader.setColor("color", colorConfig.pallete["arrow_line"]);
-	glDrawElements(GL_LINES, sphere.line_indices.size(), GL_UNSIGNED_INT, 0);
+	if(!sphere.line_indices.empty())
+	{
+		glBindVertexArray(sphere.line_vao);
+		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		objectShader.setColor("color", colorConfig.pallete["arrow_line"]);
+		glDrawElements(GL_LINES, sphere.line_indices.size(), GL_UNSIGNED_INT, 0);
+	}
 
 	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	glBindVertexArray(0);
 
 	//render text
-	textShader.use();
+	/*textShader.use();
 	textShader.setMat4("model", Mat4(1.0f));
 	textShader.setMat4("view", view);
 	textShader.setMat4("projection", perspective_projection);
-	text.render("Applying the");
+	text.render("Applying the");*/
 
 	// draw axis lines
 	model = glm::mat4(1.0f);
