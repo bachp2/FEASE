@@ -98,8 +98,10 @@ inline void static points_setup() {
 }
 
 inline void static render_points(Shader* shader) {
-	shader->setColor("color", colorConfig.pallete["dot"]);
+	glDisable(GL_DEPTH_TEST);
 
+	shader->setColor("color", colorConfig.pallete["dot"]);
+	
 	glBindVertexArray(VAO_point);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_point);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vec3)*nodes.size(), &nodes[0], GL_DYNAMIC_DRAW);
@@ -109,6 +111,8 @@ inline void static render_points(Shader* shader) {
 	glEnableVertexAttribArray(0);
 
 	glDrawArrays(GL_POINTS, 0, nodes.size());
+	
+	glEnable(GL_DEPTH_TEST);
 }
 
 inline Node* vector_find(std::vector<Node>& nv, Node n) {

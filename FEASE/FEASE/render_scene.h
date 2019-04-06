@@ -127,12 +127,9 @@ static inline void render_scene() {
 	//glBindVertexArray(VAO);
 	//glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
-	// Draw points
-
-	objectShader.use();
-	render_points(&objectShader);
-
 	// Draw lines
+	glDisable(GL_DEPTH_TEST);
+
 	glLineWidth(1.0f);
 
 	objectShader.setColor("color", colorConfig.pallete["line"]);
@@ -154,6 +151,12 @@ static inline void render_scene() {
 
 	glDrawArrays(GL_LINES, 0, elementsSize);
 
+	glEnable(GL_DEPTH_TEST);
+
+	// Draw points
+
+	objectShader.use();
+	render_points(&objectShader);
 
 	//// render obj mesh
 	objectShader.use();
