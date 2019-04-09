@@ -157,15 +157,18 @@ static inline void render_scene() {
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	glBindVertexArray(0);
 
+	// we need identity matrix for model matrix
+	model = glm::mat4(1.0f);
+
 	//render text
 	textShader.use();
+	
 	textShader.setMat4("model", Mat4(1.0f));
 	textShader.setMat4("view", view);
 	textShader.setMat4("projection", perspective_projection);
 	text.render("Applying the");
 
 	// draw axis lines
-	model = glm::mat4(1.0f);
 	axisLines.render(solidShader, scrWidth, scrHeight);
 }
 

@@ -24,6 +24,7 @@ extern "C"
 #include "text_render.h"
 #include <iostream>
 #include "render_scene.h"
+#include "config_parser.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -79,29 +80,9 @@ GLFWwindow* initApp();
 
 std::vector< glm::vec3 > obj_vertices;
 
-bool CheckLua(lua_State *L, int r){
-	if(r != LUA_OK)
-	{
-		std::string errormsg = lua_tostring(L, -1);
-		printf("%s\n", errormsg.c_str());
-		return false;
-	}
-	return true;
-}
-
 int main(int, char**)
 {
-	lua_State *L = luaL_newstate();
-	luaL_openlibs(L);
-
-	if( CheckLua(L, luaL_dofile(L, FPATH(resources/config.lua))) ){
-		lua_getglobal(L, "a");
-		if(lua_isnumber(L, -1)){
-			float a = (float)lua_tonumber(L, -1);
-			printf("a is %.3f\n", a);
-		}
-	}
-
+	
 	GLFWwindow* window = initApp();
 	// set up scene
 	// ------------------------------------------------------------------
@@ -733,5 +714,7 @@ static void ShowExampleMenuFile()
 		IM_ASSERT(0);
 	}
 	if (ImGui::MenuItem("Checked", NULL, true)) {}
-	if (ImGui::MenuItem("Quit", "Alt+F4")) {}
+	if (ImGui::MenuItem("Quit", "Alt+F4")) {
+		//glfwSetWindowShouldClose(window, true);
+	}
 }
