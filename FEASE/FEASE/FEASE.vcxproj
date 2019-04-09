@@ -147,11 +147,13 @@
     <ClCompile Include="config_parser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_loader.cpp" />
+    <ClCompile Include="shader_manager.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="text_render.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="GUI.h" />
     <ClInclude Include="color_config.h" />
     <ClInclude Include="config_parser.h" />
     <ClInclude Include="create_texture.h" />
@@ -162,6 +164,7 @@
     <ClInclude Include="obj_loader.h" />
     <ClInclude Include="render_scene.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="shader_manager.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="text_render.h" />
   </ItemGroup>
