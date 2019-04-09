@@ -22,7 +22,7 @@ extern "C"
 #include <file_system.h>
 #include "fease_draw.h"
 #include "text_render.h"
-#include "GUI.h"
+#include "custom_gui.h"
 #include <iostream>
 #include "render_scene.h"
 #include "config_parser.h"

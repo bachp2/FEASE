@@ -153,10 +153,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
-    <ClInclude Include="GUI.h" />
     <ClInclude Include="color_config.h" />
     <ClInclude Include="config_parser.h" />
     <ClInclude Include="create_texture.h" />
+    <ClInclude Include="custom_gui.h" />
     <ClInclude Include="fease_draw.h" />
     <ClInclude Include="file_system.h" />
     <ClInclude Include="color.h" />

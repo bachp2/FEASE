@@ -98,7 +98,7 @@
     <ClInclude Include="shader_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI.h">
+    <ClInclude Include="custom_gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
