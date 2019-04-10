@@ -121,7 +121,8 @@ public:
 		glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Bool> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Bool> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -130,7 +131,8 @@ public:
 		glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Int> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Int> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -139,7 +141,8 @@ public:
 		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ <<  " line:" << __LINE__ <<" <Float> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Float> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -148,7 +151,8 @@ public:
 		glUniform2fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Vec2> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Vec2> OpenGL error: " << error << std::endl;
 		}
 	}
 	void setVec2(const std::string &name, float x, float y) const
@@ -156,7 +160,8 @@ public:
 		glUniform2f(glGetUniformLocation(ID, name.c_str()), x, y);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Vec2> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Vec2> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -165,7 +170,8 @@ public:
 		glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Vec3> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout <<  " <Vec3> OpenGL error: " << error << std::endl;
 		}
 	}
 
@@ -175,7 +181,8 @@ public:
 		glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &c[0]);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << "line:" << __LINE__ << " <Color> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Color> OpenGL error: " << error << std::endl;
 		}
 	}
 
@@ -184,7 +191,8 @@ public:
 		glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << "line:" << __LINE__ << " <Vec3> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Vec3> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -193,7 +201,8 @@ public:
 		glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Vec4> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Vec4> OpenGL error: " << error << std::endl;
 		}
 	}
 	void setVec4(const std::string &name, float x, float y, float z, float w)
@@ -201,7 +210,8 @@ public:
 		glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Vec4> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout <<  " <Vec4> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -210,7 +220,8 @@ public:
 		glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Mat2> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Mat2> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -219,7 +230,8 @@ public:
 		glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Mat3> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Mat3> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -228,7 +240,8 @@ public:
 		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
-			std::cout << __FILE__ << " line:" << __LINE__ << " <Mat4> OpenGL error: " << error << std::endl;
+			log_error_fline();
+			std::cout << " <Mat4> OpenGL error: " << error << std::endl;
 		}
 		
 	}
@@ -258,6 +271,9 @@ private:
 				std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
 			}
 		}
+	}
+	void log_error_fline() const {
+		std::cout << "file: "<< __FILE__ << " line: " << __LINE__;
 	}
 };
 
