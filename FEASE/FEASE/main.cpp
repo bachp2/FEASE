@@ -22,6 +22,7 @@ extern "C"
 #include <file_system.h>
 #include "fease_draw.h"
 #include "text_render.h"
+#include "shader_manager.h"
 #include "custom_gui.h"
 #include <iostream>
 #include "render_scene.h"
@@ -62,7 +63,8 @@ ArcBallCamera camera(glm::radians(-30.0f), glm::radians(20.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 
-Shader textShader, solidShader, objectShader;
+//Shader textShader, solidShader, objectShader;
+ShaderManager shaderTable;
 RenderText text;
 
 unsigned int VBO, VAO;

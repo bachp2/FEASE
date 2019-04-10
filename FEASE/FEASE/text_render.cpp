@@ -8,7 +8,7 @@ RenderText::RenderText(Shader * s, Color c, unsigned int cfont_size) {
 	shader->use();
 	shader->setColor("textColor", c);
 	create_texture(&font_atlas_id, FPATH(resources/Bisasam.png));
-	shader->setInt("texture1", 0);
+	//shader->setInt("texture1", 0);
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ebo);

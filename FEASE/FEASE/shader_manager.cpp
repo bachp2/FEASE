@@ -15,6 +15,10 @@ ShaderManager::ShaderManager()
 {
 }
 
+Shader* ShaderManager::getShader(std::string name)
+{
+	return shaderTable[name];
+}
 
 ShaderManager::~ShaderManager()
 {

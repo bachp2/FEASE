@@ -4,7 +4,7 @@
 #include "camera.h"
 #include "color.h"
 #include "color_config.h"
-
+#include "shader_manager.h"
 #include <array>
 
 #ifndef PI
@@ -97,8 +97,9 @@ inline void static points_setup() {
 	glGenBuffers(1, &VBO_point);
 }
 
-inline void static render_points(Shader* shader) {
+inline void static render_points(ShaderManager* sm) {
 	glDisable(GL_DEPTH_TEST);
+	Shader* shader = sm->getShader("object");
 	shader->use();
 	shader->setColor("color", colorConfig.pallete["dot"]);
 	
@@ -185,14 +186,15 @@ inline static void setup_lines(){
 	glGenBuffers(1, &VBO_element);
 }
 
-inline static void render_lines(Shader* shader){
-	shader->use();
+inline static void render_lines(ShaderManager* sm){
+	Shader* s = sm->getShader("object");
+	s->use();
 
 	glDisable(GL_DEPTH_TEST);
 	
 	glLineWidth(1.0f);
 
-	shader->setColor("color", colorConfig.pallete["line"]);
+	s->setColor("color", colorConfig.pallete["line"]);
 
 	int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size() - 1;
 
@@ -243,10 +245,10 @@ struct Axis {
 		glEnableVertexAttribArray(1);
 	}
 
-	inline void render(Shader& shader, const int scrWidth, const int scrHeight) {
+	inline void render(ShaderManager* sm, const int scrWidth, const int scrHeight) {
 		glDisable(GL_DEPTH_TEST);
-
-		shader.use();
+		Shader* shader = sm->getShader("solid");
+		shader->use();
 		int ww = 320;
 		glLineWidth(1.7f);
 		glViewport(scrWidth - ww + 80, -100, ww, ww);
@@ -256,10 +258,10 @@ struct Axis {
 
 		auto view1 = glm::lookAt(glm::vec3(0.0f, 0.0f, 8.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f))*glm::inverse(model);
 		//auto view1 = glm::lookAt(glm::vec3(0.0f, 0.0f, 7.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
-		shader.setMat4("view", view1);
+		shader->setMat4("view", view1);
 
 		auto projection1 = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
-		shader.setMat4("projection", projection1);
+		shader->setMat4("projection", projection1);
 
 		glBindVertexArray(vao);
 		glDrawArrays(GL_LINES, 0, 6);
@@ -287,7 +289,7 @@ struct Grid {
 	float gridThickness;
 	float step;
 
-	inline void setup(Shader* gridShader, unsigned int grid_num = 20) {
+	inline void setup(ShaderManager* sm, unsigned int grid_num = 20) {
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
 
@@ -314,7 +316,7 @@ struct Grid {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
-		shader = gridShader;
+		shader = sm->getShader("object");
 	}
 
 	inline void render(Mat4& view, Mat4& proj) {

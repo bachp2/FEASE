@@ -3,8 +3,11 @@ class ArcBallCamera;
 class Shader;
 extern ArcBallCamera camera;
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
-extern Shader textShader, solidShader, objectShader;
+
+extern ShaderManager shaderTable;
+
 extern int scrWidth, scrHeight;
+
 extern RenderText text;
 //terry cube
 extern unsigned int VBO, VAO;
@@ -15,10 +18,9 @@ extern OBJModel sphere;
 inline static void setup_scene() {
 	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
-	textShader = Shader(FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
-	//textShader = Shader(FPATH(resources/shaders/text_billboarding.vs), FPATH(resources/shaders/text.fs));
-	solidShader = Shader(FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
-	objectShader = Shader(FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
+	shaderTable.emplaceShader("bitmapped_text", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
+	shaderTable.emplaceShader("solid", FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
+	shaderTable.emplaceShader("object", FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -44,16 +46,17 @@ inline static void setup_scene() {
 	setup_lines();
 
 	//grid
-	grid.setup(&objectShader);
+	grid.setup(&shaderTable);
 
 	// load and create a texture 
 	// -------------------------
 	//unsigned int texture;
 	//create_texture(&texture, FPATH(resources/terry.jpg));
-	textShader.use();
-	//texShader.setInt("texture1", 0);
+	Shader* textShader = shaderTable.getShader("bitmapped_text");
+	textShader->use();
+	//textShader.setInt("texture1", 0);
 
-	text = RenderText(&textShader, colorConfig.pallete["text"]);
+	text = RenderText(textShader, colorConfig.pallete["text"]);
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	auto model = OBJModel(FPATH(resources/assets/suzanne.obj));
@@ -131,15 +134,16 @@ static inline void render_scene() {
 	//glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
 	// Draw lines
-	render_lines(&objectShader);
+	render_lines(&shaderTable);
 
 	// Draw points
 
-	render_points(&objectShader);
+	render_points(&shaderTable);
 
 	//// render obj mesh
-	objectShader.use();
-	objectShader.setColor("color", colorConfig.pallete["arrow_force"]);
+	Shader* objectShader = shaderTable.getShader("object");
+	objectShader->use();
+	objectShader->setColor("color", colorConfig.pallete["arrow_force"]);
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glBindVertexArray(sphere.face_vao);
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -149,7 +153,7 @@ static inline void render_scene() {
 	{
 		glBindVertexArray(sphere.line_vao);
 		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		objectShader.setColor("color", colorConfig.pallete["arrow_line"]);
+		objectShader->setColor("color", colorConfig.pallete["arrow_line"]);
 		glDrawElements(GL_LINES, sphere.line_indices.size(), GL_UNSIGNED_INT, 0);
 	}
 
@@ -161,15 +165,16 @@ static inline void render_scene() {
 	model = glm::mat4(1.0f);
 
 	//render text
-	textShader.use();
+	Shader* textShader = shaderTable.getShader("bitmapped_text");
+	textShader->use();
 	
-	textShader.setMat4("model", Mat4(1.0f));
-	textShader.setMat4("view", view);
-	textShader.setMat4("projection", perspective_projection);
-	text.render("Applying the");
+	textShader->setMat4("model", Mat4(1.0f));
+	textShader->setMat4("view", view);
+	textShader->setMat4("projection", perspective_projection);
+	text.render("Him & I (Official Music Video)");
 
 	// draw axis lines
-	axisLines.render(solidShader, scrWidth, scrHeight);
+	axisLines.render(&shaderTable, scrWidth, scrHeight);
 }
 
 #define SHADER_HEADER "#version 330 core\n"
