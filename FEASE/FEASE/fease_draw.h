@@ -87,7 +87,7 @@ inline void vector_insert(std::vector<Node>& nv, Node n) {
 	nv.push_back(n);
 }
 
-inline void static points_setup() {
+inline void static setup_points() {
 	// set point size
 	glPointSize(5.0f);
 
@@ -213,22 +213,23 @@ inline static void render_lines(ShaderManager* sm){
 //////////////////////////////
 //AXIS LINES ENTITY
 //////////////////////////////
-const float axis_vertices[] = {
-	0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-	1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-	0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
-};
 
 struct Axis {
 	unsigned int vbo, vao;
 	ArcBallCamera* cam;
 
 	inline void setup(ArcBallCamera *camera) {
+		const static float axis_vertices[] = {
+			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+			1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+
+			0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+		};
+
 		cam = camera;
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);

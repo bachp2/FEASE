@@ -40,7 +40,7 @@ inline static void setup_scene() {
 	axisLines.setup(&camera);
 
 	// points 
-	points_setup();
+	setup_points();
 
 	// lines
 	setup_lines();
