@@ -11,7 +11,7 @@ class RenderText {
 	int font_size;
 	Shader* shader;
 	float char_size;
-	unsigned int font_atlas_id;
+	Texture font_atlas;
 public:
 	RenderText();
 

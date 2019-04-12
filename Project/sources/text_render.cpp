@@ -7,7 +7,7 @@ RenderText::RenderText(Shader * s, Color c, unsigned int cfont_size) {
 	font_size = cfont_size;
 	shader->use();
 	shader->setColor("textColor", c);
-	create_texture(&font_atlas_id, FPATH(resources/Bisasam.png));
+	create_texture(&font_atlas, FPATH(resources/Bisasam.png));
 	//shader->setInt("texture1", 0);
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
@@ -76,7 +76,7 @@ void RenderText::render(std::string str) {
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_DYNAMIC_DRAW);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, font_atlas_id);
+	glBindTexture(GL_TEXTURE_2D, font_atlas.tex_id);
 
 	shader->use();
 
