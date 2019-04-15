@@ -27,6 +27,7 @@ extern "C"
 #include <iostream>
 #include "render_scene.h"
 #include "config_parser.h"
+#include "fe_structs.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
