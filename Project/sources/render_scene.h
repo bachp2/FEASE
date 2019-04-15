@@ -12,7 +12,7 @@ extern RenderText text;
 //terry cube
 extern unsigned int VBO, VAO;
 //IndexedModel sphere;
-extern OBJModel sphere;
+extern OBJModel object;
 
 //#define STR(x) #x
 inline static void setup_scene() {
@@ -61,29 +61,29 @@ inline static void setup_scene() {
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	auto model = OBJModel(FPATH(resources/assets/suzanne.obj));
 	//sphere = model.ToIndexedModel();
-	sphere = model;
+	object = model;
 
-	glGenBuffers(1, &sphere.vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, sphere.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sphere.vertices.size() * sizeof(glm::vec3), &sphere.vertices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &object.vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, object.vbo);
+	glBufferData(GL_ARRAY_BUFFER, object.vertices.size() * sizeof(glm::vec3), &object.vertices[0], GL_STATIC_DRAW);
 
-	glGenVertexArrays(1, &sphere.face_vao);
-	glBindVertexArray(sphere.face_vao);
+	glGenVertexArrays(1, &object.face_vao);
+	glBindVertexArray(object.face_vao);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-	glGenBuffers(1, &sphere.face_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.face_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*sphere.face_indices.size(), &sphere.face_indices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &object.face_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object.face_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*object.face_indices.size(), &object.face_indices[0], GL_STATIC_DRAW);
 
-	glGenVertexArrays(1, &sphere.line_vao);
-	glBindVertexArray(sphere.line_vao);
+	glGenVertexArrays(1, &object.line_vao);
+	glBindVertexArray(object.line_vao);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-	glGenBuffers(1, &sphere.line_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.line_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*sphere.line_indices.size(), &sphere.line_indices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &object.line_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object.line_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*object.line_indices.size(), &object.line_indices[0], GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 	/*glGenBuffers(1, &sphere.line_ebo);
@@ -143,7 +143,7 @@ static inline void render_scene() {
 	render_points(&shaderTable);
 
 	//// render obj mesh
-	sphere.render(shaderTable.getShader("object"), colorConfig);
+	object.render(shaderTable.getShader("object"), colorConfig);
 
 	// we need identity matrix for model matrix
 	model = glm::mat4(1.0f);

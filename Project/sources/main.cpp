@@ -68,7 +68,7 @@ ShaderManager shaderTable;
 RenderText text;
 
 unsigned int VBO, VAO;
-OBJModel sphere;
+OBJModel object;
 
 void processInput(GLFWwindow *window);
 void handleGUILogic();
