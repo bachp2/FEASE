@@ -13,10 +13,12 @@ extern RenderText text;
 extern unsigned int VBO, VAO;
 //IndexedModel sphere;
 extern OBJModel object;
-
+extern ConfigParser configTable;
 //#define STR(x) #x
 inline static void setup_scene() {
-	colorConfig.parseColorConfig(FPATH(resources/_config.txt));
+	//colorConfig.parseColorConfig(FPATH(resources/_config.txt));
+
+	configTable = ConfigParser(FPATH(resources/config.lua));
 
 	shaderTable.emplaceShader("bitmapped_text", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
 	shaderTable.emplaceShader("solid", FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
@@ -56,7 +58,7 @@ inline static void setup_scene() {
 	textShader->use();
 	//textShader.setInt("texture1", 0);
 
-	text = RenderText(textShader, colorConfig.pallete["text"]);
+	text = RenderText(textShader, configTable.getColor("text"));
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	auto model = OBJModel(FPATH(resources/assets/suzanne.obj));
@@ -143,7 +145,7 @@ static inline void render_scene() {
 	render_points(&shaderTable);
 
 	//// render obj mesh
-	object.render(shaderTable.getShader("object"), colorConfig);
+	object.render(&shaderTable);
 
 	// we need identity matrix for model matrix
 	model = glm::mat4(1.0f);

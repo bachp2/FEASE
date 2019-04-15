@@ -3,7 +3,6 @@
 #include <set>
 #include "camera.h"
 #include "color.h"
-#include "color_config.h"
 #include "shader_manager.h"
 #include <array>
 
@@ -62,18 +61,17 @@ const float vertices[] = {
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-ColorConfig colorConfig;
+extern ConfigParser configTable;
+//ColorConfig colorConfig;
 
 //////////////////////////////
 //POINT ENTITY
 //////////////////////////////
-
 using Node = glm::vec3;
 
 std::vector<Node> nodes;
 std::vector<Node> elements;
-
-unsigned int VBO_point, VAO_point;
+unsigned int VAO_point, VBO_point;
 
 inline void vector_insert(std::vector<Node>& nv, Node n) {
 	if (nv.empty()) {
@@ -101,7 +99,7 @@ inline void static render_points(ShaderManager* sm) {
 	glDisable(GL_DEPTH_TEST);
 	Shader* shader = sm->getShader("object");
 	shader->use();
-	shader->setColor("color", colorConfig.pallete["dot"]);
+	shader->setColor("color", configTable.getColor("dot"));
 	
 	glBindVertexArray(VAO_point);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_point);
@@ -194,7 +192,7 @@ inline static void render_lines(ShaderManager* sm){
 	
 	glLineWidth(1.0f);
 
-	s->setColor("color", colorConfig.pallete["line"]);
+	s->setColor("color", configTable.getColor("line"));
 
 	int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size() - 1;
 
@@ -325,7 +323,7 @@ struct Grid {
 		shader->setMat4("projection", proj);
 		shader->setMat4("view", view);
 		shader->setMat4("model", glm::mat4(1.0f));
-		shader->setColor("color", colorConfig.pallete["gridline"]);
+		shader->setColor("color", configTable.getColor("grid"));
 		glLineWidth(0.5f);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_LINES, 0, grid_vertices.size());

@@ -13,10 +13,11 @@ unsigned int ParseOBJIndexValue(const std::string& token);
 static inline float ParseOBJFloatValue(const std::string& token, unsigned int start, unsigned int end);
 static inline std::vector<std::string> SplitString(const std::string &s, char delim);
 
-void OBJModel::render(Shader* shader, ColorConfig& cc)
+void OBJModel::render(ShaderManager* sm)
 {
+	auto shader = sm->getShader("object");
 	shader->use();
-	shader->setColor("color", cc.pallete["arrow_force"]);
+	shader->setColor("color", configTable.getColor("arrow_force"));
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glBindVertexArray(face_vao);
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -26,7 +27,7 @@ void OBJModel::render(Shader* shader, ColorConfig& cc)
 	{
 		glBindVertexArray(line_vao);
 		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		shader->setColor("color", cc.pallete["arrow_line"]);
+		shader->setColor("color", configTable.getColor("arrow_line"));
 		glDrawElements(GL_LINES, line_indices.size(), GL_UNSIGNED_INT, 0);
 	}
 

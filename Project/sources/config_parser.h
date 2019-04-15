@@ -15,7 +15,7 @@ class ConfigParser
 {
 public:
 	ConfigParser(const char *path);
-
+	ConfigParser();
 	~ConfigParser();
 
 	Color getColor(std::string n);

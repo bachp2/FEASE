@@ -24,9 +24,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="color_config.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="text_render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -62,9 +59,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="color_config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="render_scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>

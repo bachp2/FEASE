@@ -4,8 +4,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
-#include "shader.h"
-#include "color_config.h"
+#include "shader_manager.h"
+#include "config_parser.h"
 
 // Inspired from BennyQBD's obj loader code : https://github.com/BennyQBD/ModernOpenGLTutorial/blob/master/obj_loader.h
 struct OBJIndex
@@ -16,6 +16,8 @@ struct OBJIndex
 
 	bool operator<(const OBJIndex& r) const { return vertexIndex < r.vertexIndex; }
 };
+
+extern ConfigParser configTable;
 
 class OBJModel
 {
@@ -37,7 +39,7 @@ public:
 	OBJModel(){};
 	OBJModel(const std::string& fileName);
 
-	void render(Shader* shader, ColorConfig& cc);
+	void render(ShaderManager* sm);
 
 private:
 	void CreateOBJFace(const std::string& line);

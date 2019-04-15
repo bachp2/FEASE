@@ -144,7 +144,6 @@
     <ClCompile Include="..\dependencies\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\dependencies\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\dependencies\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="color_config.cpp" />
     <ClCompile Include="config_parser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_loader.cpp" />
@@ -154,7 +153,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
-    <ClInclude Include="color_config.h" />
     <ClInclude Include="config_parser.h" />
     <ClInclude Include="create_texture.h" />
     <ClInclude Include="custom_gui.h" />

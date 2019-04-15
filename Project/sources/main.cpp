@@ -65,6 +65,7 @@ float lastY = SCR_HEIGHT / 2.0f;
 
 //Shader textShader, solidShader, objectShader;
 ShaderManager shaderTable;
+ConfigParser configTable;
 RenderText text;
 
 unsigned int VBO, VAO;
