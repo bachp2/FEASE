@@ -94,6 +94,8 @@ inline static void setup_scene() {
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
+
+	loadIconsGUI();
 }
 
 static void GradientBackground(float top_r, float top_g, float top_b, float top_a, float bot_r, float bot_g, float bot_b, float bot_a);
@@ -141,25 +143,7 @@ static inline void render_scene() {
 	render_points(&shaderTable);
 
 	//// render obj mesh
-	Shader* objectShader = shaderTable.getShader("object");
-	objectShader->use();
-	objectShader->setColor("color", colorConfig.pallete["arrow_force"]);
-	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-	glBindVertexArray(sphere.face_vao);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glDrawElements(GL_TRIANGLES, sphere.face_indices.size(), GL_UNSIGNED_INT, 0);
-
-	if(!sphere.line_indices.empty())
-	{
-		glBindVertexArray(sphere.line_vao);
-		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		objectShader->setColor("color", colorConfig.pallete["arrow_line"]);
-		glDrawElements(GL_LINES, sphere.line_indices.size(), GL_UNSIGNED_INT, 0);
-	}
-
-	//glDrawArrays(GL_TRIANGLES, 0, sphere.positions.size());
-	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-	glBindVertexArray(0);
+	sphere.render(shaderTable.getShader("object"), colorConfig);
 
 	// we need identity matrix for model matrix
 	model = glm::mat4(1.0f);

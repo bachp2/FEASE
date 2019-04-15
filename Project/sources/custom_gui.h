@@ -1,5 +1,6 @@
 #pragma once
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 #include "mouse_listener.h"
@@ -12,33 +13,15 @@ float lastFrame = 0.0f;
 extern ArcBallCamera camera;
 // Demonstrate creating a fullscreen menu bar and populating it.
 void ShowExampleMenuFile();
-static void ShowExampleAppMainMenuBar()
-{
-	if (ImGui::BeginMainMenuBar())
-	{
-		//ImGui::ImageButton
-		if (ImGui::BeginMenu("File"))
-		{
-			ShowExampleMenuFile();
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Edit"))
-		{
-			if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-			ImGui::Separator();
-			if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-			if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-			if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
-	}
+std::vector<Texture> icons;
+Texture icon;
+inline static void loadIconsGUI(){
+	create_texture(&icon, FPATH(resources/notepad.png));
 }
 
 // code borrowed from @ebachard: https://github.com/ebachard/miniDart
 // generic miniDart theme
-void IMGUI_StyleLightGreen(ImGuiStyle* dst)
+inline static void IMGUI_StyleLightGreen(ImGuiStyle* dst)
 {
 	ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
@@ -110,7 +93,7 @@ void IMGUI_StyleLightGreen(ImGuiStyle* dst)
 }
 
 // code borrowed from github user @Derydoca in this thread https://github.com/ocornut/imgui/issues/707
-void IMGUI_StyleDark()
+static void inline IMGUI_StyleDark()
 {
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
@@ -178,7 +161,7 @@ void IMGUI_StyleDark()
 	style->TabRounding = 0.0f;
 	style->WindowRounding = 4.0f;
 }
-static void ShowExampleMenuFile()
+inline static void ShowExampleMenuFile()
 {
 	ImGui::MenuItem("(dummy menu)", NULL, false, false);
 	if (ImGui::MenuItem("New")) {}
@@ -248,6 +231,7 @@ static void ShowExampleMenuFile()
 void ShowExampleMenuFile();
 inline static void handleGUILogic() 
 {
+	using namespace ImGui;
 	static float FPS_display(0.0f);
 	static float phi = 0.0f, theta = 0.0f;
 	static bool cam_is_fixed = false;
@@ -266,8 +250,11 @@ inline static void handleGUILogic()
 		accumulate_deltaTime = 0.0f;
 	}
 
-	if (ImGui::BeginMainMenuBar())
+	ImVec2 main_menu_size;
+	if (BeginMainMenuBar())
 	{
+		main_menu_size = GetWindowSize();
+		
 		if (ImGui::BeginMenu("File"))
 		{
 			ShowExampleMenuFile();
@@ -275,16 +262,32 @@ inline static void handleGUILogic()
 		}
 		if (ImGui::BeginMenu("Edit"))
 		{
-			if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+			if (MenuItem("Undo", "CTRL+Z")) {}
+			if (MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
 			ImGui::Separator();
-			if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-			if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-			if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+			if (MenuItem("Cut", "CTRL+X")) {}
+			if (MenuItem("Copy", "CTRL+C")) {}
+			if (MenuItem("Paste", "CTRL+V")) {}
 			ImGui::EndMenu();
 		}
-		ImGui::EndMainMenuBar();
+		EndMainMenuBar();
 	}
+
+
+	/*ImGuiContext* g = GetCurrentContext();
+	g->NextWindowData.MenuBarOffsetMinVal = ImVec2(g->Style.DisplaySafeAreaPadding.x, ImMax(g->Style.DisplaySafeAreaPadding.y - g->Style.FramePadding.y, 0.0f));
+	SetNextWindowPos(ImVec2(0.0f, main_menu_size.y));
+	SetNextWindowSize(main_menu_size);
+
+	PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0,0));
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+
+	if(ImGui::Begin("##MenuBar", NULL, window_flags)){
+		
+		ImageButton((void*)(intptr_t)icon.tex_id, ImVec2(icon.width/2, icon.height/2));
+		ImGui::End();
+	}*/
 
 	ImGui::Begin("Toolbar");
 
@@ -292,9 +295,9 @@ inline static void handleGUILogic()
 	ImGui::Text("Dear ImGui (%s)", IMGUI_VERSION);
 
 	ImGui::Text("Normal to:");
-	ImGui::RadioButton("x", &normal_to, 0); ImGui::SameLine();
-	ImGui::RadioButton("y", &normal_to, 1); ImGui::SameLine();
-	ImGui::RadioButton("z", &normal_to, 2);
+	RadioButton("x", &normal_to, 0); SameLine();
+	RadioButton("y", &normal_to, 1); SameLine();
+	RadioButton("z", &normal_to, 2);
 
 	if (normal_to != radio_select_once) {
 		radio_select_once = normal_to;
@@ -308,9 +311,9 @@ inline static void handleGUILogic()
 	if (cam_is_fixed) camera.cameraState = CAM_FIXED; //allowed zooming
 	else camera.cameraState = CAM_FREE;
 
-	ImGui::RadioButton("Add Node", &mouse_agenda, ADD_NODE);
-	ImGui::RadioButton("Connect Ele.", &mouse_agenda, CONNECT_ELE);
-	ImGui::RadioButton("Select Node", &mouse_agenda, SELECT_NODE);
+	RadioButton("Add Node", &mouse_agenda, ADD_NODE);
+	RadioButton("Connect Ele.", &mouse_agenda, CONNECT_ELE);
+	RadioButton("Select Node", &mouse_agenda, SELECT_NODE);
 
 	mouseListener.agenda = Mouse_Agenda(mouse_agenda);
 
@@ -318,5 +321,10 @@ inline static void handleGUILogic()
 	ImGui::Text("node count: %d", nodes.size());
 
 	////ImGui::Button("run")
+
 	ImGui::End();
+}
+
+namespace ImGui{
+
 }

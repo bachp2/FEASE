@@ -1,6 +1,7 @@
 #include "obj_loader.h"
 #include <fstream>
 #include <iostream>
+
 #include <algorithm>
 #include <map>
 
@@ -11,6 +12,27 @@ static inline unsigned int ParseOBJIndexValue(const std::string& token, unsigned
 unsigned int ParseOBJIndexValue(const std::string& token);
 static inline float ParseOBJFloatValue(const std::string& token, unsigned int start, unsigned int end);
 static inline std::vector<std::string> SplitString(const std::string &s, char delim);
+
+void OBJModel::render(Shader* shader, ColorConfig& cc)
+{
+	shader->use();
+	shader->setColor("color", cc.pallete["arrow_force"]);
+	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	glBindVertexArray(face_vao);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glDrawElements(GL_TRIANGLES, face_indices.size(), GL_UNSIGNED_INT, 0);
+
+	if(!line_indices.empty())
+	{
+		glBindVertexArray(line_vao);
+		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		shader->setColor("color", cc.pallete["arrow_line"]);
+		glDrawElements(GL_LINES, line_indices.size(), GL_UNSIGNED_INT, 0);
+	}
+
+	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	glBindVertexArray(0);
+}
 
 OBJModel::OBJModel(const std::string& fileName)
 {

@@ -12,6 +12,7 @@ class RenderText {
 	Shader* shader;
 	float char_size;
 	Texture font_atlas;
+
 public:
 	RenderText();
 

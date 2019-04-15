@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
+#include "shader.h"
+#include "color_config.h"
 
 // Inspired from BennyQBD's obj loader code : https://github.com/BennyQBD/ModernOpenGLTutorial/blob/master/obj_loader.h
 struct OBJIndex
@@ -34,6 +36,9 @@ public:
 	//unsigned int vbo, vao, ebo;
 	OBJModel(){};
 	OBJModel(const std::string& fileName);
+
+	void render(Shader* shader, ColorConfig& cc);
+
 private:
 	void CreateOBJFace(const std::string& line);
 	void CreateOBJLine(const std::string& line);

@@ -71,7 +71,6 @@ unsigned int VBO, VAO;
 OBJModel sphere;
 
 void processInput(GLFWwindow *window);
-void create_texture(unsigned int* texture, const char * filepath);
 void handleGUILogic();
 void render_scene();
 void setup_scene();
@@ -401,7 +400,7 @@ inline static GLFWwindow* initApp() {
 	//glEnable(GL_CULL_FACE);
 
 	////////////////////////////
-	ImGui::GetIO().Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 12.0f, NULL, NULL);
+	//ImGui::GetIO().Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 12.0f, NULL, NULL);
 	IMGUI_StyleLightGreen(nullptr);
 	//IMGUI_StyleDark();
 	return window;
