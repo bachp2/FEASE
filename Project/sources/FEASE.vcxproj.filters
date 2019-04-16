@@ -98,6 +98,9 @@
     <ClInclude Include="create_texture.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
+    <ClInclude Include="fe_structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\shaders\texture.vs">

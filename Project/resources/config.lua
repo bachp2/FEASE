@@ -14,7 +14,8 @@ line = {
 }
 
 background = {
-	color = "#07254f"
+	-- color = {"#4286f4"}
+	color_gradient = {"#4286f4", "#85aef2"}
 }
 
 grid = {
