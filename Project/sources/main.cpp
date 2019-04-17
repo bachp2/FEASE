@@ -23,14 +23,12 @@ extern "C"
 #include "fease_draw.h"
 #include "text_render.h"
 #include "shader_manager.h"
-#include "custom_gui.h"
 #include <iostream>
 #include "render_scene.h"
 #include "config_parser.h"
 #include "fe_structs.h"
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
+
+
 
 #define GLFW_INCLUDE_GLU // for gluErrorString
 #include <GLFW/glfw3.h>
@@ -46,13 +44,11 @@ extern "C"
 #include <shader.h>
 #include "mouse_listener.h"
 
-
-ImGuiIO* imguiIO;
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 int scrWidth = SCR_WIDTH, scrHeight = SCR_HEIGHT;
-
+float deltaTime, lastFrame;
 //ImGuiIO* imguiIO;
 
 glm::mat4 perspective_projection, view, model, orthogonal_projection;
@@ -73,7 +69,6 @@ unsigned int VBO, VAO;
 OBJModel object;
 
 void processInput(GLFWwindow *window);
-void handleGUILogic();
 void render_scene();
 void setup_scene();
 GLFWwindow* initApp();
@@ -92,7 +87,6 @@ int main(int, char**)
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
-		handleGUILogic();
 		// Per-frame time logic
 		// --------------------
 		float currentFrame = glfwGetTime();
@@ -107,9 +101,6 @@ int main(int, char**)
 		// ------
 		render_scene();
 
-		//Render ImGUI
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwMakeContextCurrent(window);
@@ -128,9 +119,6 @@ int main(int, char**)
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
@@ -262,7 +250,7 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 	
-	if (mouseListener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE) && !ImGui::GetIO().WantCaptureMouse)
+	if (mouseListener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
 		camera.ProcessMouseMovement(xoffset, yoffset);
 	//printf("mouse flag %d in mouse position callback\n", mouseListener.flag);
 }
@@ -365,17 +353,6 @@ inline static GLFWwindow* initApp() {
 		fprintf(stderr, "Failed to initialize OpenGL loader!\n");
 	}
 
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	imguiIO = ImGui::GetIOPtr();
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsClassic();
-
-	// Setup Platform/Renderer bindings
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init();
-
 	// set callback functions glfw
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -401,10 +378,6 @@ inline static GLFWwindow* initApp() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glEnable(GL_CULL_FACE);
 
-	////////////////////////////
-	//ImGui::GetIO().Fonts->AddFontFromFileTTF(FPATH(resources/Karla-Regular.ttf), 12.0f, NULL, NULL);
-	IMGUI_StyleLightGreen(nullptr);
-	//IMGUI_StyleDark();
 	return window;
 }
 

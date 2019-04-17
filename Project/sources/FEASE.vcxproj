@@ -139,23 +139,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\dependencies\glad\glad.c" />
-    <ClCompile Include="..\dependencies\imgui\imgui.cpp" />
-    <ClCompile Include="..\dependencies\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\dependencies\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\dependencies\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="config_parser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_loader.cpp" />
     <ClCompile Include="shader_manager.cpp" />
-    <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="stb_truetype.cpp" />
     <ClCompile Include="text_render.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="config_parser.h" />
     <ClInclude Include="create_texture.h" />
-    <ClInclude Include="custom_gui.h" />
     <ClInclude Include="fease_draw.h" />
     <ClInclude Include="fe_structs.h" />
     <ClInclude Include="file_system.h" />

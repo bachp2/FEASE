@@ -1,6 +1,6 @@
 #pragma once
 #include <Eigen/Core>
-std::vector<Eigen::Vector2f> FENodes;
+
 struct Ele1D {
 	unsigned int n0, n1;
 	Ele1D(const unsigned int m0, const unsigned int m1) : n0(m0), n1(m1){}
@@ -16,8 +16,6 @@ struct Bar : Ele1D {
 	}
 };
 
-
-
 struct EBeam : Ele1D {
 	float E, A;
 };
@@ -27,6 +25,6 @@ struct TBeam : Ele1D {
 };
 
 struct FEObject {
-	
-
+	std::vector<Eigen::Vector2f> fNodes;
+	std::vector<Ele1D> fElements;
 };

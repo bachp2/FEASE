@@ -36,25 +36,10 @@
     <ClCompile Include="shader_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stb_image.cpp">
-      <Filter>Source Files\dep</Filter>
-    </ClCompile>
     <ClCompile Include="..\dependencies\glad\glad.c">
       <Filter>Source Files\dep</Filter>
     </ClCompile>
-    <ClCompile Include="..\dependencies\imgui\imgui.cpp">
-      <Filter>Source Files\dep</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dependencies\imgui\imgui_impl_opengl3.cpp">
-      <Filter>Source Files\dep</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dependencies\imgui\imgui_draw.cpp">
-      <Filter>Source Files\dep</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dependencies\imgui\imgui_impl_glfw.cpp">
-      <Filter>Source Files\dep</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dependencies\imgui\imgui_widgets.cpp">
+    <ClCompile Include="stb_truetype.cpp">
       <Filter>Source Files\dep</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,9 +51,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shader_manager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="custom_gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">

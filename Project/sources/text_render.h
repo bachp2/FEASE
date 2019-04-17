@@ -6,6 +6,8 @@
 #include <vector>
 #include <array>
 
+#include <stb_image.h>
+
 class RenderText {
 	unsigned int vbo, vao, ebo;
 	int font_size;
