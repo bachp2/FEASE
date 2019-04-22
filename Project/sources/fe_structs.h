@@ -3,15 +3,6 @@
 #include <vector>
 
 
-struct AssemblyStage {
-	bool APPLIED_FORCES, APPLIED_CONSTRAINTS, CONSTRUCTED_MASTER_STIFFNESS;
-};
-
-struct AssemblyInfo {
-
-
-};
-
 struct Ele1D {
 	unsigned int n0, n1;
 	Ele1D(const unsigned int m0, const unsigned int m1) : n0(m0), n1(m1){}
@@ -19,6 +10,13 @@ struct Ele1D {
 };
 
 struct FEObject {
+
+	struct AssemblyInfo {
+		bool APPLIED_FORCES = false;
+		bool APPLIED_CONSTRAINTS = false;
+		bool CONSTRUCTED_MASTER_STIFFNESS = false;
+	}asm_info;
+
 	std::vector<Eigen::Vector2f> fNodes;
 	std::vector<Ele1D*> fElements;
 	Eigen::MatrixXf* MasterStiffness;

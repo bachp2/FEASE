@@ -46,6 +46,7 @@ void FEObject::construct_master_stiffness()
 		}
 	}
 	printf("Done\n");
+	asm_info.CONSTRUCTED_MASTER_STIFFNESS = true;
 }
 
 Eigen::Vector4i FEObject::get_eft(Ele1D* e)
