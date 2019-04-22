@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClCompile Include="..\dependencies\glad\glad.c" />
     <ClCompile Include="config_parser.cpp" />
+    <ClCompile Include="fe_structs.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_loader.cpp" />
     <ClCompile Include="shader_manager.cpp" />

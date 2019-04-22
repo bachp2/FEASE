@@ -67,7 +67,7 @@ RenderText text;
 
 unsigned int VBO, VAO;
 OBJModel object;
-
+FEObject fe;
 void processInput(GLFWwindow *window);
 void render_scene();
 void setup_scene();
@@ -83,6 +83,11 @@ int main(int, char**)
 	// ------------------------------------------------------------------
 	setup_scene();
 	
+
+	fe.fNodes.push_back(Eigen::Vector2f(0, 0));
+	fe.fNodes.push_back(Eigen::Vector2f(10, 0));
+	fe.fNodes.push_back(Eigen::Vector2f(10, 10));
+
 	// Render Loop
 	// -----------
 	while (!glfwWindowShouldClose(window))

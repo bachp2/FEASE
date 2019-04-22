@@ -42,6 +42,9 @@
     <ClCompile Include="stb_truetype.cpp">
       <Filter>Source Files\dep</Filter>
     </ClCompile>
+    <ClCompile Include="fe_structs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render_scene.h">
