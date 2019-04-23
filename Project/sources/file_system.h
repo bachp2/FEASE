@@ -11,7 +11,7 @@
 
 //work only for Windows system
 std::string GetFulProjectlPath(const char * partialPath);
-static const std::string pathTo(std::string path)
+inline static const std::string pathTo(std::string path)
 {
 	using namespace std;
 	//const std::string root = "C:\\Users\\bachp2\\Documents\\IFEM\\FEASE\\FEASE";
@@ -52,7 +52,22 @@ inline static std::string GetFulProjectlPath( const char * partialPath )
 }
 
 
-inline bool checkIfFileExist(const char *name) {
+inline static bool checkIfFileExist(const char *name) {
 	struct stat buffer;
 	return (stat(name, &buffer) == 0);
+}
+
+inline static std::vector<uint8_t> readFile(const char* path)
+{
+	std::ifstream file(path, std::ios::binary | std::ios::ate);
+	if (!file.is_open())
+		printf("Failed to open file\n");
+
+	const auto size = file.tellg();
+	file.seekg(0, std::ios::beg);
+	auto bytes = std::vector<uint8_t>(size);
+	file.read(reinterpret_cast<char*>(&bytes[0]), size);
+	file.close();
+
+	return bytes;
 }

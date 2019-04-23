@@ -59,7 +59,8 @@ inline static void setup_scene() {
 	textShader->use();
 	//textShader.setInt("texture1", 0);
 
-	//text = RenderText(textShader, configTable.getColor("text"), 16);
+	//text = RenderText();
+	text = RenderText(textShader, configTable.getColor("text"));
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	auto model = OBJModel(FPATH(resources/assets/suzanne.obj));
@@ -161,7 +162,7 @@ static inline void render_scene() {
 	textShader->setMat4("model", Mat4(1.0f));
 	textShader->setMat4("view", view);
 	textShader->setMat4("projection", perspective_projection);
-	//text.render("Sleep Deprived");
+	text.render("Sleep Deprived");
 
 	//text.writeBitmap(0, 0, "Sleep Deprived");
 	// draw axis lines
