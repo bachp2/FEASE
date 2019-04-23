@@ -86,7 +86,7 @@ void RenderText::render(std::string str) {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-	for (unsigned int i = 0; i < 95 * 4; i += 4) {
+	for (unsigned int i = 0; i < str.length() * 4; i += 4) {
 		std::array<unsigned int, 3> a;
 		a = { i,i + 1,i + 2 };
 		text_indices.push_back(a);
@@ -105,6 +105,4 @@ void RenderText::render(std::string str) {
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6 * text_indices.size() / 2, GL_UNSIGNED_INT, 0);
-
-
 }

@@ -1,7 +1,4 @@
-﻿#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
-#define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z); 
-#define PRINTBOOL(X) std::cout << #X << ": " << std::boolalpha << X << std::endl;
-
+﻿
 extern "C"
 {
 #include <lua535\include\lua.h>
@@ -32,6 +29,12 @@ extern "C"
 
 #define GLFW_INCLUDE_GLU // for gluErrorString
 #include <GLFW/glfw3.h>
+
+#ifdef _WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32
+#endif
+
+#include <GLFW/glfw3native.h>
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
