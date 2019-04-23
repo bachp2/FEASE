@@ -68,6 +68,7 @@ RenderText text;
 unsigned int VBO, VAO;
 OBJModel object;
 FEObject fe;
+
 void processInput(GLFWwindow *window);
 void render_scene();
 void setup_scene();

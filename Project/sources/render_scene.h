@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 class ArcBallCamera;
 class Shader;
 extern ArcBallCamera camera;
@@ -58,7 +59,7 @@ inline static void setup_scene() {
 	textShader->use();
 	//textShader.setInt("texture1", 0);
 
-	text = RenderText(textShader, configTable.getColor("text"));
+	//text = RenderText(textShader, configTable.getColor("text"), 16);
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	auto model = OBJModel(FPATH(resources/assets/suzanne.obj));
@@ -83,9 +84,13 @@ inline static void setup_scene() {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-	glGenBuffers(1, &object.line_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object.line_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*object.line_indices.size(), &object.line_indices[0], GL_STATIC_DRAW);
+	if(!object.line_indices.empty())
+	{
+		glGenBuffers(1, &object.line_ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object.line_ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*object.line_indices.size(), &object.line_indices[0], GL_STATIC_DRAW);
+	}
+	
 
 	glBindVertexArray(0);
 	/*glGenBuffers(1, &sphere.line_ebo);
@@ -156,9 +161,9 @@ static inline void render_scene() {
 	textShader->setMat4("model", Mat4(1.0f));
 	textShader->setMat4("view", view);
 	textShader->setMat4("projection", perspective_projection);
-	text.render("Sleep Deprived");
+	//text.render("Sleep Deprived");
 
-	text.writeBitmap(0, 0, "Sleep Deprived");
+	//text.writeBitmap(0, 0, "Sleep Deprived");
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 }
