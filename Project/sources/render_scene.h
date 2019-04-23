@@ -164,7 +164,7 @@ static inline void render_scene() {
 	textShader->setMat4("projection", perspective_projection);
 	text.render("Sleep Deprived");
 
-	//text.writeBitmap(0, 0, "Sleep Deprived");
+	text.writeBitmap(0, 0, "Sleep Deprived");
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 }
