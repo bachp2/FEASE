@@ -156,8 +156,9 @@ static inline void render_scene() {
 	textShader->setMat4("model", Mat4(1.0f));
 	textShader->setMat4("view", view);
 	textShader->setMat4("projection", perspective_projection);
-	text.render("Him & I (Official Music Video)");
+	text.render("Sleep Deprived");
 
+	text.writeBitmap(0, 0, "Sleep Deprived");
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 }

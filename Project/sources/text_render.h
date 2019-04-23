@@ -6,7 +6,6 @@
 #include <vector>
 #include <array>
 #include <memory>
-#define STB_TRUETYPE_IMPLEMENTATION
 #include <stb_truetype.h>
 #include <stb_image.h>
 
@@ -25,12 +24,11 @@ public:
 
 	RenderText(Shader* s, Color c, unsigned int cfont_size = 16);
 
-	void loadTTF(std::string path);
 	void render(std::string str);
 	void setCharacterSize(float a){
 		char_size = a;
 	};
-
+	void writeBitmap(float x, float y, std::string str);
 private:
 	void _initfont(void)
 	{

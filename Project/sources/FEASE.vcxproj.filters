@@ -39,11 +39,11 @@
     <ClCompile Include="..\dependencies\glad\glad.c">
       <Filter>Source Files\dep</Filter>
     </ClCompile>
-    <ClCompile Include="stb_truetype.cpp">
-      <Filter>Source Files\dep</Filter>
-    </ClCompile>
     <ClCompile Include="fe_structs.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_implement.cpp">
+      <Filter>Source Files\dep</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
