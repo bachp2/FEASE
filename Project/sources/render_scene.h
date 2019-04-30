@@ -102,7 +102,8 @@ inline static void setup_scene() {
 	text.setCharacterSize(16 * 1.5f / scrHeight);
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-	orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
+	//orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
+	orthogonal_projection = glm::ortho<float>(0, scrWidth, 0, scrHeight, -100, 100);
 
 }
 
@@ -161,14 +162,18 @@ static inline void render_scene() {
 	//render text
 	Shader* textShader = shaderTable.getShader("bitmapped_text");
 	textShader->use();
-	
-	textShader->setMat4("model", Mat4(1.0f));
+	auto nmodel = Mat4(1.0f);
+	glm::translate(nmodel, Vec3(100, 600, 0));
+	glm::scale(nmodel, Vec3(0.05, 0.05, 0.05));
+
+	textShader->setMat4("model", nmodel);
 	textShader->setMat4("view", view);
-	textShader->setMat4("projection", perspective_projection);
+	//textShader->setMat4("projection", perspective_projection);
+	textShader->setMat4("projection", orthogonal_projection);
 	//text.render("Sleep Deprived");
 
 	//
-	text.writeBitmap("abc");
+	text.writeBitmap("Assuming that you're starting from an identity matrix");
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 }
