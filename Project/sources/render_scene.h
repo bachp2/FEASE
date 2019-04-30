@@ -57,6 +57,7 @@ inline static void setup_scene() {
 	//create_texture(&texture, FPATH(resources/terry.jpg));
 	Shader* textShader = shaderTable.getShader("bitmapped_text");
 	textShader->use();
+	
 	//textShader.setInt("texture1", 0);
 
 	//text = RenderText();
@@ -114,7 +115,9 @@ static inline void render_scene() {
 	//mygl_GradientBackground(bot.r, bot.g, bot.b, 1.0f, top.r, top.g, top.b, 1.0f);
 	glClearColor(1.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	GradientBackground( 0.6, 0.8, 0.3, 1.0, 0.3, 0.0, 0.6, 1.0 );
+	auto top = hexCodeToRGB("#42b0ce");
+	auto bot = hexCodeToRGB("#002530");
+	GradientBackground(top.r, top.g, top.b, 1.0, bot.r, bot.g, bot.b, 1.0 );
 
 	// View Projection Model matrices
 
@@ -162,9 +165,10 @@ static inline void render_scene() {
 	textShader->setMat4("model", Mat4(1.0f));
 	textShader->setMat4("view", view);
 	textShader->setMat4("projection", perspective_projection);
-	text.render("Sleep Deprived");
+	//text.render("Sleep Deprived");
 
-	//text.writeBitmap(0, 0, "Sleep Deprived");
+	//
+	text.writeBitmap("abc");
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 }
