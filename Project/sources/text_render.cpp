@@ -37,14 +37,15 @@ void RenderText::writeBitmap(std::string str)
 			stbtt_aligned_quad q;
 			stbtt_GetBakedQuad(cdata, 512,512, *text-32, &xoff,&yoff,&q,1);//1=opengl & d3d10+,0=d3d9
 
-			text_vertices.push_back({q.x0,q.y0, 0.0f, q.s0,q.t1});
-			text_vertices.push_back({q.x1,q.y0, 0.0f, q.s1,q.t1});
-			text_vertices.push_back({q.x1,q.y1, 0.0f, q.s1,q.t0});
-			text_vertices.push_back({q.x0,q.y1, 0.0f, q.s0,q.t0});
-			/*glTexCoord2f(q.s0,q.t1); glVertex2f(q.x0,q.y0);
-			glTexCoord2f(q.s1,q.t1); glVertex2f(q.x1,q.y0);
-			glTexCoord2f(q.s1,q.t0); glVertex2f(q.x1,q.y1);
-			glTexCoord2f(q.s0,q.t0); glVertex2f(q.x0,q.y1);*/
+			text_vertices.push_back({q.x0,q.y0, 0.0f, q.s0,q.t0});
+			text_vertices.push_back({q.x1,q.y0, 0.0f, q.s1,q.t0});
+			text_vertices.push_back({q.x1,q.y1, 0.0f, q.s1,q.t1});
+			text_vertices.push_back({q.x0,q.y1, 0.0f, q.s0,q.t1});
+
+			/*text_vertices.push_back({q.x0,q.y0, 0.0f, q.s1,q.t0});
+			text_vertices.push_back({q.x1,q.y0, 0.0f, q.s0,q.t0});
+			text_vertices.push_back({q.x1,q.y1, 0.0f, q.s0,q.t1});
+			text_vertices.push_back({q.x0,q.y1, 0.0f, q.s1,q.t1});*/
 		}
 		++text;
 	}
@@ -72,9 +73,8 @@ void RenderText::writeBitmap(std::string str)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * text_indices.size(), &text_indices[0], GL_DYNAMIC_DRAW);
 
 	shader->use();
-
 	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, 6*text_indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void RenderText::render(std::string str) {

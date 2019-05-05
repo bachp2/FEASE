@@ -103,7 +103,7 @@ inline static void setup_scene() {
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	//orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
-	orthogonal_projection = glm::ortho<float>(0, scrWidth, -scrHeight, 0, -100, 100);
+	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
 
 }
 
@@ -162,9 +162,9 @@ static inline void render_scene() {
 	//render text
 	Shader* textShader = shaderTable.getShader("bitmapped_text");
 	textShader->use();
-	auto nmodel = Mat4(1.0f);
-	glm::translate(nmodel, Vec3(100, 600, 0));
-	glm::scale(nmodel, Vec3(0.1, 0.1, 1));
+	glm::mat4 nmodel = Mat4(1.0f);
+	nmodel = glm::translate(nmodel, Vec3(0, 300, 0));
+	//glm::scale(nmodel, Vec3(0.1, 0.1, 1));
 
 	textShader->setMat4("model", nmodel);
 	textShader->setMat4("view", view);

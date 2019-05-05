@@ -21,7 +21,7 @@ class RenderText {
 
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 	GLuint ftex;
-
+	//int ascent, baseline, descent;
 public:
 	RenderText();
 
