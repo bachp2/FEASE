@@ -36,6 +36,7 @@ void RenderText::writeBitmap(std::string str)
 		if (*text >= 32 && *text < 128) {
 			stbtt_aligned_quad q;
 			stbtt_GetBakedQuad(cdata, 512,512, *text-32, &xoff,&yoff,&q,1);//1=opengl & d3d10+,0=d3d9
+
 			text_vertices.push_back({q.x0,q.y0, 0.0f, q.s0,q.t1});
 			text_vertices.push_back({q.x1,q.y0, 0.0f, q.s1,q.t1});
 			text_vertices.push_back({q.x1,q.y1, 0.0f, q.s1,q.t0});
@@ -61,21 +62,19 @@ void RenderText::writeBitmap(std::string str)
 
 	for (unsigned int i = 0; i < str.length() * 4; i += 4) {
 		std::array<unsigned int, 3> a;
-		a = { i, i + 1,i + 2 };
+		a = { i, i + 1, i + 2 };
 		text_indices.push_back(a);
 
-		a = { i + 1,i + 3,i + 2 };
+		a = { i, i + 2, i + 3 };
 		text_indices.push_back(a);
 	}
 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * text_indices.size(), &text_indices[0], GL_DYNAMIC_DRAW);
 
-	
-
 	shader->use();
 
 	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 6*text_indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void RenderText::render(std::string str) {
@@ -131,7 +130,7 @@ void RenderText::render(std::string str) {
 		std::array<unsigned int, 3> a;
 		a = { i,i + 1,i + 2 };
 		text_indices.push_back(a);
-
+		
 		a = { i + 1,i + 3,i + 2 };
 		text_indices.push_back(a);
 	}

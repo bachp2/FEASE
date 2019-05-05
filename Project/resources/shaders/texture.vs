@@ -9,7 +9,8 @@ uniform mat4 view;
 uniform mat4 projection;
 
 mat4 get_cylindrical_billboard_view_matrix(){
-	float scalingFactor = sqrt(view[0][0]*view[0][0] + view[1][0]*view[1][0] + view[2][0]*view[2][0]);
+	//float scalingFactor = sqrt(view[0][0]*view[0][0] + view[1][0]*view[1][0] + view[2][0]*view[2][0]);
+	float scalingFactor = 1.0;
 	vec4 c0 = vec4(scalingFactor*vec3(1.0, 0.0, 0.0), view[3][0]);
 	//vec4 c1 = vec4(scalingFactor*vec3(0.0, 1.0, 0.0), view[3][1]);
 	vec4 c1 = vec4(view[1]);
@@ -19,7 +20,8 @@ mat4 get_cylindrical_billboard_view_matrix(){
 }
 
 mat4 get_spherical_billboard_view_matrix(){
-	float scalingFactor = sqrt(view[0][0]*view[0][0] + view[1][0]*view[1][0] + view[2][0]*view[2][0]);
+	//float scalingFactor = sqrt(view[0][0]*view[0][0] + view[1][0]*view[1][0] + view[2][0]*view[2][0]);
+	float scalingFactor = 1.0;
 	vec4 c0 = vec4(scalingFactor*vec3(1.0, 0.0, 0.0), view[3][0]);
 	vec4 c1 = vec4(scalingFactor*vec3(0.0, 1.0, 0.0), view[3][1]);
 	vec4 c2 = vec4(scalingFactor*vec3(0.0, 0.0, 1.0), view[3][2]);
