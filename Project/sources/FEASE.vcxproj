@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="..\dependencies\glad\glad.c" />
     <ClCompile Include="config_parser.cpp" />
+    <ClCompile Include="custom_gui_widgets.cpp" />
     <ClCompile Include="fe_structs.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_loader.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="config_parser.h" />
     <ClInclude Include="create_texture.h" />
+    <ClInclude Include="custom_gui_widgets.h" />
     <ClInclude Include="fease_draw.h" />
     <ClInclude Include="fe_structs.h" />
     <ClInclude Include="file_system.h" />

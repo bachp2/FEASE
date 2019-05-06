@@ -159,9 +159,8 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
-	text.setCharacterSize(8.0 / scrHeight);
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-	orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
+	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
 	glViewport(0, 0, width, height);
 }
 

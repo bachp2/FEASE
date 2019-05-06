@@ -45,6 +45,9 @@
     <ClCompile Include="stb_implement.cpp">
       <Filter>Source Files\dep</Filter>
     </ClCompile>
+    <ClCompile Include="custom_gui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render_scene.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="custom_gui_widgets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

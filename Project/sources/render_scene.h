@@ -55,13 +55,11 @@ inline static void setup_scene() {
 	// -------------------------
 	//unsigned int texture;
 	//create_texture(&texture, FPATH(resources/terry.jpg));
-	Shader* textShader = shaderTable.getShader("bitmapped_text");
-	textShader->use();
 	
 	//textShader.setInt("texture1", 0);
 
 	//text = RenderText();
-	text = RenderText(textShader, configTable.getColor("text"));
+	text = RenderText(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	auto model = OBJModel(FPATH(resources/assets/suzanne.obj));
@@ -99,10 +97,7 @@ inline static void setup_scene() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere.line_ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 2 * sphere.line_indices.size(), &sphere.line_indices[0], GL_STATIC_DRAW);*/
 
-	text.setCharacterSize(16 * 1.5f / scrHeight);
-
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-	//orthogonal_projection = glm::ortho<float>(-float(scrWidth) / scrHeight, float(scrWidth) / scrHeight, -1, 1, -100, 100);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
 
 }
@@ -159,21 +154,11 @@ static inline void render_scene() {
 	// we need identity matrix for model matrix
 	model = glm::mat4(1.0f);
 
-	//render text
-	Shader* textShader = shaderTable.getShader("bitmapped_text");
-	textShader->use();
-	glm::mat4 nmodel = Mat4(1.0f);
-	nmodel = glm::translate(nmodel, Vec3(0, 300, 0));
-	//glm::scale(nmodel, Vec3(0.1, 0.1, 1));
-
-	textShader->setMat4("model", nmodel);
-	textShader->setMat4("view", view);
-	//textShader->setMat4("projection", perspective_projection);
-	textShader->setMat4("projection", orthogonal_projection);
 	//text.render("Sleep Deprived");
 
-	//
-	text.writeBitmap("Hello World");
+	text.writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 10, 300);
+	text.writeBitmap("Carole & Tuesday", 0, 300 + text.get_font_line_gap());
+
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 }
