@@ -17,7 +17,7 @@ void OBJModel::render(ShaderManager* sm)
 {
 	auto shader = sm->getShader("object");
 	shader->use();
-	shader->setColor("color", configTable.getColor("arrow_force"));
+	shader->setColor("color", configTable.getColor("line"));
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glBindVertexArray(face_vao);
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -32,6 +32,36 @@ void OBJModel::render(ShaderManager* sm)
 	}
 
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	glBindVertexArray(0);
+}
+
+void OBJModel::render_setup()
+{
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &face_vao);
+	glBindVertexArray(face_vao);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	glGenBuffers(1, &face_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*face_indices.size(), &face_indices[0], GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &line_vao);
+	glBindVertexArray(line_vao);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	if(!line_indices.empty())
+	{
+		glGenBuffers(1, &line_ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, line_ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*line_indices.size(), &line_indices[0], GL_STATIC_DRAW);
+	}
+
 	glBindVertexArray(0);
 }
 
@@ -263,3 +293,4 @@ static inline std::vector<std::string> SplitString(const std::string &s, char de
 
 	return elems;
 }
+

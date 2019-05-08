@@ -14,9 +14,7 @@ class GUIForm {
 	
 public:
 	GUIForm() {};
-	GUIForm(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h) : x(_x), y(_y), width(_w), height(_h) {
-
-		color = hexCodeToRGB("#C1C1C1");
+	GUIForm(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#C1C1C1")) : x(_x), y(_y), width(_w), height(_h), color(_c) {
 
 		float vertices[] = {
 			0, 0, 0.0f,
@@ -48,11 +46,30 @@ public:
 	};
 
 	bool isHover(int mx, int my);
-	void render(Shader* s);
+	virtual void render(Shader* s);
 	void move(int _x, int _y);
 	int x, y, width, height;
 	Color color;
 	bool moveable = false;
+};
+
+class cHelpText : GUIForm {
+	unsigned int vbo, vao, ebo;
+public:
+	cHelpText(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c){
+	}
+
+	void include_text(std::string t){
+		text = t;
+	};
+
+	void clear_text() {
+		text.clear();
+	};
+
+	virtual void render(Shader* s);
+private:
+	std::string text;
 };
 
 class cButton : GUIForm

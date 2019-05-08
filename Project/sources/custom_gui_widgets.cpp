@@ -30,3 +30,17 @@ void GUIForm::render(Shader * s)
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
+
+void cHelpText::render(Shader * s)
+{
+	glDisable(GL_CULL_FACE);
+	s->use();
+	glm::mat4 _model = glm::mat4(1.0f);
+	_model = glm::translate(_model, glm::vec3(x, y, 0));
+	s->setMat4("model", _model);
+	s->setMat4("projection", orthogonal_projection);
+	s->setColor("color", color);
+
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}

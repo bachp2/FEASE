@@ -70,7 +70,7 @@ ConfigParser configTable;
 RenderText text;
 GUIForm testForm;
 unsigned int VBO, VAO;
-OBJModel object;
+std::vector<OBJModel*> obj_model_container;
 FEObject fe;
 MouseListener mouseListener;
 void processInput(GLFWwindow *window);
@@ -126,7 +126,9 @@ int main(int, char**)
 	glDeleteBuffers(1, &VBO_point);
 	axisLines.cleanup();
 	grid.cleanup();
-
+	for(auto& o : obj_model_container){
+		delete o;
+	}
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 

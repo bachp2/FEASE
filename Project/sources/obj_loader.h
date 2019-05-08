@@ -38,7 +38,7 @@ public:
 	//unsigned int vbo, vao, ebo;
 	OBJModel(){};
 	OBJModel(const std::string& fileName);
-
+	void render_setup();
 	void render(ShaderManager* sm);
 
 private:
@@ -48,7 +48,6 @@ private:
 	glm::vec2 ParseOBJVec2(const std::string& line);
 	glm::vec3 ParseOBJVec3(const std::string& line);
 	OBJIndex ParseOBJIndex(const std::string& token);
-	
 };
 
 
