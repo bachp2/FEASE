@@ -13,16 +13,12 @@ class GUIForm {
 public:
 	GUIForm() {};
 	GUIForm(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h) : x(_x), y(_y), width(_w), height(_h) {
-		float x0 = x;
-		float y0 = y;
-		float x1 = x + width;
-		float y1 = y + height;
 
 		float vertices[] = {
-			x0, y0, 0.0f,
-			x1, y1, 0.0f,
-			x0, y1, 0.0f,
-			x1, y0, 0.0f,
+			0, 0, 0.0f,
+			width, height, 0.0f,
+			0, height, 0.0f,
+			width, 0, 0.0f,
 		};
 
 		unsigned int indices[] = {
@@ -49,7 +45,7 @@ public:
 
 	bool isHover(int mx, int my);
 	void render(Shader* s);
-
+	void move(int _x, int _y);
 	unsigned int x, y, width, height;
 	Color color;
 };

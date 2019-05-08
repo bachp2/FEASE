@@ -197,6 +197,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		//auto r = getHitPtFromRaycastToGrid(hit, mouseX, mouseY);
 		//printf("hit? %d\n", r);
 		//assert(mouseListener.agenda == SELECT_NODE);
+
 		if (mouseListener.agenda == SELECT_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
 			//printf("select node success");
 			glm::ivec2 coord(0);
@@ -224,7 +225,6 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 				vector_insert(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
 			}
 		}
-
 	}
 
 	if (mouseListener.flag) mouseListener.flag = false;
@@ -261,6 +261,13 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	
 	if (mouseListener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
 		camera.ProcessMouseMovement(xoffset, yoffset);
+	
+	if(testForm.isHover(xpos, ypos) && mouseListener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
+		testForm.move(xoffset, -yoffset);
+	}
+	//testForm.isHover(xpos, ypos);
+
+
 	//printf("mouse flag %d in mouse position callback\n", mouseListener.flag);
 }
 
