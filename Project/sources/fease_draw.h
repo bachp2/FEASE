@@ -284,9 +284,9 @@ struct Grid {
 	Shader* shader;
 	unsigned int vbo, vao, ebo;
 	unsigned int gnum; //number of grids
-	std::vector<Vec3> grid_vertices;
 	float gridThickness;
 	float step;
+	unsigned int vertices_size;
 
 	inline void setup(ShaderManager* sm, unsigned int grid_num = 20) {
 		glGenVertexArrays(1, &vao);
@@ -297,7 +297,7 @@ struct Grid {
 
 		gnum = grid_num;
 		step = 1.0f / gnum;
-
+		std::vector<Vec3> grid_vertices;
 		for (float i = -0.5; i < 0.51; i += step)
 		{
 			//vertical lines
@@ -316,6 +316,7 @@ struct Grid {
 		glEnableVertexAttribArray(0);
 
 		shader = sm->getShader("object");
+		vertices_size = grid_vertices.size();
 	}
 
 	inline void render(Mat4& view, Mat4& proj) {
@@ -326,7 +327,7 @@ struct Grid {
 		shader->setColor("color", configTable.getColor("grid"));
 		glLineWidth(0.5f);
 		glBindVertexArray(vao);
-		glDrawArrays(GL_LINES, 0, grid_vertices.size());
+		glDrawArrays(GL_LINES, 0, vertices_size);
 	}
 
 	inline void cleanup() {

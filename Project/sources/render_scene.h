@@ -15,6 +15,7 @@ extern unsigned int VBO, VAO;
 //IndexedModel sphere;
 extern OBJModel object;
 extern ConfigParser configTable;
+extern GUIForm testForm;
 //#define STR(x) #x
 inline static void setup_scene() {
 	//colorConfig.parseColorConfig(FPATH(resources/_config.txt));
@@ -24,6 +25,7 @@ inline static void setup_scene() {
 	shaderTable.emplaceShader("bitmapped_text", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
 	shaderTable.emplaceShader("solid", FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
 	shaderTable.emplaceShader("object", FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
+	shaderTable.emplaceShader("2D", FPATH(resources/shaders/_2dobject.vs), FPATH(resources/shaders/object.fs));
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -39,6 +41,8 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	//
+	testForm = GUIForm(15, 50, 100, 100);
 	// cartesian axis lines
 	axisLines.setup(&camera);
 
@@ -156,11 +160,13 @@ static inline void render_scene() {
 
 	//text.render("Sleep Deprived");
 
-	text.writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 10, 300);
+	text.writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 8, 300);
 	text.writeBitmap("Carole & Tuesday", 0, 300 + text.get_font_line_gap());
 
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
+
+	testForm.render(shaderTable.getShader("2D"));
 }
 
 #define SHADER_HEADER "#version 330 core\n"

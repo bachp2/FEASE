@@ -170,7 +170,6 @@
     <ClInclude Include="text_render.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\resources\shaders\grid.vs" />
     <None Include="..\resources\shaders\object.fs" />
     <None Include="..\resources\shaders\object.vs" />
     <None Include="..\resources\shaders\solid.fs" />

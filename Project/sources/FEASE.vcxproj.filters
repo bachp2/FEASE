@@ -109,9 +109,6 @@
     <None Include="..\resources\shaders\solid.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\shaders\grid.vs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\resources\shaders\solid.fs">
       <Filter>Resource Files</Filter>
     </None>

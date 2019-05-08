@@ -21,6 +21,7 @@ extern "C"
 #include "text_render.h"
 #include "shader_manager.h"
 #include <iostream>
+#include "custom_gui_widgets.h"
 #include "render_scene.h"
 #include "config_parser.h"
 #include "fe_structs.h"
@@ -67,7 +68,7 @@ float lastY = SCR_HEIGHT / 2.0f;
 ShaderManager shaderTable;
 ConfigParser configTable;
 RenderText text;
-
+GUIForm testForm;
 unsigned int VBO, VAO;
 OBJModel object;
 FEObject fe;
