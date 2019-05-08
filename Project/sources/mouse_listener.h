@@ -34,4 +34,4 @@ struct MouseListener {
 		return false;
 	}
 	inline void resetState() { state = NIL; }
-} mouseListener;
+};

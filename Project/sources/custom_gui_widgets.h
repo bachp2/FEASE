@@ -3,16 +3,20 @@
 #include "color.h"
 #include "text_render.h"
 #include "config_parser.h"
+#include "mouse_listener.h"
 
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 extern ConfigParser configTable;
+extern MouseListener mouseListener;
 class GUIForm {
 	
 	unsigned int vbo, vao, ebo;
-
+	
 public:
 	GUIForm() {};
 	GUIForm(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h) : x(_x), y(_y), width(_w), height(_h) {
+
+		color = hexCodeToRGB("#C1C1C1");
 
 		float vertices[] = {
 			0, 0, 0.0f,
@@ -46,8 +50,9 @@ public:
 	bool isHover(int mx, int my);
 	void render(Shader* s);
 	void move(int _x, int _y);
-	unsigned int x, y, width, height;
+	int x, y, width, height;
 	Color color;
+	bool moveable = false;
 };
 
 class cButton : GUIForm

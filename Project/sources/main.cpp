@@ -72,7 +72,7 @@ GUIForm testForm;
 unsigned int VBO, VAO;
 OBJModel object;
 FEObject fe;
-
+MouseListener mouseListener;
 void processInput(GLFWwindow *window);
 void render_scene();
 void setup_scene();
@@ -183,6 +183,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		mouseListener.state = CLICK;
 		//printf("clicked!\n");
 		mouseListener.flag = true;
+		testForm.moveable = false;
 	} 
 	else if (action == GLFW_RELEASE && mouseListener.state == DRAG) mouseListener.flag = true;
 
@@ -230,6 +231,19 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 	if (mouseListener.flag) mouseListener.flag = false;
 	if (mouseListener.state != LIMBO) mouseListener.resetState();
 	//printf("mouse flag %d in mouse action callback\n", mouseListener.flag);
+	
+	double mouseX, mouseY;
+	//getting cursor position
+	glfwGetCursorPos(window, &mouseX, &mouseY);
+
+	if(testForm.isHover(mouseX, mouseY)){
+		testForm.moveable = true;
+		//printf("movealbe");
+	}
+
+	if(action == GLFW_RELEASE) {
+		testForm.moveable = false;
+	}
 }
 
 bool firstMouse = true;
@@ -262,9 +276,10 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	if (mouseListener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
 		camera.ProcessMouseMovement(xoffset, yoffset);
 	
-	if(testForm.isHover(xpos, ypos) && mouseListener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
+	if(testForm.moveable && mouseListener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
 		testForm.move(xoffset, -yoffset);
 	}
+
 	//testForm.isHover(xpos, ypos);
 
 
