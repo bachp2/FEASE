@@ -31,7 +31,7 @@ public:
 
 	//void render(std::string str);
 
-	void writeBitmap(std::string str, unsigned int px, unsigned int py);
+	void writeBitmap(std::string str, int px, int py);
 
 	void _initfont()
 	{

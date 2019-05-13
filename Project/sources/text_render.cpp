@@ -15,7 +15,7 @@ TextPainter::TextPainter(Shader * s, Color c) {
 }
 
 
-void TextPainter::writeBitmap(std::string str, unsigned int px, unsigned int py)
+void TextPainter::writeBitmap(std::string str, int px, int py)
 {
 	float xoff; float yoff;
 	// assume orthographic projection with units = screen pixels, origin at top left

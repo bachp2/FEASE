@@ -21,7 +21,7 @@ struct MouseListener {
 	//note to myself, validate state first
 	Mouse_State state = NIL;
 	Mouse_Agenda agenda = ADD_NODE;
-	int button;
+	int button=0;
 	bool flag = false;
 	double _cx, _cy; //capture mouse's position from mouse button callback function
 	double _dx, _dy; //capture mouse's vector from mouse callback function

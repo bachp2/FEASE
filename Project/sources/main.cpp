@@ -26,8 +26,6 @@ extern "C"
 #include "config_parser.h"
 #include "fe_structs.h"
 
-
-
 #define GLFW_INCLUDE_GLU // for gluErrorString
 #include <GLFW/glfw3.h>
 
@@ -187,7 +185,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		//printf("clicked!\n");
 		mouse_event_listener.flag = true;
 		for(auto& w : gui_widget_container){
-			w->moveable = false;
+			w->draggable = false;
 		}
 	} 
 	else if (action == GLFW_RELEASE && mouse_event_listener.state == DRAG) mouse_event_listener.flag = true;

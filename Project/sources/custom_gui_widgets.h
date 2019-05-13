@@ -8,7 +8,6 @@
 
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 extern ConfigParser configTable;
-extern MouseListener mouse_event_listener;
 
 class GUIForm {
 	
@@ -55,17 +54,35 @@ public:
 	unsigned int vbo, vao, ebo;
 	int x, y, width, height;
 	Color color;
-	bool moveable = false;
+	bool draggable = false;
 	MouseListener* listener = nullptr;
+};
+
+class WidgetContainer {
+	std::vector<GUIForm*> gui_widget_container;
+	bool WidgetDragged = false;
+
+public:
+	void push_back(GUIForm* g) { gui_widget_container.push_back(g); };
+	void update_widgets();
+
+	void render_widgets(){
+		for(auto& w : gui_widget_container){
+			w->update();
+		}
+	};
 };
 
 class cHelpText : public GUIForm {
 public:
-	cHelpText(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c)
+	/*cHelpText(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c)
+	{
+
+	}*/
+	cHelpText(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#adad11")) : GUIForm(_x, _y, _w, _h, _c)
 	{
 
 	}
-
 	cHelpText() {};
 
 	void include_text(std::string t){
@@ -85,6 +102,7 @@ private:
 	std::string text;
 	TextPainter* painter;
 };
+
 
 class cButton : GUIForm
 {

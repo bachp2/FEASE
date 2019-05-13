@@ -6,7 +6,7 @@ extern ArcBallCamera camera;
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 
 extern ShaderManager shaderTable;
-
+extern MouseListener mouse_event_listener;
 extern int scrWidth, scrHeight;
 
 extern TextPainter text_painter;
@@ -44,7 +44,9 @@ inline static void setup_scene() {
 	//
 	text_painter = TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
 
-	gui_widget_container.push_back(new GUIForm(15, 50, 100, 100));
+	auto tw = new GUIForm(15, 50, 100, 100);
+	tw->listener = &mouse_event_listener;
+	gui_widget_container.push_back(tw);
 	
 	auto text_box = new cHelpText(30, 50, 200, 200);
 	text_box->listener = &mouse_event_listener;
@@ -147,6 +149,10 @@ static inline void render_scene() {
 
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
+
+	for(auto& w : gui_widget_container){
+		w->update();
+	}
 
 	for(auto& w : gui_widget_container)
 	{
