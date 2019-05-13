@@ -48,7 +48,7 @@ public:
 	bool isHover(int mx, int my);
 
 	virtual void render(Shader* s);
-
+	virtual void update();
 	void move(int _x, int _y);
 
 public:
@@ -56,9 +56,10 @@ public:
 	int x, y, width, height;
 	Color color;
 	bool moveable = false;
+	MouseListener* listener = nullptr;
 };
 
-class cHelpText : GUIForm {
+class cHelpText : public GUIForm {
 public:
 	cHelpText(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c)
 	{

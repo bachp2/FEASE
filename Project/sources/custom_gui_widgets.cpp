@@ -17,6 +17,11 @@ void GUIForm::move(int dx, int dy)
 	y += dy;
 }
 
+void GUIForm::update()
+{
+
+}
+
 void GUIForm::render(Shader * s)
 {
 	glDisable(GL_CULL_FACE);

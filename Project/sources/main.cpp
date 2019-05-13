@@ -241,17 +241,17 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 	//getting cursor position
 	glfwGetCursorPos(window, &mouseX, &mouseY);
 
-	for(auto& w : gui_widget_container)
-	{
-		if(w->isHover(mouseX, mouseY)){
-			w->moveable = true;
-			//printf("movealbe");
-		}
+	//for(auto& w : gui_widget_container)
+	//{
+	//	if(w->isHover(mouseX, mouseY)){
+	//		w->moveable = true;
+	//		//printf("movealbe");
+	//	}
 
-		if(action == GLFW_RELEASE) {
-			w->moveable = false;
-		}
-	}
+	//	if(action == GLFW_RELEASE) {
+	//		w->moveable = false;
+	//	}
+	//}
 }
 
 bool firstMouse = true;
@@ -267,6 +267,11 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	
+	mouse_event_listener._cx = xpos;
+	mouse_event_listener._cy = ypos;
+	mouse_event_listener._dx = xoffset;
+	mouse_event_listener._dy = yoffset;
+
 	if (mouse_event_listener.flag) {
 		mouse_event_listener.state = NIL;
 		mouse_event_listener.flag = false;
@@ -284,17 +289,12 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	if (mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
 		camera.ProcessMouseMovement(xoffset, yoffset);
 	
-	for(auto& w : gui_widget_container){
+	/*for(auto& w : gui_widget_container){
 		if(w->moveable && mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
 			w->move(xoffset, -yoffset);
 		}
-	}
+	}*/
 	
-
-	//testForm.isHover(xpos, ypos);
-
-
-	//printf("mouse flag %d in mouse position callback\n", mouseListener.flag);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

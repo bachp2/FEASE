@@ -47,6 +47,7 @@ inline static void setup_scene() {
 	gui_widget_container.push_back(new GUIForm(15, 50, 100, 100));
 	
 	auto text_box = new cHelpText(30, 50, 200, 200);
+	text_box->listener = &mouse_event_listener;
 	text_box->setPainter(&text_painter);
 	text_box->include_text("Sleep On The Floor");
 	gui_widget_container.push_back((GUIForm *) text_box);
