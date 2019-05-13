@@ -1,8 +1,8 @@
 #include "text_render.h"
 
-RenderText::RenderText() {}
+TextPainter::TextPainter() {}
 
-RenderText::RenderText(Shader * s, Color c) {
+TextPainter::TextPainter(Shader * s, Color c) {
 	shader = s;
 	shader->use();
 	shader->setColor("textColor", c);
@@ -15,7 +15,7 @@ RenderText::RenderText(Shader * s, Color c) {
 }
 
 
-void RenderText::writeBitmap(std::string str, unsigned int px, unsigned int py)
+void TextPainter::writeBitmap(std::string str, unsigned int px, unsigned int py)
 {
 	float xoff; float yoff;
 	// assume orthographic projection with units = screen pixels, origin at top left

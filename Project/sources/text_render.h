@@ -16,18 +16,18 @@
 
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 
-class RenderText {
+class TextPainter {
 	unsigned int vbo, vao, ebo;
 	Shader* shader;
 	Texture font_atlas;
 	unsigned char temp_bitmap[512*512];
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 	GLuint ftex;
-
+	unsigned int line_gap = 0;
 public:
-	RenderText();
+	TextPainter();
 
-	RenderText(Shader* s, Color c);
+	TextPainter(Shader* s, Color c);
 
 	//void render(std::string str);
 
@@ -54,16 +54,21 @@ public:
 
 	// costly operation, do once and store this somewhere
 	unsigned short get_font_line_gap(){
-		unsigned short _max = 0;
-		
-		for (int i = 0; i < 96; i++){
-			auto g = cdata[i].y1 - cdata[i].y0;
-			if (_max < g) _max = g;
+		if(line_gap == 0){
+			unsigned short _max = 0;
+
+			for (int i = 0; i < 96; i++){
+				auto g = cdata[i].y1 - cdata[i].y0;
+				if (_max < g) _max = g;
+			}
+			line_gap = _max + 1;
 		}
-		return _max + 1;
+		
+		return line_gap;
 	}
 	
 	unsigned int get_line_length(const std::string& str){
+		
 		unsigned int llen = 0;
 		for(auto& c : str)
 		{

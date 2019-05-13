@@ -9,13 +9,13 @@ extern ShaderManager shaderTable;
 
 extern int scrWidth, scrHeight;
 
-extern RenderText text;
+extern TextPainter text_painter;
 //terry cube
 extern unsigned int VBO, VAO;
 //IndexedModel sphere;
 extern std::vector<OBJModel*> obj_model_container;
 extern ConfigParser configTable;
-extern GUIForm testForm;
+extern std::vector<GUIForm*> gui_widget_container;
 //#define STR(x) #x
 inline static void setup_scene() {
 	//colorConfig.parseColorConfig(FPATH(resources/_config.txt));
@@ -42,7 +42,15 @@ inline static void setup_scene() {
 	glEnableVertexAttribArray(1);
 
 	//
-	testForm = GUIForm(15, 50, 100, 100);
+	text_painter = TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
+
+	gui_widget_container.push_back(new GUIForm(15, 50, 100, 100));
+	
+	auto text_box = new cHelpText(30, 50, 200, 200);
+	text_box->setPainter(&text_painter);
+	text_box->include_text("Sleep On The Floor");
+	gui_widget_container.push_back((GUIForm *) text_box);
+	
 	// cartesian axis lines
 	axisLines.setup(&camera);
 
@@ -63,7 +71,7 @@ inline static void setup_scene() {
 	//textShader.setInt("texture1", 0);
 
 	//text = RenderText();
-	text = RenderText(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
+	
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	obj_model_container.push_back( new OBJModel(FPATH(resources/assets/suzanne.obj)) );
@@ -71,7 +79,6 @@ inline static void setup_scene() {
 	for (auto& o : obj_model_container){
 		o->render_setup();
 	}
-
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
@@ -134,13 +141,16 @@ static inline void render_scene() {
 
 	//text.render("Sleep Deprived");
 
-	text.writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 8, 300);
-	text.writeBitmap("Carole & Tuesday", 0, 300 + text.get_font_line_gap());
+	text_painter.writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 8, 110);
+	text_painter.writeBitmap("Carole & Tuesday", 0, 300 + text_painter.get_font_line_gap());
 
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 
-	testForm.render(shaderTable.getShader("2D"));
+	for(auto& w : gui_widget_container)
+	{
+		w->render(shaderTable.getShader("2D"));
+	}
 }
 
 #define SHADER_HEADER "#version 330 core\n"

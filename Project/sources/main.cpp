@@ -67,12 +67,13 @@ float lastY = SCR_HEIGHT / 2.0f;
 //Shader textShader, solidShader, objectShader;
 ShaderManager shaderTable;
 ConfigParser configTable;
-RenderText text;
-GUIForm testForm;
+TextPainter text_painter;
+
+std::vector<GUIForm*> gui_widget_container;
 unsigned int VBO, VAO;
 std::vector<OBJModel*> obj_model_container;
 FEObject fe;
-MouseListener mouseListener;
+MouseListener mouse_event_listener;
 void processInput(GLFWwindow *window);
 void render_scene();
 void setup_scene();
@@ -177,19 +178,21 @@ bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
 void inline mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS) {
-		mouseListener.button = button;
-		mouseListener.state = LIMBO;
+		mouse_event_listener.button = button;
+		mouse_event_listener.state = LIMBO;
 	}
 
-	if (action == GLFW_RELEASE && mouseListener.state == LIMBO) {
-		mouseListener.state = CLICK;
+	if (action == GLFW_RELEASE && mouse_event_listener.state == LIMBO) {
+		mouse_event_listener.state = CLICK;
 		//printf("clicked!\n");
-		mouseListener.flag = true;
-		testForm.moveable = false;
+		mouse_event_listener.flag = true;
+		for(auto& w : gui_widget_container){
+			w->moveable = false;
+		}
 	} 
-	else if (action == GLFW_RELEASE && mouseListener.state == DRAG) mouseListener.flag = true;
+	else if (action == GLFW_RELEASE && mouse_event_listener.state == DRAG) mouse_event_listener.flag = true;
 
-	if (mouseListener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
+	if (mouse_event_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
 	{
 		double mouseX, mouseY;
 		//getting cursor position
@@ -201,7 +204,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		//printf("hit? %d\n", r);
 		//assert(mouseListener.agenda == SELECT_NODE);
 
-		if (mouseListener.agenda == SELECT_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
+		if (mouse_event_listener.agenda == SELECT_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
 			//printf("select node success");
 			glm::ivec2 coord(0);
 			if (selectGrid(coord, hit, lim))
@@ -217,7 +220,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			}
 		}
 
-		if (mouseListener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
+		if (mouse_event_listener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
 		{
 			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
 			//printf("add node success");
@@ -230,21 +233,24 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		}
 	}
 
-	if (mouseListener.flag) mouseListener.flag = false;
-	if (mouseListener.state != LIMBO) mouseListener.resetState();
+	if (mouse_event_listener.flag) mouse_event_listener.flag = false;
+	if (mouse_event_listener.state != LIMBO) mouse_event_listener.resetState();
 	//printf("mouse flag %d in mouse action callback\n", mouseListener.flag);
 	
 	double mouseX, mouseY;
 	//getting cursor position
 	glfwGetCursorPos(window, &mouseX, &mouseY);
 
-	if(testForm.isHover(mouseX, mouseY)){
-		testForm.moveable = true;
-		//printf("movealbe");
-	}
+	for(auto& w : gui_widget_container)
+	{
+		if(w->isHover(mouseX, mouseY)){
+			w->moveable = true;
+			//printf("movealbe");
+		}
 
-	if(action == GLFW_RELEASE) {
-		testForm.moveable = false;
+		if(action == GLFW_RELEASE) {
+			w->moveable = false;
+		}
 	}
 }
 
@@ -261,26 +267,29 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	
-	if (mouseListener.flag) {
-		mouseListener.state = NIL;
-		mouseListener.flag = false;
+	if (mouse_event_listener.flag) {
+		mouse_event_listener.state = NIL;
+		mouse_event_listener.flag = false;
 		//printf("staring at the abyss...\n");
 	}
 
-	if (mouseListener.state == LIMBO) {
-		mouseListener.state = DRAG;
+	if (mouse_event_listener.state == LIMBO) {
+		mouse_event_listener.state = DRAG;
 		//printf("dragging a dead mouse!\n");
 	}
 
 	lastX = xpos;
 	lastY = ypos;
 	
-	if (mouseListener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
+	if (mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
 		camera.ProcessMouseMovement(xoffset, yoffset);
 	
-	if(testForm.moveable && mouseListener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
-		testForm.move(xoffset, -yoffset);
+	for(auto& w : gui_widget_container){
+		if(w->moveable && mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
+			w->move(xoffset, -yoffset);
+		}
 	}
+	
 
 	//testForm.isHover(xpos, ypos);
 

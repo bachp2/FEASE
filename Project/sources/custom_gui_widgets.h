@@ -4,13 +4,13 @@
 #include "text_render.h"
 #include "config_parser.h"
 #include "mouse_listener.h"
+#include "text_render.h"
 
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 extern ConfigParser configTable;
-extern MouseListener mouseListener;
+extern MouseListener mouse_event_listener;
+
 class GUIForm {
-	
-	unsigned int vbo, vao, ebo;
 	
 public:
 	GUIForm() {};
@@ -46,30 +46,43 @@ public:
 	};
 
 	bool isHover(int mx, int my);
+
 	virtual void render(Shader* s);
+
 	void move(int _x, int _y);
+
+public:
+	unsigned int vbo, vao, ebo;
 	int x, y, width, height;
 	Color color;
 	bool moveable = false;
 };
 
 class cHelpText : GUIForm {
-	unsigned int vbo, vao, ebo;
 public:
-	cHelpText(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c){
+	cHelpText(unsigned int _x, unsigned int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c)
+	{
+
 	}
+
+	cHelpText() {};
 
 	void include_text(std::string t){
 		text = t;
 	};
 
+	void setPainter(TextPainter* tp){
+		painter = tp;
+	}
+
 	void clear_text() {
 		text.clear();
 	};
 
-	virtual void render(Shader* s);
+	void render(Shader* s);
 private:
 	std::string text;
+	TextPainter* painter;
 };
 
 class cButton : GUIForm
