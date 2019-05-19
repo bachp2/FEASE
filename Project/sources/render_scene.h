@@ -15,7 +15,8 @@ extern unsigned int VBO, VAO;
 //IndexedModel sphere;
 extern std::vector<OBJModel*> obj_model_container;
 extern ConfigParser configTable;
-extern std::vector<GUIForm*> gui_widget_container;
+//extern std::vector<GUIForm*> gui_widget_container;
+extern WidgetContainer gui_widget_container;
 //#define STR(x) #x
 inline static void setup_scene() {
 	//colorConfig.parseColorConfig(FPATH(resources/_config.txt));
@@ -150,14 +151,8 @@ static inline void render_scene() {
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 
-	for(auto& w : gui_widget_container){
-		w->update();
-	}
-
-	for(auto& w : gui_widget_container)
-	{
-		w->render(shaderTable.getShader("2D"));
-	}
+	gui_widget_container.update_widgets();
+	gui_widget_container.render_widgets();
 }
 
 #define SHADER_HEADER "#version 330 core\n"

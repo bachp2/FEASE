@@ -67,7 +67,7 @@ ShaderManager shaderTable;
 ConfigParser configTable;
 TextPainter text_painter;
 
-std::vector<GUIForm*> gui_widget_container;
+WidgetContainer gui_widget_container;
 unsigned int VBO, VAO;
 std::vector<OBJModel*> obj_model_container;
 FEObject fe;
@@ -184,9 +184,6 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		mouse_event_listener.state = CLICK;
 		//printf("clicked!\n");
 		mouse_event_listener.flag = true;
-		for(auto& w : gui_widget_container){
-			w->draggable = false;
-		}
 	} 
 	else if (action == GLFW_RELEASE && mouse_event_listener.state == DRAG) mouse_event_listener.flag = true;
 
@@ -238,18 +235,6 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 	double mouseX, mouseY;
 	//getting cursor position
 	glfwGetCursorPos(window, &mouseX, &mouseY);
-
-	//for(auto& w : gui_widget_container)
-	//{
-	//	if(w->isHover(mouseX, mouseY)){
-	//		w->moveable = true;
-	//		//printf("movealbe");
-	//	}
-
-	//	if(action == GLFW_RELEASE) {
-	//		w->moveable = false;
-	//	}
-	//}
 }
 
 bool firstMouse = true;

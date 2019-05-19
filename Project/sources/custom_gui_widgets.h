@@ -5,9 +5,11 @@
 #include "config_parser.h"
 #include "mouse_listener.h"
 #include "text_render.h"
+#include "shader_manager.h"
 
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 extern ConfigParser configTable;
+extern ShaderManager shaderTable;
 
 class GUIForm {
 	
@@ -66,9 +68,11 @@ public:
 	void push_back(GUIForm* g) { gui_widget_container.push_back(g); };
 	void update_widgets();
 
-	void render_widgets(){
+	void render_widgets()
+	{
+		Shader* s = shaderTable.getShader("2D");
 		for(auto& w : gui_widget_container){
-			w->update();
+			w->render(s);
 		}
 	};
 };

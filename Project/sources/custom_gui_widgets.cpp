@@ -82,6 +82,6 @@ void cHelpText::render(Shader * s)
 {
 	GUIForm::render(s);
 	//painter->writeBitmap(text, x*2, y*2+painter->get_font_line_gap());	
-	painter->writeBitmap("Roland was a warrior", x*2, y*2+painter->get_font_line_gap());	
+	painter->writeBitmap(this->text, x*2, y*2+painter->get_font_line_gap());	
 	//painter->writeBitmap(text, x*2, y*2);	
 }
