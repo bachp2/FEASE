@@ -163,6 +163,12 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
+	for(const auto& w : gui_widget_container.get_container()){
+		if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
+			w->width = scrWidth;
+			w->resize();
+		}
+	}
 	glViewport(0, 0, width, height);
 }
 
@@ -177,15 +183,14 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 {
 	if (action == GLFW_PRESS) {
 		mouse_event_listener.button = button;
-		mouse_event_listener.state = LIMBO;
+		mouse_event_listener.state = CLICK;
+		//printf("Click\n");
 	}
 
-	if (action == GLFW_RELEASE && mouse_event_listener.state == LIMBO) {
-		mouse_event_listener.state = CLICK;
-		//printf("clicked!\n");
-		mouse_event_listener.flag = true;
+	if (action == GLFW_RELEASE) {
+		mouse_event_listener.state = NIL;
+		//printf("Nil\n");
 	} 
-	else if (action == GLFW_RELEASE && mouse_event_listener.state == DRAG) mouse_event_listener.flag = true;
 
 	if (mouse_event_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
 	{
@@ -227,14 +232,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			}
 		}
 	}
-
-	if (mouse_event_listener.flag) mouse_event_listener.flag = false;
-	if (mouse_event_listener.state != LIMBO) mouse_event_listener.resetState();
-	//printf("mouse flag %d in mouse action callback\n", mouseListener.flag);
 	
-	double mouseX, mouseY;
-	//getting cursor position
-	glfwGetCursorPos(window, &mouseX, &mouseY);
 }
 
 bool firstMouse = true;
@@ -255,13 +253,7 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	mouse_event_listener._dx = xoffset;
 	mouse_event_listener._dy = yoffset;
 
-	if (mouse_event_listener.flag) {
-		mouse_event_listener.state = NIL;
-		mouse_event_listener.flag = false;
-		//printf("staring at the abyss...\n");
-	}
-
-	if (mouse_event_listener.state == LIMBO) {
+	if (mouse_event_listener.state == CLICK) {
 		mouse_event_listener.state = DRAG;
 		//printf("dragging a dead mouse!\n");
 	}

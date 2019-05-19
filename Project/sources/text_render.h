@@ -19,7 +19,6 @@ extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 class TextPainter {
 	unsigned int vbo, vao, ebo;
 	Shader* shader;
-	Texture font_atlas;
 	unsigned char temp_bitmap[512*512];
 	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 	GLuint ftex;
@@ -52,6 +51,10 @@ public:
 		return c.y1 - c.y0;
 	}
 
+	unsigned short get_glyph_width(char _c){
+		return cdata[_c - 32].xadvance;
+	}
+
 	// costly operation, do once and store this somewhere
 	unsigned short get_font_line_gap(){
 		if(line_gap == 0){
@@ -67,6 +70,7 @@ public:
 		return line_gap;
 	}
 	
+
 	unsigned int get_line_length(const std::string& str){
 		
 		unsigned int llen = 0;

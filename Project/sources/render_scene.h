@@ -45,12 +45,15 @@ inline static void setup_scene() {
 	//
 	text_painter = TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
 
-	auto tw = new GUIForm(15, 50, 100, 100);
-	tw->listener = &mouse_event_listener;
-	gui_widget_container.push_back(tw);
+	/*auto tw = new GUIForm(15, 50, 100, 100);
+	gui_widget_container.push_back(tw);*/
 	
+	auto menu_bar = new cMenuBar();
+	menu_bar->setPainter(&text_painter);
+	menu_bar->set_menu_items({"File", "Edit", "Tools"});
+	gui_widget_container.push_back((GUIForm *)menu_bar);
+
 	auto text_box = new cHelpText(30, 50, 200, 200);
-	text_box->listener = &mouse_event_listener;
 	text_box->setPainter(&text_painter);
 	text_box->include_text("Sleep On The Floor");
 	gui_widget_container.push_back((GUIForm *) text_box);
@@ -140,7 +143,7 @@ static inline void render_scene() {
 		o->render(&shaderTable);
 	}
 
-	// we need identity matrix for model matrix
+	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);
 
 	//text.render("Sleep Deprived");

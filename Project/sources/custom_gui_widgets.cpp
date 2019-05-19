@@ -1,6 +1,6 @@
 #include "custom_gui_widgets.h"
 
-bool GUIForm::isHover(int mx, int my)
+bool GUIForm::hit_test(int mx, int my)
 {
 	int x0 = x; int x1 = x + width;
 	int y0 = y; int y1 = y + height;
@@ -11,42 +11,83 @@ bool GUIForm::isHover(int mx, int my)
 	return true;
 }
 
-void GUIForm::move(int dx, int dy)
+void GUIForm::move(float dx, float dy)
 {
 	x += dx;
 	y += dy;
 }
 
+void cMenuBar::move(float _x, float _y)
+{
+	// empty to make this object immovable
+}
+
 void WidgetContainer::update_widgets()
 {
-	auto lw = gui_widget_container.end();
-	if ((*lw)->isHover((*lw)->listener->_cx, (*lw)->listener->_cy)){
-	
-		
+	auto mx = mouse_event_listener._cx;
+	auto my = mouse_event_listener._cy;
+	if (mouse_event_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT)){
+		//printf("Clicked\n");
+		for (WidgetIter it = gui_widget_container.end(); it != gui_widget_container.begin(); )
+		{
+			--it;
+			if((*it)->hit_test(mx, my))
+			{
+				(*it)->draggable = true;
+				_list_bump_member(it);
+				//printf("hit\n");
+				break;
+			}
+		}
 	}
-	for(auto& w : gui_widget_container){
-		//w->update();
 
-		auto l = w->listener;
-		if (l->draggedBy(GLFW_MOUSE_BUTTON_LEFT) && w->isHover(l->_cx, l->_cy)){
-			w->draggable = true;
-			WidgetDragged = true;
+	if(mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT))
+	{
+		auto dx = mouse_event_listener._dx;
+		auto dy = mouse_event_listener._dy;
+		auto current_widget = gui_widget_container.back();
+		//sanity check
+		if(current_widget->draggable)
+		{
+			current_widget->move(dx, -dy);
+			mouse_event_listener._dx = 0;
+			mouse_event_listener._dy = 0;
 		}
+	}
 
-		if(w->draggable && w->listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT)) {
-			w->move(l->_dx, -l->_dy);
-			l->_dx = 0;
-			l->_dy = 0;
-		}
-
-		if (!w->listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT)) w->draggable = false;
+	if (mouse_event_listener.nilState()) 
+	{
+		// safe check
+		auto current_widget = gui_widget_container.back();
+		current_widget->draggable = false;
 	}
 }
 
+void WidgetContainer::render_widgets()
+{
+	Shader* s = shaderTable.getShader("2D");
+	for(auto& w : gui_widget_container){
+		w->render(s);
+	}
+}
+
+void WidgetContainer::_list_swap_member(WidgetIter& n1, WidgetIter& n2)
+{
+	GUIForm* tmp = *n1;
+	*n1 = *n2;
+	*n2 = tmp;
+}
+
+void WidgetContainer::_list_bump_member(WidgetIter & n1)
+{
+	GUIForm* tmp = *n1;
+	gui_widget_container.erase(n1);
+	gui_widget_container.push_back(tmp);
+}
 
 void GUIForm::update()
 {
-	if (listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT) && isHover(listener->_cx, listener->_cy)){
+	/*if (listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT) && isHover(listener->_cx, listener->_cy)){
 		draggable = true;
 	}
 
@@ -56,7 +97,7 @@ void GUIForm::update()
 		listener->_dy = 0;
 	}
 
-	if (!listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT)) draggable = false;
+	if (!listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT)) draggable = false;*/
 }
 
 void GUIForm::render(Shader * s)
@@ -84,4 +125,20 @@ void cHelpText::render(Shader * s)
 	//painter->writeBitmap(text, x*2, y*2+painter->get_font_line_gap());	
 	painter->writeBitmap(this->text, x*2, y*2+painter->get_font_line_gap());	
 	//painter->writeBitmap(text, x*2, y*2);	
+}
+
+void cMenuBar::render(Shader * s)
+{
+	GUIForm::render(s);
+
+	auto cx = x * 2;
+	auto cy = y * 2 + painter->get_font_line_gap();
+
+	painter->writeBitmap(" ", cx, cy);
+	cx += painter->get_glyph_width(' ')/2;
+	for(const auto& str : menu_items){
+		painter->writeBitmap(str, cx, cy);
+		cx += painter->get_line_length(str)/2;
+	}
+	
 }

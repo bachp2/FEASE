@@ -22,7 +22,6 @@ struct MouseListener {
 	Mouse_State state = NIL;
 	Mouse_Agenda agenda = ADD_NODE;
 	int button=0;
-	bool flag = false;
 	double _cx, _cy; //capture mouse's position from mouse button callback function
 	double _dx, _dy; //capture mouse's vector from mouse callback function
 	inline bool draggedBy(int btn) {
@@ -31,8 +30,17 @@ struct MouseListener {
 	}
 
 	inline bool clickedBy(int btn) {
-		if (button == btn && state == CLICK) return true;
+		if (button == btn && state == CLICK) {
+			return true;
+		}
 		return false;
 	}
-	inline void resetState() { state = NIL; }
+
+	inline bool nilState() {
+		return state == NIL;
+	}
+	
+	inline void resetState() { 
+		state = NIL; 
+	}
 };

@@ -6,7 +6,6 @@ TextPainter::TextPainter(Shader * s, Color c) {
 	shader = s;
 	shader->use();
 	shader->setColor("textColor", c);
-	create_texture(&font_atlas, FPATH(resources/Bisasam.png));
 	//shader->setInt("texture1", 0);
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
