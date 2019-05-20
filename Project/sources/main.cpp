@@ -65,7 +65,7 @@ float lastY = SCR_HEIGHT / 2.0f;
 //Shader textShader, solidShader, objectShader;
 ShaderManager shaderTable;
 ConfigParser configTable;
-TextPainter text_painter;
+TextPainter* text_painter;
 
 WidgetContainer gui_widget_container;
 unsigned int VBO, VAO;
@@ -186,6 +186,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		mouse_event_listener.state = CLICK;
 		//printf("Click\n");
 	}
+	
 
 	if (action == GLFW_RELEASE) {
 		mouse_event_listener.state = NIL;

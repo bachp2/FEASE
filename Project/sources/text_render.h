@@ -17,12 +17,26 @@
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 
 class TextPainter {
+	
+	struct Font
+	{
+		const uint32_t size = 12;
+		const uint32_t atlasWidth = 512;
+		const uint32_t atlasHeight = 512;
+		const uint32_t oversampleX = 2;
+		const uint32_t oversampleY = 2;
+		const uint32_t firstChar = ' ';
+		const uint32_t charCount = '~' - ' ';
+		std::unique_ptr<stbtt_packedchar[]> charInfo;
+		stbtt_fontinfo info;
+		GLuint texture = 0;
+	};
+
 	unsigned int vbo, vao, ebo;
 	Shader* shader;
-	unsigned char temp_bitmap[512*512];
-	stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
-	GLuint ftex;
-	unsigned int line_gap = 0;
+	//stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
+	//GLuint ftex;
+	Font font;
 public:
 	TextPainter();
 
@@ -32,51 +46,46 @@ public:
 
 	void writeBitmap(std::string str, int px, int py);
 
-	void _initfont()
-	{
-		auto ttf_buffer = readFile("C:\\Users\\bachp2\\Documents\\IFEM\\FEASE\\Project\\resources\\Chicago.ttf");
-		//printf("%d\n",checkIfFileExist("C:/windows/fonts/arial.ttf"));
-		stbtt_BakeFontBitmap(ttf_buffer.data(),0, 32.0, temp_bitmap,512,512, 32,96, cdata); // no guarantee this fits!
-		//// can free ttf_buffer at this point
-		glGenTextures(1, &ftex);
-		glBindTexture(GL_TEXTURE_2D, ftex);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 512,512, 0, GL_RED, GL_UNSIGNED_BYTE, temp_bitmap);
-		//// can free temp_bitmap at this point
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		//stbi_write_png("out.png", 512, 512, 1, temp_bitmap, 512);
+	TextPainter(const TextPainter&) = default;
+	TextPainter& operator=(const TextPainter&) = default;
+	void _initfont();
+
+	void set_text_color(Color c);
+
+	int get_glyph_height(char _c){
+		stbtt_aligned_quad q;
+		float xoff = 0;
+		float yoff = 0;
+		stbtt_GetPackedQuad(font.charInfo.get(), font.atlasWidth, font.atlasHeight, _c-font.firstChar,
+			&xoff, &yoff, &q,1);
+		//printf("glyph height %.2f\n", q.y1 - q.y0);
+		return q.y1 - q.y0;
 	}
 
-	unsigned short get_glyph_height(char _c){
-		auto c = cdata[_c - 32];
-		return c.y1 - c.y0;
+	int get_glyph_width(char _c){
+		stbtt_aligned_quad q;
+		float xoff = 0;
+		float yoff = 0;
+		stbtt_GetPackedQuad(font.charInfo.get(), font.atlasWidth, font.atlasHeight, _c-font.firstChar,
+			&xoff, &yoff, &q,1);
+		return q.x1 - q.x0;
 	}
 
-	unsigned short get_glyph_width(char _c){
-		return cdata[_c - 32].xadvance;
-	}
-
-	// costly operation, do once and store this somewhere
-	unsigned short get_font_line_gap(){
-		if(line_gap == 0){
-			unsigned short _max = 0;
-
-			for (int i = 0; i < 96; i++){
-				auto g = cdata[i].y1 - cdata[i].y0;
-				if (_max < g) _max = g;
-			}
-			line_gap = _max + 1;
-		}
-		
-		return line_gap;
+	int get_font_line_gap(){
+		return get_glyph_height('A') + 2;;
 	}
 	
+	float get_scale_for_pixel_height(unsigned int h){
+		return h*1.0f/get_glyph_height('A');
+	}
 
-	unsigned int get_line_length(const std::string& str){
+	int get_line_length(const std::string& str){
 		
 		unsigned int llen = 0;
 		for(auto& c : str)
 		{
-			llen += cdata[c - 32].xadvance;
+			//printf("xadvance %d\n", font.charInfo[c - ' '].xadvance);
+			llen += get_glyph_width(c);
 		}
 		return llen;
 	}

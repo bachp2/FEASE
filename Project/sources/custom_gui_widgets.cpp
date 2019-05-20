@@ -61,6 +61,11 @@ void WidgetContainer::update_widgets()
 		auto current_widget = gui_widget_container.back();
 		current_widget->draggable = false;
 	}
+
+	for(const auto& w : gui_widget_container)
+	{
+		w->update();
+	}
 }
 
 void WidgetContainer::render_widgets()
@@ -85,20 +90,46 @@ void WidgetContainer::_list_bump_member(WidgetIter & n1)
 	gui_widget_container.push_back(tmp);
 }
 
-void GUIForm::update()
+int last_index = 0;
+void cMenuBar::update()
 {
-	/*if (listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT) && isHover(listener->_cx, listener->_cy)){
-		draggable = true;
+	if (!hit_test(mouse_event_listener._cx, mouse_event_listener._cy)) return;
+
+	int index = test_item_hit(mouse_event_listener._cx, mouse_event_listener._cy);
+
+	if (index == -1) {
+		//if(highlighter) highlighter->color = hexCodeToRGB("#C0C0C0");
+		printf("yo\n");
+		delete highlighter;
+		highlighter = nullptr;
 	}
 
-	if(draggable && listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT)) {
-		move(listener->_dx, -listener->_dy);
-		listener->_dx = 0;
-		listener->_dy = 0;
-	}
+	if(index != -1){
+		//printf("hit %d item!\n", index);
+		
+		int x0, x1;
+		for (int i = 0; i < menu_items.size(); ++i)
+		{
+			if(i==0) 
+			{
+				x0 = x; 
+				x1 = x + 25 + painter->get_line_length(menu_items[i]);
+			}
+			else {
+				x0 = x1; 
+				x1 = x0 + 20 + painter->get_line_length(menu_items[i]);
+			}
+			if (i == index) break;
+		}
 
-	if (!listener->draggedBy(GLFW_MOUSE_BUTTON_LEFT)) draggable = false;*/
+		if(last_index != index) {
+			highlighter = new cHightLightBox(x0, this->y, x1-x0, this->height);
+			last_index = index;
+		}
+	}
 }
+
+
 
 void GUIForm::render(Shader * s)
 {
@@ -122,23 +153,25 @@ void GUIForm::render(Shader * s)
 void cHelpText::render(Shader * s)
 {
 	GUIForm::render(s);
-	//painter->writeBitmap(text, x*2, y*2+painter->get_font_line_gap());	
-	painter->writeBitmap(this->text, x*2, y*2+painter->get_font_line_gap());	
-	//painter->writeBitmap(text, x*2, y*2);	
+	painter->writeBitmap(text, x, y+painter->get_font_line_gap());
 }
 
 void cMenuBar::render(Shader * s)
 {
 	GUIForm::render(s);
-
-	auto cx = x * 2;
-	auto cy = y * 2 + painter->get_font_line_gap();
-
-	painter->writeBitmap(" ", cx, cy);
-	cx += painter->get_glyph_width(' ')/2;
+	if (highlighter != nullptr) {
+		//painter->set_text_color(highlighter->textColor);
+		highlighter->render(s);
+	}
+	auto cx = 5;
+	auto cy = 2+painter->get_font_line_gap();
 	for(const auto& str : menu_items){
 		painter->writeBitmap(str, cx, cy);
-		cx += painter->get_line_length(str)/2;
+		cx += 20;
 	}
-	
+}
+
+void cHightLightBox::render(Shader * s)
+{
+	GUIForm::render(s);
 }

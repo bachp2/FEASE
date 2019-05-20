@@ -51,7 +51,7 @@ public:
 	bool hit_test(int mx, int my);
 
 	virtual void render(Shader* s);
-	virtual void update();
+	virtual void update(){};
 	virtual void move(float _x, float _y);
 	
 	void resize(){
@@ -113,12 +113,31 @@ public:
 		}
 	};
 };
+class cHightLightBox : public GUIForm
+{
+public:
+	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#15659A")) : 
+		GUIForm(_x, _y, _w, _h, _c)
+	{};
 
-class cMenuBar : GUIForm
+	~cHightLightBox(){
+		glDeleteVertexArrays(1, &this->vao);
+		glDeleteBuffers(1, &this->vbo);
+		glDeleteBuffers(1, &this->ebo);
+	};
+
+	void render(Shader* s);
+	void move(float _x, float _y){};
+	const Color textColor = hexCodeToRGB("#ffffff");
+};
+
+class cMenuBar : public GUIForm
 {
 	std::vector<std::string> menu_items;
 	TextPainter* painter;
+	cHightLightBox* highlighter = nullptr;
 public:
+	// !! careful raw value input prone to bug >> should make into const
 	cMenuBar(int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19, Color _c = hexCodeToRGB("#C0C0C0")) : GUIForm(_x, _y, _w, _h, _c)
 	{};
 
@@ -134,9 +153,30 @@ public:
 		menu_items = items;
 	}
 
-	int test_item_hit(){
-		
-		
+	void update();
+
+	int test_item_hit(int mx, int my){
+		int x0, x1;
+		for (int i = 0; i < menu_items.size(); ++i)
+		{
+			if(i==0) 
+			{
+				x0 = x; 
+				x1 = x + 25 + painter->get_line_length(menu_items[i]);
+			}
+			else {
+				x0 = x1; 
+				x1 = x0 + 20 + painter->get_line_length(menu_items[i]);
+			}
+
+			//printf("ln: %d\n", painter->get_line_length(menu_items[i]));
+			if (mx < x1 && mx > x0) 
+			{
+				//printf("i : %d\n", i);
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	WidgetType type(){

@@ -1,5 +1,5 @@
 ﻿#pragma once
-
+#include "text_render.h"
 class ArcBallCamera;
 class Shader;
 extern ArcBallCamera camera;
@@ -9,7 +9,7 @@ extern ShaderManager shaderTable;
 extern MouseListener mouse_event_listener;
 extern int scrWidth, scrHeight;
 
-extern TextPainter text_painter;
+extern TextPainter* text_painter;
 //terry cube
 extern unsigned int VBO, VAO;
 //IndexedModel sphere;
@@ -42,19 +42,18 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	//
-	text_painter = TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
+	text_painter = new TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
 
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
 	
 	auto menu_bar = new cMenuBar();
-	menu_bar->setPainter(&text_painter);
+	menu_bar->setPainter(text_painter);
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
 	gui_widget_container.push_back((GUIForm *)menu_bar);
 
 	auto text_box = new cHelpText(30, 50, 200, 200);
-	text_box->setPainter(&text_painter);
+	text_box->setPainter(text_painter);
 	text_box->include_text("Sleep On The Floor");
 	gui_widget_container.push_back((GUIForm *) text_box);
 	
@@ -148,8 +147,8 @@ static inline void render_scene() {
 
 	//text.render("Sleep Deprived");
 
-	text_painter.writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 8, 110);
-	text_painter.writeBitmap("Carole & Tuesday", 0, 300 + text_painter.get_font_line_gap());
+	text_painter->writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 8, 300);
+	text_painter->writeBitmap("Carole & Tuesday", 0, 300+text_painter->get_font_line_gap());
 
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
