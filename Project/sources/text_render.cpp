@@ -4,6 +4,7 @@ TextPainter::TextPainter(Shader * s, Color c) {
 	shader = s;
 	shader->use();
 	shader->setColor("textColor", c);
+	shader->setInt("texture1", 0);
 	//shader->setInt("texture1", 0);
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
@@ -18,7 +19,7 @@ TextPainter::TextPainter()
 void TextPainter::_initfont()
 {
 	unsigned char temp_bitmap[512*512];
-	auto ttf_buffer = readFile("C:\\Users\\bachp2\\Documents\\IFEM\\FEASE\\Project\\resources\\LucidaGrande.ttf");
+	auto ttf_buffer = readFile("C:\\Users\\bachp2\\Documents\\IFEM\\FEASE\\Project\\resources\\microsoftRE.ttf");
 
 	font.charInfo = std::make_unique<stbtt_packedchar[]>(font.charCount);
 	stbtt_pack_context context;
@@ -118,6 +119,7 @@ void TextPainter::writeBitmap(std::string str, int px, int py)
 	shader->setMat4("projection", orthogonal_projection);
 
 	glBindVertexArray(vao);
+	glBindTexture(GL_TEXTURE_2D, font.texture);
 	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
 }
 

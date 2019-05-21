@@ -20,11 +20,11 @@ class TextPainter {
 	
 	struct Font
 	{
-		const uint32_t size = 12;
+		const uint32_t size = 13;
 		const uint32_t atlasWidth = 512;
 		const uint32_t atlasHeight = 512;
-		const uint32_t oversampleX = 2;
-		const uint32_t oversampleY = 2;
+		const uint32_t oversampleX = 4;
+		const uint32_t oversampleY = 4;
 		const uint32_t firstChar = ' ';
 		const uint32_t charCount = '~' - ' ';
 		std::unique_ptr<stbtt_packedchar[]> charInfo;

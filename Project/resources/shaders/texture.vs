@@ -31,9 +31,11 @@ mat4 get_spherical_billboard_view_matrix(){
 
 void main()
 {	
-	//gl_Position = projection * view  * model * vec4(aPos, 1.0f);
+	gl_Position = projection * view  * model * vec4(aPos, 1.0f);
 	mat4 billboard_view = get_spherical_billboard_view_matrix();
-	gl_Position = projection * billboard_view  * model * vec4(aPos, 1.0f);
+	//{1}
+	//gl_Position = projection * billboard_view  * model * vec4(aPos, 1.0f);
+	
 	//gl_Position = billboard_view  * model * vec4(aPos, 1.0f);
 	//gl_Position = mvp * vec4(aPos, 1.0f);
 	//gl_Position = vec4(aPos, 1.0f);

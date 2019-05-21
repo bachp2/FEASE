@@ -113,6 +113,7 @@ public:
 		}
 	};
 };
+
 class cHightLightBox : public GUIForm
 {
 public:
@@ -131,14 +132,14 @@ public:
 	const Color textColor = hexCodeToRGB("#ffffff");
 };
 
-class cMenuBar : public GUIForm
+class cMainMenuBar : public GUIForm
 {
 	std::vector<std::string> menu_items;
 	TextPainter* painter;
 	cHightLightBox* highlighter = nullptr;
 public:
 	// !! careful raw value input prone to bug >> should make into const
-	cMenuBar(int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19, Color _c = hexCodeToRGB("#C0C0C0")) : GUIForm(_x, _y, _w, _h, _c)
+	cMainMenuBar(int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19, Color _c = hexCodeToRGB("#C0C0C0")) : GUIForm(_x, _y, _w, _h, _c)
 	{};
 
 	void setPainter(TextPainter* tp){
@@ -184,6 +185,22 @@ public:
 	}
 };
 
+class cMenuBar : public GUIForm {
+	TextPainter* painter;
+	cHightLightBox* highlighter = nullptr;
+public:
+	cMenuBar(int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19, Color _c = hexCodeToRGB("#C0C0C0")) : GUIForm(_x, _y, _w, _h, _c)
+	{};
+	void setPainter(TextPainter* tp){
+		painter = tp;
+	}
+	void render(Shader* s);
+
+	void move(float _x, float _y);
+
+	void update();
+};
+
 class cHelpText : public GUIForm {
 public:
 	cHelpText(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c)
@@ -212,7 +229,7 @@ private:
 };
 
 
-class cButton : GUIForm
+class cButton : public GUIForm
 {
 	std::string label;
 public:

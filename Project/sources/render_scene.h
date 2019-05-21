@@ -18,12 +18,14 @@ extern ConfigParser configTable;
 //extern std::vector<GUIForm*> gui_widget_container;
 extern WidgetContainer gui_widget_container;
 //#define STR(x) #x
+Texture texture;
 inline static void setup_scene() {
 	//colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
 	configTable = ConfigParser(FPATH(resources/config.lua));
 
 	shaderTable.emplaceShader("bitmapped_text", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
+	shaderTable.emplaceShader("texture", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/texture.fs));
 	shaderTable.emplaceShader("solid", FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
 	shaderTable.emplaceShader("object", FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
 	shaderTable.emplaceShader("2D", FPATH(resources/shaders/_2dobject.vs), FPATH(resources/shaders/object.fs));
@@ -47,7 +49,7 @@ inline static void setup_scene() {
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
 	
-	auto menu_bar = new cMenuBar();
+	auto menu_bar = new cMainMenuBar();
 	menu_bar->setPainter(text_painter);
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
 	gui_widget_container.push_back((GUIForm *)menu_bar);
@@ -71,10 +73,10 @@ inline static void setup_scene() {
 
 	// load and create a texture 
 	// -------------------------
-	//unsigned int texture;
-	//create_texture(&texture, FPATH(resources/terry.jpg));
+	auto textShader = shaderTable.getShader("texture");
+	create_texture(&texture, FPATH(resources/terry.jpg));
 	
-	//textShader.setInt("texture1", 0);
+	textShader->setInt("texture1", 0);
 
 	//text = RenderText();
 	
@@ -118,17 +120,18 @@ static inline void render_scene() {
 
 	//// Draw box
 	//// bind textures on corresponding texture units
+	auto textShader = shaderTable.getShader("texture");
+	textShader->use();
+	textShader->setMat4("projection", perspective_projection);
+	textShader->setMat4("view", view);
 
-	//textShader.use();
-	//textShader.setMat4("projection", perspective_projection);
-	//textShader.setMat4("view", view);
-
-	///*model = glm::mat4(1.0f);
-	//model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
-	//texShader.setMat4("model", model);
-	//model = glm::mat4(1.0f);
-	//glBindVertexArray(VAO);
-	//glDrawArrays(GL_TRIANGLES, 0, 36);*/
+	model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
+	textShader->setMat4("model", model);
+	model = glm::mat4(1.0f);
+	glBindVertexArray(VAO);
+	glBindTexture(GL_TEXTURE_2D, texture.tex_id);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	// Draw lines
 	render_lines(&shaderTable);

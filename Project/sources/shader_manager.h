@@ -2,6 +2,14 @@
 #include <map>
 #include "shader.h"
 #include <string>
+#include <vector>
+
+class ShaderRecipe {
+	std::vector<std::string> uniforms;
+	std::string shader_template;
+
+};
+
 class ShaderManager
 {
 	std::map<std::string, Shader*> shaderTable;

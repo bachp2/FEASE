@@ -17,7 +17,7 @@ void GUIForm::move(float dx, float dy)
 	y += dy;
 }
 
-void cMenuBar::move(float _x, float _y)
+void cMainMenuBar::move(float _x, float _y)
 {
 	// empty to make this object immovable
 }
@@ -91,7 +91,7 @@ void WidgetContainer::_list_bump_member(WidgetIter & n1)
 }
 
 int last_index = 0;
-void cMenuBar::update()
+void cMainMenuBar::update()
 {
 	if (!hit_test(mouse_event_listener._cx, mouse_event_listener._cy)) return;
 
@@ -99,9 +99,10 @@ void cMenuBar::update()
 
 	if (index == -1) {
 		//if(highlighter) highlighter->color = hexCodeToRGB("#C0C0C0");
-		printf("yo\n");
+		//printf("yo\n");
 		delete highlighter;
 		highlighter = nullptr;
+		//last_index = menu_items.size();
 	}
 
 	if(index != -1){
@@ -123,13 +124,12 @@ void cMenuBar::update()
 		}
 
 		if(last_index != index) {
-			highlighter = new cHightLightBox(x0, this->y, x1-x0, this->height);
+			auto padding = (x1 - x0) / 4;
+			highlighter = new cHightLightBox(x0-padding, this->y, x1-x0, this->height);
 			last_index = index;
 		}
 	}
 }
-
-
 
 void GUIForm::render(Shader * s)
 {
@@ -156,18 +156,19 @@ void cHelpText::render(Shader * s)
 	painter->writeBitmap(text, x, y+painter->get_font_line_gap());
 }
 
-void cMenuBar::render(Shader * s)
+void cMainMenuBar::render(Shader * s)
 {
 	GUIForm::render(s);
 	if (highlighter != nullptr) {
 		//painter->set_text_color(highlighter->textColor);
 		highlighter->render(s);
 	}
-	auto cx = 5;
+	auto cx = -5;
 	auto cy = 2+painter->get_font_line_gap();
 	for(const auto& str : menu_items){
+		cx += 10;
 		painter->writeBitmap(str, cx, cy);
-		cx += 20;
+		cx += 10;
 	}
 }
 
