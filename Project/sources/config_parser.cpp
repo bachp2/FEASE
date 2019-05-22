@@ -17,12 +17,12 @@ void ConfigParser::lua_lookupTable(lua_State *L, const char *name, const char *k
 		lua_pushstring(L, key);
 		lua_gettable(L, -2);
 		if(lua_isnil(L, -1)){
-			printf("return nil value\n");
+			//printf("return nil value\n");
 			lua_pop(L, 1);
 			return;
 		}
 		colorPallete[name] = hexCodeToRGB(lua_tostring(L, -1));
-		printf("%s\n", lua_tostring(L, -1));
+		//printf("%s\n", lua_tostring(L, -1));
 		lua_pop(L, 1);
 	}
 	
