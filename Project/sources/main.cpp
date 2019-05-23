@@ -68,6 +68,7 @@ ConfigParser configTable;
 TextPainter* text_painter;
 
 WidgetContainer gui_widget_container;
+TextureQuad tq;
 unsigned int VBO, VAO;
 std::vector<OBJModel*> obj_model_container;
 FEObject fe;
@@ -270,7 +271,6 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 			w->move(xoffset, -yoffset);
 		}
 	}*/
-	
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

@@ -8,7 +8,7 @@ extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 extern ShaderManager shaderTable;
 extern MouseListener mouse_event_listener;
 extern int scrWidth, scrHeight;
-
+extern TextureQuad tq;
 extern TextPainter* text_painter;
 //terry cube
 extern unsigned int VBO, VAO;
@@ -87,10 +87,11 @@ inline static void setup_scene() {
 	for (auto& o : obj_model_container){
 		o->render_setup();
 	}
+	tq = TextureQuad(500, 100, 12, 12);
+	tq.set_texture_ptr(new Texture(FPATH(resources/terry.jpg)));
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
-
 }
 
 static void GradientBackground(float top_r, float top_g, float top_b, float top_a, float bot_r, float bot_g, float bot_b, float bot_a);
@@ -158,6 +159,8 @@ static inline void render_scene() {
 
 	gui_widget_container.update_widgets();
 	gui_widget_container.render_widgets();
+
+	tq.render(shaderTable.getShader("texture"));
 }
 
 #define SHADER_HEADER "#version 330 core\n"

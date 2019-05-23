@@ -125,7 +125,7 @@ void cMainMenuBar::update()
 
 		if(last_index != index) {
 			auto padding = (x1 - x0) / 4;
-			highlighter = new cHightLightBox(x0-padding, this->y, x1-x0, this->height);
+			highlighter = new cHightLightBox(x0-padding+6, this->y, x1-x0, this->height);
 			last_index = index;
 		}
 	}
@@ -163,12 +163,11 @@ void cMainMenuBar::render(Shader * s)
 		//painter->set_text_color(highlighter->textColor);
 		highlighter->render(s);
 	}
-	auto cx = -5;
+	auto cx = 6;
 	auto cy = 2+painter->get_font_line_gap();
 	for(const auto& str : menu_items){
-		cx += 10;
-		painter->writeBitmap(str, cx, cy);
-		cx += 10;
+		painter->writeBitmap(str, cx, cy, hexCodeToRGB("#ffffff"));
+		cx += 20;
 	}
 }
 

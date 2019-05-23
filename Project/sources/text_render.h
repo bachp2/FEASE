@@ -45,7 +45,7 @@ public:
 	//void render(std::string str);
 
 	void writeBitmap(std::string str, int px, int py);
-
+	void writeBitmap(std::string str, int px, int py, Color c);
 	TextPainter(const TextPainter&) = default;
 	TextPainter& operator=(const TextPainter&) = default;
 	void _initfont();
@@ -89,5 +89,6 @@ public:
 		}
 		return llen;
 	}
+	const Color _default, _highlighted;
 };
 
