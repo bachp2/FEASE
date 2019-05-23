@@ -4,6 +4,8 @@
 //////////////////////////////
 //COLOR STRUCT AND UTILS
 //////////////////////////////
+class Color;
+Color hexCodeToRGB(std::string input);
 struct Color {
 	float r, g, b;
 	static Color White(){

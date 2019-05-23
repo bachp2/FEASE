@@ -103,6 +103,7 @@ void cMainMenuBar::update()
 		delete highlighter;
 		highlighter = nullptr;
 		//last_index = menu_items.size();
+		highlight_info.highlight = false;
 	}
 
 	if(index != -1){
@@ -128,6 +129,9 @@ void cMainMenuBar::update()
 			highlighter = new cHightLightBox(x0-padding+6, this->y, x1-x0, this->height);
 			last_index = index;
 		}
+		highlight_info.index = index;
+		highlight_info.highlight = true;
+
 	}
 }
 
@@ -166,7 +170,8 @@ void cMainMenuBar::render(Shader * s)
 	auto cx = 6;
 	auto cy = 2+painter->get_font_line_gap();
 	for(const auto& str : menu_items){
-		painter->writeBitmap(str, cx, cy, hexCodeToRGB("#ffffff"));
+		if(highlight_info.highlight) painter->writeBitmap(str, cx, cy, painter->_highlighted);
+		else painter->writeBitmap(str, cx, cy, painter->_default);
 		cx += 20;
 	}
 }

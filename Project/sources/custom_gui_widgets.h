@@ -137,6 +137,7 @@ class cMainMenuBar : public GUIForm
 	std::vector<std::string> menu_items;
 	TextPainter* painter;
 	cHightLightBox* highlighter = nullptr;
+	struct { int index = 0; bool highlight = false; } highlight_info;
 public:
 	// !! careful raw value input prone to bug >> should make into const
 	cMainMenuBar(int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19, Color _c = hexCodeToRGB("#C0C0C0")) : GUIForm(_x, _y, _w, _h, _c)
@@ -183,6 +184,7 @@ public:
 	WidgetType type(){
 		return _MAIN_MENU;
 	}
+	
 };
 
 class cMenuBar : public GUIForm {
