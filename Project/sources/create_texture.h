@@ -6,12 +6,13 @@ extern glm::mat4 view, model, orthogonal_projection;
 class Texture;
 void create_texture(Texture* texture, const char* filepath, bool mipmap);
 struct Texture{
+	unsigned int ref = 0;
 	unsigned int tex_id;
 	int width, height;
 	Texture(){}
 
-	Texture(const char* filepath, bool mipmap){
-		create_texture(this, filepath, mipmap);
+	Texture(std::string filepath, bool mipmap){
+		create_texture(this, filepath.c_str(), mipmap);
 	}
 };
 
@@ -21,7 +22,14 @@ class TextureQuad {
 	float x, y;
 	unsigned int width, height;
 public:
+
 	TextureQuad() {};
+
+	TextureQuad(const TextureQuad &tq) {
+		TextureQuad(tq.x, tq.y, tq.width, tq.height);
+		this->set_texture_ptr(tq.tex);
+	};
+
 	TextureQuad(int _x, int _y, unsigned int _w, unsigned int _h) : x(_x), y(_y), width(_w), height(_h) {
 
 		const float vertices[] = {
@@ -58,10 +66,14 @@ public:
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
 	};
 
-	void set_texture_ptr(Texture* t) { tex = t; }
+	void set_texture_ptr(Texture* t) { tex = t; t->ref++; }
 
 	~TextureQuad(){
 		if (!tex) return;
+		if(tex->ref) {
+			tex->ref--;
+			return;
+		}
 		glDeleteTextures(1, &tex->tex_id);
 		delete tex;
 		tex = nullptr;
@@ -102,7 +114,7 @@ static void create_texture(Texture* texture, const char* filepath, bool mipmap =
 	}
 	else
 	{
-		printf("Failed to load texture\n");
+		printf("Failed to load texture : %s\n", filepath);
 	}
 	stbi_image_free(data);
 }

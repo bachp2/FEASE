@@ -88,6 +88,25 @@ inline static void setup_scene() {
 	for (auto& o : obj_model_container){
 		o->render_setup();
 	}
+
+	std::vector<std::string> icon_names = {
+		"document-new",
+		"document-save",
+		"edit-copy",
+		"edit-cut",
+		"edit-redo",
+		"edit-undo"
+	};
+
+	auto size = 22;
+	for (int i = 0; i < icon_names.size(); i++) {
+		std::string path = FPATH(resources/gui_icons/);
+		if(i == 0) tq = TextureQuad(500, 100, size, size);
+		else tq = TextureQuad(500+size, 100, size, size);
+		tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
+		gui_icons.push_back(tq);
+	}
+
 	tq = TextureQuad(500, 100, 22, 22);
 	tq.set_texture_ptr(new Texture(FPATH(resources/gui_icons/edit-undo.png), true));
 	//tq.set_texture_ptr(new Texture(FPATH(resources/terry.jpg), true));
