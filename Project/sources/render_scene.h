@@ -9,6 +9,7 @@ extern ShaderManager shaderTable;
 extern MouseListener mouse_event_listener;
 extern int scrWidth, scrHeight;
 extern TextureQuad tq;
+extern std::vector<TextureQuad> gui_icons;
 extern TextPainter* text_painter;
 //terry cube
 extern unsigned int VBO, VAO;
@@ -87,8 +88,9 @@ inline static void setup_scene() {
 	for (auto& o : obj_model_container){
 		o->render_setup();
 	}
-	tq = TextureQuad(500, 100, 12, 12);
-	tq.set_texture_ptr(new Texture(FPATH(resources/terry.jpg)));
+	tq = TextureQuad(500, 100, 22, 22);
+	tq.set_texture_ptr(new Texture(FPATH(resources/gui_icons/edit-undo.png), true));
+	//tq.set_texture_ptr(new Texture(FPATH(resources/terry.jpg), true));
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
@@ -151,8 +153,8 @@ static inline void render_scene() {
 
 	//text.render("Sleep Deprived");
 
-	text_painter->writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 8, 300);
-	text_painter->writeBitmap("Carole & Tuesday", 0, 300+text_painter->get_font_line_gap());
+	//text_painter->writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 8, 300);
+	//text_painter->writeBitmap("Carole & Tuesday", 0, 300+text_painter->get_font_line_gap());
 
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);

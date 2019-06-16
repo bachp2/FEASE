@@ -4,14 +4,14 @@
 #include <glad/glad.h>
 extern glm::mat4 view, model, orthogonal_projection;
 class Texture;
-void create_texture(Texture* texture, const char* filepath);
+void create_texture(Texture* texture, const char* filepath, bool mipmap);
 struct Texture{
 	unsigned int tex_id;
 	int width, height;
 	Texture(){}
 
-	Texture(const char* filepath){
-		create_texture(this, filepath);
+	Texture(const char* filepath, bool mipmap){
+		create_texture(this, filepath, mipmap);
 	}
 };
 
@@ -81,7 +81,7 @@ public:
 	}
 };
 
-static void create_texture(Texture* texture, const char* filepath) {
+static void create_texture(Texture* texture, const char* filepath, bool mipmap = true) {
 	glGenTextures(1, &texture->tex_id);
 	glBindTexture(GL_TEXTURE_2D, texture->tex_id);
 	// set the texture wrapping parameters
@@ -92,13 +92,13 @@ static void create_texture(Texture* texture, const char* filepath) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 
 	// load image, create texture and generate mipmaps
-	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	//stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 	int nrChannels;
-	unsigned char *data = stbi_load(filepath, &texture->width, &texture->height, &nrChannels, 0);
+	unsigned char *data = stbi_load(filepath, &texture->width, &texture->height, &nrChannels, STBI_rgb_alpha);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->width, texture->height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		if(mipmap) glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
 	{

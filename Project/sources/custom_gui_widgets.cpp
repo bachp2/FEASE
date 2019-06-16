@@ -115,8 +115,8 @@ void cMainMenuBar::update()
 		{
 			if(i==0) 
 			{
-				x0 = x; 
-				x1 = x + 25 + painter->get_line_length(menu_items[i]);
+				x0 = this->x; 
+				x1 = this->x + 26 + painter->get_line_length(menu_items[i]);
 			}
 			else {
 				x0 = x1; 
@@ -132,7 +132,6 @@ void cMainMenuBar::update()
 		}
 		highlight_info.index = index;
 		highlight_info.highlight = true;
-
 	}
 }
 

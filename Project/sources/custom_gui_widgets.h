@@ -160,7 +160,7 @@ public:
 	int test_item_hit(int mx, int my){
 		int x0, x1, y0, y1;
 		//y0 = 0, y1 = 2 + painter->get_font_line_gap();
-		if (y0 = 0, y1 = 2+painter->get_font_line_gap(), my < y0 || my > y1){
+		if (y0 = 0, y1 = 2+painter->get_font_line_gap(), my <= y0 || my > y1){
 			return -1;
 		}
 
