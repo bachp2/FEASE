@@ -104,6 +104,7 @@ void cMainMenuBar::update()
 		highlighter = nullptr;
 		//last_index = menu_items.size();
 		highlight_info.highlight = false;
+		last_index = -1;
 	}
 
 	if(index != -1){

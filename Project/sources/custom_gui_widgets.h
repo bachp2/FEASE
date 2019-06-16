@@ -117,7 +117,7 @@ public:
 class cHightLightBox : public GUIForm
 {
 public:
-	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#15659A")) : 
+	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#7f7f7f")) : 
 		GUIForm(_x, _y, _w, _h, _c)
 	{};
 
@@ -158,13 +158,18 @@ public:
 	void update();
 
 	int test_item_hit(int mx, int my){
-		int x0, x1;
+		int x0, x1, y0, y1;
+		//y0 = 0, y1 = 2 + painter->get_font_line_gap();
+		if (y0 = 0, y1 = 2+painter->get_font_line_gap(), my < y0 || my > y1){
+			return -1;
+		}
+
 		for (int i = 0; i < menu_items.size(); ++i)
 		{
 			if(i==0) 
 			{
-				x0 = x; 
-				x1 = x + 25 + painter->get_line_length(menu_items[i]);
+				x0 = this->x; 
+				x1 = this->x + 26 + painter->get_line_length(menu_items[i]);
 			}
 			else {
 				x0 = x1; 

@@ -126,13 +126,13 @@ static inline void render_scene() {
 	textShader->setMat4("projection", perspective_projection);
 	textShader->setMat4("view", view);
 
-	model = glm::mat4(1.0f);
+	/*model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
 	textShader->setMat4("model", model);
 	model = glm::mat4(1.0f);
 	glBindVertexArray(VAO);
 	glBindTexture(GL_TEXTURE_2D, texture.tex_id);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
 	// Draw lines
 	render_lines(&shaderTable);
