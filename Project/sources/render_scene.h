@@ -57,7 +57,7 @@ inline static void setup_scene() {
 
 	auto text_box = new cHelpText(30, 50, 200, 200);
 	text_box->setPainter(text_painter);
-	text_box->include_text("Sleep On The Floor");
+	text_box->include_text("The quick brown fox");
 	gui_widget_container.push_back((GUIForm *) text_box);
 	
 	// cartesian axis lines
@@ -99,12 +99,15 @@ inline static void setup_scene() {
 	};
 
 	auto size = 22;
+	//gui_icons.reserve(10);
 	for (int i = 0; i < icon_names.size(); i++) {
 		std::string path = FPATH(resources/gui_icons/);
 		if(i == 0) tq = TextureQuad(500, 100, size, size);
 		else tq = TextureQuad(500+size, 100, size, size);
 		tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
-		gui_icons.push_back(tq);
+		printf("a\n");
+		gui_icons.emplace_back(tq);
+		printf("b\n");
 	}
 
 	tq = TextureQuad(500, 100, 22, 22);
@@ -181,6 +184,9 @@ static inline void render_scene() {
 	gui_widget_container.update_widgets();
 	gui_widget_container.render_widgets();
 
+	/*for(auto &a : gui_icons){
+		a.render(shaderTable.getShader("texture"));
+	}*/
 	tq.render(shaderTable.getShader("texture"));
 }
 

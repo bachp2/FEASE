@@ -28,6 +28,7 @@ public:
 	TextureQuad(const TextureQuad &tq) {
 		TextureQuad(tq.x, tq.y, tq.width, tq.height);
 		this->set_texture_ptr(tq.tex);
+		printf("copied!\n");
 	};
 
 	TextureQuad(int _x, int _y, unsigned int _w, unsigned int _h) : x(_x), y(_y), width(_w), height(_h) {
@@ -66,7 +67,7 @@ public:
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
 	};
 
-	void set_texture_ptr(Texture* t) { tex = t; t->ref++; }
+	void set_texture_ptr(Texture* t) { tex = t; tex->ref++; }
 
 	~TextureQuad(){
 		if (!tex) return;
@@ -77,6 +78,8 @@ public:
 		glDeleteTextures(1, &tex->tex_id);
 		delete tex;
 		tex = nullptr;
+
+		printf("deleted!\n");
 	}
 
 	void render(Shader* s){
