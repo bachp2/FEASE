@@ -197,6 +197,8 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 
 	if (mouse_event_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
 	{
+		if (gui_widget_container.mouseInteractWithWidget) return;
+
 		double mouseX, mouseY;
 		//getting cursor position
 		glfwGetCursorPos(window, &mouseX, &mouseY);

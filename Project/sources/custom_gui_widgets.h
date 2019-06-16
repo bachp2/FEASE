@@ -112,6 +112,7 @@ public:
 			delete w;
 		}
 	};
+	bool mouseInteractWithWidget = false;
 };
 
 class cHightLightBox : public GUIForm

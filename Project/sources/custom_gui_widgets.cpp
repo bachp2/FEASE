@@ -36,8 +36,10 @@ void WidgetContainer::update_widgets()
 				(*it)->draggable = true;
 				_list_bump_member(it);
 				//printf("hit\n");
+				mouseInteractWithWidget = true;
 				break;
 			}
+			mouseInteractWithWidget = false;
 		}
 	}
 
