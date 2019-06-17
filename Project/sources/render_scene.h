@@ -98,21 +98,26 @@ inline static void setup_scene() {
 		"edit-undo"
 	};
 
-	auto size = 22;
-	//gui_icons.reserve(10);
-	for (int i = 0; i < icon_names.size(); i++) {
+	gui_icons.reserve(10);
+	for (int size = 22, xx = 500, i = 0; i < icon_names.size(); i++) {
 		std::string path = FPATH(resources/gui_icons/);
-		if(i == 0) tq = TextureQuad(500, 100, size, size);
-		else tq = TextureQuad(500+size, 100, size, size);
+		TextureQuad tq;
+		tq = TextureQuad(xx, 100, size, size);
 		tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
-		printf("a\n");
-		gui_icons.emplace_back(tq);
-		printf("b\n");
+		//printf("a\n");
+		gui_icons.push_back(tq);
+		//printf("b\n");
+		xx += size;
 	}
 
-	tq = TextureQuad(500, 100, 22, 22);
-	tq.set_texture_ptr(new Texture(FPATH(resources/gui_icons/edit-undo.png), true));
+	for (int i = 0; i < icon_names.size(); i++){
+		gui_icons[i].print_texture_ptr();
+	}
+
+	/*tq = TextureQuad(500, 100, 22, 22);
+	tq.set_texture_ptr(new Texture(FPATH(resources/gui_icons/edit-undo.png), true));*/
 	//tq.set_texture_ptr(new Texture(FPATH(resources/terry.jpg), true));
+	//gui_icons.push_back(tq);
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
@@ -184,10 +189,9 @@ static inline void render_scene() {
 	gui_widget_container.update_widgets();
 	gui_widget_container.render_widgets();
 
-	/*for(auto &a : gui_icons){
+	for(auto &a : gui_icons){
 		a.render(shaderTable.getShader("texture"));
-	}*/
-	tq.render(shaderTable.getShader("texture"));
+	}
 }
 
 #define SHADER_HEADER "#version 330 core\n"

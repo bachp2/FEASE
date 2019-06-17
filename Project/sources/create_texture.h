@@ -25,8 +25,7 @@ public:
 
 	TextureQuad() {};
 
-	TextureQuad(const TextureQuad &tq) {
-		TextureQuad(tq.x, tq.y, tq.width, tq.height);
+	TextureQuad(const TextureQuad &tq) : TextureQuad(tq.x,tq.y,tq.width,tq.height){
 		this->set_texture_ptr(tq.tex);
 		printf("copied!\n");
 	};
@@ -35,9 +34,9 @@ public:
 
 		const float vertices[] = {
 			0, 0, 0.0f, 0, 0,
-			width, height, 0.0f, 1, 1,
-			0, height, 0.0f, 0, 1,
-			width, 0, 0.0f, 1, 0
+			this->width, this->height, 0.0f, 1, 1,
+			0, this->height, 0.0f, 0, 1,
+			this->width, 0, 0.0f, 1, 0
 		};
 
 		const unsigned int indices[] = {
@@ -47,7 +46,6 @@ public:
 
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
-		glGenBuffers(1, &vbo);
 
 		glGenBuffers(1, &vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -61,7 +59,6 @@ public:
 		// texture coord attribute
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(1);
-
 		glGenBuffers(1, &ebo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
@@ -70,9 +67,10 @@ public:
 	void set_texture_ptr(Texture* t) { tex = t; tex->ref++; }
 
 	~TextureQuad(){
-		if (!tex) return;
+		if (tex == nullptr) return;
 		if(tex->ref) {
 			tex->ref--;
+			printf("deleted duplicate!\n");
 			return;
 		}
 		glDeleteTextures(1, &tex->tex_id);
@@ -80,6 +78,10 @@ public:
 		tex = nullptr;
 
 		printf("deleted!\n");
+	}
+
+	void print_texture_ptr(){
+		printf("%p, ref: %d\n", tex, tex->ref);
 	}
 
 	void render(Shader* s){

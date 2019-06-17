@@ -118,7 +118,7 @@ void cMainMenuBar::update()
 			if(i==0) 
 			{
 				x0 = this->x; 
-				x1 = this->x + 26 + painter->get_line_length(menu_items[i]);
+				x1 = this->x + 30 + painter->get_line_length(menu_items[i]);
 			}
 			else {
 				x0 = x1; 
@@ -169,7 +169,7 @@ void cMainMenuBar::render(Shader * s)
 		//painter->set_text_color(highlighter->textColor);
 		highlighter->render(s);
 	}
-	auto cx = 6;
+	auto cx = 10;
 	auto cy = 2+painter->get_font_line_gap();
 	for(const auto& str : menu_items){
 		if(highlight_info.highlight) painter->writeBitmap(str, cx, cy, painter->_highlighted);
