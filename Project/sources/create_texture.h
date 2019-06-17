@@ -27,7 +27,7 @@ public:
 
 	TextureQuad(const TextureQuad &tq) : TextureQuad(tq.x,tq.y,tq.width,tq.height){
 		this->set_texture_ptr(tq.tex);
-		printf("copied!\n");
+		//printf("copied!\n");
 	};
 
 	TextureQuad(int _x, int _y, unsigned int _w, unsigned int _h) : x(_x), y(_y), width(_w), height(_h) {
@@ -70,14 +70,14 @@ public:
 		if (tex == nullptr) return;
 		if(tex->ref) {
 			tex->ref--;
-			printf("deleted duplicate!\n");
+			//printf("deleted duplicate!\n");
 			return;
 		}
 		glDeleteTextures(1, &tex->tex_id);
 		delete tex;
 		tex = nullptr;
 
-		printf("deleted!\n");
+		//printf("deleted!\n");
 	}
 
 	void print_texture_ptr(){

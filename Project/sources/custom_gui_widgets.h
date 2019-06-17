@@ -137,12 +137,25 @@ class cMainMenuBar : public GUIForm
 {
 	std::vector<std::string> menu_items;
 	TextPainter* painter;
+	std::vector<TextureQuad> icon_buttons;
 	cHightLightBox* highlighter = nullptr;
 	struct { int index = 0; bool highlight = false; } highlight_info;
 public:
 	// !! careful raw value input prone to bug >> should make into const
-	cMainMenuBar(int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19, Color _c = hexCodeToRGB("#C0C0C0")) : GUIForm(_x, _y, _w, _h, _c)
-	{};
+	cMainMenuBar(std::vector<std::string> icon_names, int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19+26, Color _c = hexCodeToRGB("#C0C0C0") ) : GUIForm(_x, _y, _w, _h, _c)
+	{
+		icon_buttons.reserve(10);
+		for (int size = 24, xx = 0, i = 0; i < icon_names.size(); i++) {
+			std::string path = FPATH(resources/gui_icons/);
+			TextureQuad tq;
+			tq = TextureQuad(xx, 19, size, size);
+			tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
+			//printf("a\n");
+			icon_buttons.push_back(tq);
+			//printf("b\n");
+			xx += size;
+		}
+	};
 
 	void setPainter(TextPainter* tp){
 		painter = tp;

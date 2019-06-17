@@ -68,8 +68,7 @@ ConfigParser configTable;
 TextPainter* text_painter;
 
 WidgetContainer gui_widget_container;
-TextureQuad tq;
-std::vector<TextureQuad> gui_icons;
+//TextureQuad tq;
 unsigned int VBO, VAO;
 std::vector<OBJModel*> obj_model_container;
 FEObject fe;

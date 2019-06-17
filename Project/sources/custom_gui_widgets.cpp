@@ -129,7 +129,7 @@ void cMainMenuBar::update()
 
 		if(last_index != index) {
 			auto padding = (x1 - x0) / 4;
-			highlighter = new cHightLightBox(x0-padding+6, this->y, x1-x0, this->height);
+			highlighter = new cHightLightBox(x0-padding+6, this->y, x1-x0,  19);
 			last_index = index;
 		}
 		highlight_info.index = index;
@@ -175,6 +175,9 @@ void cMainMenuBar::render(Shader * s)
 		if(highlight_info.highlight) painter->writeBitmap(str, cx, cy, painter->_highlighted);
 		else painter->writeBitmap(str, cx, cy, painter->_default);
 		cx += 20;
+	}
+	for(auto &a : icon_buttons){
+		a.render(shaderTable.getShader("texture"));
 	}
 }
 

@@ -8,8 +8,6 @@ extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 extern ShaderManager shaderTable;
 extern MouseListener mouse_event_listener;
 extern int scrWidth, scrHeight;
-extern TextureQuad tq;
-extern std::vector<TextureQuad> gui_icons;
 extern TextPainter* text_painter;
 //terry cube
 extern unsigned int VBO, VAO;
@@ -49,8 +47,15 @@ inline static void setup_scene() {
 
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
-	
-	auto menu_bar = new cMainMenuBar();
+	std::vector<std::string> icon_names = {
+		"document-new",
+		"document-save",
+		"edit-copy",
+		"edit-cut",
+		"edit-redo",
+		"edit-undo"
+	};
+	auto menu_bar = new cMainMenuBar(icon_names);
 	menu_bar->setPainter(text_painter);
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
 	gui_widget_container.push_back((GUIForm *)menu_bar);
@@ -88,36 +93,6 @@ inline static void setup_scene() {
 	for (auto& o : obj_model_container){
 		o->render_setup();
 	}
-
-	std::vector<std::string> icon_names = {
-		"document-new",
-		"document-save",
-		"edit-copy",
-		"edit-cut",
-		"edit-redo",
-		"edit-undo"
-	};
-
-	gui_icons.reserve(10);
-	for (int size = 22, xx = 500, i = 0; i < icon_names.size(); i++) {
-		std::string path = FPATH(resources/gui_icons/);
-		TextureQuad tq;
-		tq = TextureQuad(xx, 100, size, size);
-		tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
-		//printf("a\n");
-		gui_icons.push_back(tq);
-		//printf("b\n");
-		xx += size;
-	}
-
-	for (int i = 0; i < icon_names.size(); i++){
-		gui_icons[i].print_texture_ptr();
-	}
-
-	/*tq = TextureQuad(500, 100, 22, 22);
-	tq.set_texture_ptr(new Texture(FPATH(resources/gui_icons/edit-undo.png), true));*/
-	//tq.set_texture_ptr(new Texture(FPATH(resources/terry.jpg), true));
-	//gui_icons.push_back(tq);
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
@@ -188,10 +163,6 @@ static inline void render_scene() {
 
 	gui_widget_container.update_widgets();
 	gui_widget_container.render_widgets();
-
-	for(auto &a : gui_icons){
-		a.render(shaderTable.getShader("texture"));
-	}
 }
 
 #define SHADER_HEADER "#version 330 core\n"
