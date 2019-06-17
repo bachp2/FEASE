@@ -140,20 +140,21 @@ class cMainMenuBar : public GUIForm
 	std::vector<TextureQuad> icon_buttons;
 	cHightLightBox* highlighter = nullptr;
 	struct { int index = 0; bool highlight = false; } highlight_info;
+	static const int text_menu_height = 22;
+	static const int icon_menu_height = 26;
 public:
 	// !! careful raw value input prone to bug >> should make into const
-	cMainMenuBar(std::vector<std::string> icon_names, int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19+26, Color _c = hexCodeToRGB("#C0C0C0") ) : GUIForm(_x, _y, _w, _h, _c)
+	cMainMenuBar(std::vector<std::string> icon_names, int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = text_menu_height+icon_menu_height, Color _c = hexCodeToRGB("#C0C0C0") ) : GUIForm(_x, _y, _w, _h, _c)
 	{
 		icon_buttons.reserve(10);
-		for (int size = 24, xx = 0, i = 0; i < icon_names.size(); i++) {
+		for (int isize = 24, xx = 0, i = 0; i < icon_names.size(); i++, xx += isize) {
 			std::string path = FPATH(resources/gui_icons/);
 			TextureQuad tq;
-			tq = TextureQuad(xx, 19, size, size);
+			tq = TextureQuad(xx, this->y+text_menu_height, isize, isize);
 			tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
 			//printf("a\n");
 			icon_buttons.push_back(tq);
 			//printf("b\n");
-			xx += size;
 		}
 	};
 
@@ -173,30 +174,48 @@ public:
 
 	int test_item_hit(int mx, int my){
 		int x0, x1, y0, y1;
+
+		//check for text menu hit
 		//y0 = 0, y1 = 2 + painter->get_font_line_gap();
-		if (y0 = 0, y1 = 2+painter->get_font_line_gap(), my <= y0 || my > y1){
+		if (y0 = this->y, y1 = this->height, my <= y0 || my > y1){
 			return -1;
 		}
 
-		for (int i = 0; i < menu_items.size(); ++i)
+		enum {FIRST_ROW, SECOND_ROW} _RowMenu;
+		if (y0 = this->y, y1 = text_menu_height, my > y0 && my < y1) _RowMenu = FIRST_ROW;
+		else _RowMenu = SECOND_ROW;
+		
+		switch(_RowMenu)
 		{
-			if(i==0) 
+		case FIRST_ROW:
+			for (int i = 0; i < menu_items.size(); ++i)
 			{
-				x0 = this->x; 
-				x1 = this->x + 26 + painter->get_line_length(menu_items[i]);
-			}
-			else {
-				x0 = x1; 
-				x1 = x0 + 20 + painter->get_line_length(menu_items[i]);
-			}
+				if(i==0) 
+				{
+					x0 = this->x; 
+					x1 = this->x + 26 + painter->get_line_length(menu_items[i]);
+				}
+				else {
+					x0 = x1; 
+					x1 = x0 + 20 + painter->get_line_length(menu_items[i]);
+				}
 
-			//printf("ln: %d\n", painter->get_line_length(menu_items[i]));
-			if (mx < x1 && mx > x0) 
-			{
-				//printf("i : %d\n", i);
-				return i;
+				//printf("ln: %d\n", painter->get_line_length(menu_items[i]));
+				if (mx < x1 && mx > x0) 
+				{
+					//printf("i : %d\n", i);
+					return i;
+				}
 			}
+			break;
+		case SECOND_ROW:
+			auto i = mx / 24;
+			if (i >= icon_buttons.size()) return -1;
+			return i + menu_items.size();
+			break;
 		}
+		
+
 		return -1;
 	}
 

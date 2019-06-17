@@ -129,7 +129,10 @@ void cMainMenuBar::update()
 
 		if(last_index != index) {
 			auto padding = (x1 - x0) / 4;
-			highlighter = new cHightLightBox(x0-padding+6, this->y, x1-x0,  19);
+			if(index < menu_items.size())
+				highlighter = new cHightLightBox(x0-padding, this->y, x1-x0,  text_menu_height);
+			else
+				highlighter = new cHightLightBox(this->x + (index-menu_items.size())*24, text_menu_height, 24,  icon_menu_height);
 			last_index = index;
 		}
 		highlight_info.index = index;
