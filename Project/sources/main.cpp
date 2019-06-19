@@ -89,9 +89,9 @@ int main(int, char**)
 	setup_scene();
 	
 
-	fe.fNodes.push_back(Eigen::Vector2f(0, 0));
+	/*fe.fNodes.push_back(Eigen::Vector2f(0, 0));
 	fe.fNodes.push_back(Eigen::Vector2f(10, 0));
-	fe.fNodes.push_back(Eigen::Vector2f(10, 10));
+	fe.fNodes.push_back(Eigen::Vector2f(10, 10));*/
 
 	// Render Loop
 	// -----------
@@ -208,7 +208,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		//printf("hit? %d\n", r);
 		//assert(mouseListener.agenda == SELECT_NODE);
 
-		if (mouse_event_listener.agenda == SELECT_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
+		if (mouse_event_listener.agenda == CONNECT_ELE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
 			//printf("select node success");
 			glm::ivec2 coord(0);
 			if (selectGrid(coord, hit, lim))
@@ -267,7 +267,9 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	
 	if (mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
 		camera.ProcessMouseMovement(xoffset, yoffset);
-	
+	// hit detection when outside of any active widgets
+	gui_widget_container.generic_hit_testing_widgets();
+
 	/*for(auto& w : gui_widget_container){
 		if(w->moveable && mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
 			w->move(xoffset, -yoffset);

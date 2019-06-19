@@ -48,12 +48,15 @@ inline static void setup_scene() {
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
 	std::vector<std::string> icon_names = {
-		"document-new",
+		"document_new",
 		"document-save",
 		"edit-copy",
 		"edit-cut",
 		"edit-redo",
-		"edit-undo"
+		"edit-undo",
+		"truss",
+		"node",
+		"media-playback-start"
 	};
 	auto menu_bar = new cMainMenuBar(icon_names);
 	menu_bar->setPainter(text_painter);
@@ -146,9 +149,9 @@ static inline void render_scene() {
 	render_points(&shaderTable);
 
 	//// render obj mesh
-	for(auto& o : obj_model_container){
+	/*for(auto& o : obj_model_container){
 		o->render(&shaderTable);
-	}
+	}*/
 
 	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);

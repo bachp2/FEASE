@@ -93,7 +93,8 @@ public:
 	enum WidgetType{
 		_FORM, _HELPER,
 		_MAIN_MENU,
-		_DROP_DOWN
+		_DROP_DOWN,
+		_TEXTURE_QUAD
 	};
 };
 
@@ -112,6 +113,7 @@ public:
 			delete w;
 		}
 	};
+	void generic_hit_testing_widgets();
 	bool mouseInteractWithWidget = false;
 };
 

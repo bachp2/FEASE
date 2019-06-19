@@ -68,6 +68,22 @@ void WidgetContainer::update_widgets()
 	{
 		w->update();
 	}
+	//mouseInteractWithWidget = false;
+}
+
+void WidgetContainer::generic_hit_testing_widgets(){
+	auto mx = mouse_event_listener._cx;
+	auto my = mouse_event_listener._cy;
+	for (WidgetIter it = gui_widget_container.end(); it != gui_widget_container.begin(); )
+	{
+		--it;
+		if((*it)->hit_test(mx, my))
+		{
+			mouseInteractWithWidget = true;
+			break;
+		}
+		mouseInteractWithWidget = false;
+	}
 }
 
 void WidgetContainer::render_widgets()
@@ -108,35 +124,49 @@ void cMainMenuBar::update()
 		highlight_info.highlight = false;
 		last_index = -1;
 	}
-
-	if(index != -1){
-		//printf("hit %d item!\n", index);
+	//printf("hit %d item!\n", index);
 		
-		int x0, x1;
-		for (int i = 0; i < menu_items.size(); ++i)
+	int x0, x1;
+	for (int i = 0; i < menu_items.size(); ++i)
+	{
+		if(i==0) 
 		{
-			if(i==0) 
-			{
-				x0 = this->x; 
-				x1 = this->x + 30 + painter->get_line_length(menu_items[i]);
-			}
-			else {
-				x0 = x1; 
-				x1 = x0 + 20 + painter->get_line_length(menu_items[i]);
-			}
-			if (i == index) break;
+			x0 = this->x; 
+			x1 = this->x + 30 + painter->get_line_length(menu_items[i]);
 		}
+		else {
+			x0 = x1; 
+			x1 = x0 + 20 + painter->get_line_length(menu_items[i]);
+		}
+		if (i == index) break;
+	}
 
-		if(last_index != index) {
-			auto padding = (x1 - x0) / 4;
-			if(index < menu_items.size())
-				highlighter = new cHightLightBox(x0-padding, this->y, x1-x0,  text_menu_height);
-			else
-				highlighter = new cHightLightBox(this->x + (index-menu_items.size())*24, text_menu_height, 24,  icon_menu_height);
-			last_index = index;
-		}
-		highlight_info.index = index;
-		highlight_info.highlight = true;
+	if(last_index != index) {
+		auto padding = (x1 - x0) / 4;
+		if(index < menu_items.size())
+			highlighter = new cHightLightBox(x0-padding, this->y, x1-x0,  text_menu_height);
+		else
+			highlighter = new cHightLightBox(this->x + (index-menu_items.size())*24, text_menu_height, 24,  icon_menu_height);
+		last_index = index;
+	}
+	highlight_info.index = index;
+	highlight_info.highlight = true;
+
+	if(mouse_event_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT)){
+		mouse_event_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
+		//switch(index-menu_items.size()){
+		//case 6:
+		//	mouse_event_listener.agenda = Mouse_Agenda::CONNECT_ELE;
+		//	//printf("connect element\n");
+		//	break;
+		//case 7:
+		//	mouse_event_listener.agenda = Mouse_Agenda::ADD_NODE;
+		//	//printf("select node\n");
+		//	break;
+		//case 8:
+		//	mouse_event_listener.agenda = Mouse_Agenda::RUN_ANALYSIS;
+		//	break;
+		//}
 	}
 }
 

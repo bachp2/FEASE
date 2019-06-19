@@ -14,7 +14,8 @@ enum Mouse_State {
 enum Mouse_Agenda {
 	ADD_NODE,
 	CONNECT_ELE,
-	SELECT_NODE
+	SELECT_NODE,
+	RUN_ANALYSIS
 };
 
 struct MouseListener {
