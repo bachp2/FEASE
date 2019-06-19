@@ -153,20 +153,20 @@ void cMainMenuBar::update()
 	highlight_info.highlight = true;
 
 	if(mouse_event_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT)){
-		mouse_event_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
-		//switch(index-menu_items.size()){
-		//case 6:
-		//	mouse_event_listener.agenda = Mouse_Agenda::CONNECT_ELE;
-		//	//printf("connect element\n");
-		//	break;
-		//case 7:
-		//	mouse_event_listener.agenda = Mouse_Agenda::ADD_NODE;
-		//	//printf("select node\n");
-		//	break;
-		//case 8:
-		//	mouse_event_listener.agenda = Mouse_Agenda::RUN_ANALYSIS;
-		//	break;
-		//}
+		//mouse_event_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
+		switch(index-menu_items.size()){
+		case 6:
+			mouse_event_listener.agenda = Mouse_Agenda::CONNECT_ELE;
+			//printf("connect element\n");
+			break;
+		case 7:
+			mouse_event_listener.agenda = Mouse_Agenda::ADD_NODE;
+			//printf("select node\n");
+			break;
+		case 8:
+			mouse_event_listener.agenda = Mouse_Agenda::RUN_ANALYSIS;
+			break;
+		}
 	}
 }
 

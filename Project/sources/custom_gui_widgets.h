@@ -149,14 +149,24 @@ public:
 	cMainMenuBar(std::vector<std::string> icon_names, int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = text_menu_height+icon_menu_height, Color _c = hexCodeToRGB("#C0C0C0") ) : GUIForm(_x, _y, _w, _h, _c)
 	{
 		icon_buttons.reserve(10);
-		for (int isize = 24, xx = 0, i = 0; i < icon_names.size(); i++, xx += isize) {
+		Texture* separator = nullptr;
+		for (int isize = 24, xx = 0, i = 0; i < icon_names.size(); i++) {
 			std::string path = FPATH(resources/gui_icons/);
 			TextureQuad tq;
-			tq = TextureQuad(xx, this->y+text_menu_height, isize, isize);
-			tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
-			//printf("a\n");
+			if(icon_names[i] == "separator")	
+			{
+				tq = TextureQuad(xx, this->y+text_menu_height, 1, isize);
+				xx += 1;
+				if (!separator) separator = new Texture(path + icon_names[i] + ".png", true);
+				tq.set_texture_ptr(separator);
+			}
+			else
+			{
+				tq = TextureQuad(xx, this->y+text_menu_height, isize, isize);
+				xx += isize;
+				tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
+			}
 			icon_buttons.push_back(tq);
-			//printf("b\n");
 		}
 	};
 

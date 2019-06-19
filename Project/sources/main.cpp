@@ -73,6 +73,8 @@ unsigned int VBO, VAO;
 std::vector<OBJModel*> obj_model_container;
 FEObject fe;
 MouseListener mouse_event_listener;
+
+void run_data_analysis();
 void processInput(GLFWwindow *window);
 void render_scene();
 void setup_scene();
@@ -111,6 +113,12 @@ int main(int, char**)
 		// ------
 		render_scene();
 
+		if (mouse_event_listener.agenda == Mouse_Agenda::RUN_ANALYSIS && mouse_event_listener.state == Mouse_State::NIL) {
+			// if condition allows one click only
+			run_data_analysis();
+			mouse_event_listener.agenda = Mouse_Agenda::ADD_NODE;
+		}
+			
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwMakeContextCurrent(window);
@@ -136,6 +144,22 @@ int main(int, char**)
 	glfwTerminate();
 
 	return 0;
+}
+
+static inline void run_data_analysis()
+{
+	printf("running truss analysis...\n");
+	for (int i = 0; i < nodes.size(); ++i){
+		fe.fNodes.emplace_back(nodes[i].x, nodes[i].y);
+	}
+
+	for (int i = 0; i < elements.size(); ++i){
+		auto e_ptr = new Bar(elements[i].x, elements[i].y, 1, 1);
+		fe.fElements.push_back((Ele1D *) e_ptr);
+	}
+	printf("truss node count %d\n", fe.fNodes.size());
+	printf("truss element count %d\n", fe.fElements.size());
+	printf("--END--\n");
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -182,6 +206,7 @@ bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
 
 void inline mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+	
 	if (action == GLFW_PRESS) {
 		mouse_event_listener.button = button;
 		mouse_event_listener.state = CLICK;

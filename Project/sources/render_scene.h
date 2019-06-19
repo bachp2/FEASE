@@ -50,10 +50,12 @@ inline static void setup_scene() {
 	std::vector<std::string> icon_names = {
 		"document_new",
 		"document-save",
+		//"separator",
 		"edit-copy",
 		"edit-cut",
 		"edit-redo",
 		"edit-undo",
+		"separator",
 		"truss",
 		"node",
 		"media-playback-start"

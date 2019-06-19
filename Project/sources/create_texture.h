@@ -65,6 +65,7 @@ public:
 	};
 
 	void set_texture_ptr(Texture* t) { tex = t; tex->ref++; }
+	bool isEmptyTexture() { return this->tex; };
 
 	~TextureQuad(){
 		if (tex == nullptr) return;
