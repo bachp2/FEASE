@@ -52,7 +52,7 @@ void TextPainter::_initfont()
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 512,512, 0, GL_RED, GL_UNSIGNED_BYTE, temp_bitmap);
 	////// can free temp_bitmap at this point
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	stbi_write_png("out.png", 512, 512, 1, temp_bitmap, 512);
+	//stbi_write_png("out.png", 512, 512, 1, temp_bitmap, 512);
 }
 
 void TextPainter::set_text_color(Color c){

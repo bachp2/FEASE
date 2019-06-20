@@ -126,6 +126,19 @@ inline Node* vector_find(std::vector<Node>& nv, Node n) {
 	return nullptr;
 }
 
+inline int vector_findi(std::vector<Node>& nv, Node n) {
+	int index = 0;
+	for (auto &i : nv) {
+		auto a = glm::length(i - n) < 0.0001;
+		/*PRINT3F(i.x, i.y, i.z);
+		PRINT3F(n.x, n.y, n.z);*/
+		if (a) return index;
+		index++;
+	}
+	//printf("\n");
+	return -1;
+}
+
 inline bool insert_by_unique_pair(std::vector<Node>& c, Node* n1) {
 	auto t = c.size() % 2;
 	if (t == 0) {

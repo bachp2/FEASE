@@ -148,17 +148,34 @@ int main(int, char**)
 
 static inline void run_data_analysis()
 {
-	printf("running truss analysis...\n");
+	fe.fNodes.clear();
+	fe.fElements.clear();
+	printf("Running truss analysis...\n");
+	printf("Geometry definition stage...\n");
 	for (int i = 0; i < nodes.size(); ++i){
-		fe.fNodes.emplace_back(nodes[i].x, nodes[i].y);
+		fe.fNodes.emplace_back(nodes[i].x, nodes[i].z);
 	}
 
-	for (int i = 0; i < elements.size(); ++i){
-		auto e_ptr = new Bar(elements[i].x, elements[i].y, 1, 1);
-		fe.fElements.push_back((Ele1D *) e_ptr);
+	int elementSize;
+	if (elements.size() % 2) elementSize = elements.size() - 1;
+	else elementSize = elements.size();
+	for (int i = 0; i < elementSize; i+=2){
+		auto idx = vector_findi(nodes, elements[i]);
+		auto idx1 = vector_findi(nodes, elements[i+1]);
+		//printf("%d, %d\n", idx, idx1);
+		fe.fElements.push_back(new Bar(idx, idx1));
 	}
-	printf("truss node count %d\n", fe.fNodes.size());
-	printf("truss element count %d\n", fe.fElements.size());
+
+	printf("Truss node count %d\n", fe.fNodes.size());
+	printf("Truss element count %d\n", fe.fElements.size());
+	printf("Writing to lua script...");
+	std::string content;
+	for (int i = 0; i < nodes.size(); ++i){
+		content.append(str_format("%.3f\n","asdasd"));
+	}
+	printf("Saving to %s\n", FPATH(Project/fem_solver/default.lua));
+	writeFile(FPATH(sources/fem_solver/default.lua), content);
+	printf("Stage 1 completed\n");
 	printf("--END--\n");
 }
 
@@ -166,6 +183,10 @@ static inline void run_data_analysis()
 // ---------------------------------------------------------------------------------------------------------
 static inline void processInput(GLFWwindow *window)
 {
+	if(mouse_event_listener.agenda == RUN_ANALYSIS)
+	{
+		//print text to console
+	}
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 

@@ -5,8 +5,11 @@
 
 struct Ele1D {
 	unsigned int n0, n1;
-	Ele1D(const unsigned int m0, const unsigned int m1) : n0(m0), n1(m1){}
-	Eigen::Matrix4f ElementStiffness;
+	//Eigen::Matrix4f ElementStiffness = Eigen::Matrix4f::Zero();
+	Ele1D(const unsigned int m0, const unsigned int m1) : n0(m0), n1(m1){
+		///ElementStiffness = Eigen::Matrix4f::Zero();
+	}
+
 };
 
 struct FEObject {
@@ -34,10 +37,11 @@ struct FEObject {
 	};
 };
 
-struct Bar : Ele1D {
+struct Bar : public Ele1D {
 	float E, A, L;
-	Bar(unsigned int m0, unsigned int m1, float eE, float eA) : Ele1D(m0, m1), E(eE), A(eA) {
+	Bar(unsigned int m0, unsigned int m1) : Ele1D(m0, m1) {
 		//Element
+		
 	}
 	void _construct_element_stiffness_matrix(std::vector<Eigen::Vector2f>* nodes);
 };
