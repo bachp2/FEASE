@@ -124,7 +124,7 @@ int main(int, char**)
 		glfwMakeContextCurrent(window);
 		glfwSwapBuffers(window);
 
-		glfwPollEvents();
+		glfwWaitEvents();
 	}
 
 	// optional: de-allocate all resources once they've outlived their purpose:
@@ -186,6 +186,7 @@ static inline void processInput(GLFWwindow *window)
 	if(mouse_event_listener.agenda == RUN_ANALYSIS)
 	{
 		//print text to console
+		printf("asdasdas");
 	}
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
