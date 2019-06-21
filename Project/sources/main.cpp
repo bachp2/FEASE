@@ -90,8 +90,7 @@ int main(int, char**)
 	// set up scene
 	// ------------------------------------------------------------------
 	setup_scene();
-	std::unordered_map<int, Character> characters;
-	parse_bm_font_descriptor(FPATH(resources/ms_font.txt), &characters);
+	
 	/*fe.fNodes.push_back(Eigen::Vector2f(0, 0));
 	fe.fNodes.push_back(Eigen::Vector2f(10, 0));
 	fe.fNodes.push_back(Eigen::Vector2f(10, 10));*/

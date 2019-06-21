@@ -205,8 +205,8 @@ void cMainMenuBar::render(Shader * s)
 	auto cx = 10;
 	auto cy = 2+painter->get_font_line_gap();
 	for(const auto& str : menu_items){
-		if(highlight_info.highlight) painter->writeBitmap(str, cx, cy, painter->_highlighted);
-		else painter->writeBitmap(str, cx, cy, painter->_default);
+		if(highlight_info.highlight) painter->writeBitmap(str, cx, cy);
+		else painter->writeBitmap(str, cx, cy);
 		cx += 20;
 	}
 	for(auto &a : icon_buttons){
