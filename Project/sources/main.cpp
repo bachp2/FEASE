@@ -25,7 +25,8 @@ extern "C"
 #include "render_scene.h"
 #include "config_parser.h"
 #include "fe_structs.h"
-
+#include <windows.h>
+#include "bm_parser.h"
 #define GLFW_INCLUDE_GLU // for gluErrorString
 #include <GLFW/glfw3.h>
 
@@ -89,8 +90,8 @@ int main(int, char**)
 	// set up scene
 	// ------------------------------------------------------------------
 	setup_scene();
-	
-
+	std::unordered_map<int, Character> characters;
+	parse_bm_font_descriptor(FPATH(resources/ms_font.txt), &characters);
 	/*fe.fNodes.push_back(Eigen::Vector2f(0, 0));
 	fe.fNodes.push_back(Eigen::Vector2f(10, 0));
 	fe.fNodes.push_back(Eigen::Vector2f(10, 10));*/
@@ -152,29 +153,37 @@ static inline void run_data_analysis()
 	fe.fElements.clear();
 	printf("Running truss analysis...\n");
 	printf("Geometry definition stage...\n");
-	for (int i = 0; i < nodes.size(); ++i){
-		fe.fNodes.emplace_back(nodes[i].x, nodes[i].z);
-	}
+	
 
-	int elementSize;
-	if (elements.size() % 2) elementSize = elements.size() - 1;
-	else elementSize = elements.size();
-	for (int i = 0; i < elementSize; i+=2){
-		auto idx = vector_findi(nodes, elements[i]);
-		auto idx1 = vector_findi(nodes, elements[i+1]);
-		//printf("%d, %d\n", idx, idx1);
-		fe.fElements.push_back(new Bar(idx, idx1));
+	char c=0;
+	while (c != '\n')
+	{
+		putchar(c);
+		c = getchar();
 	}
 
 	printf("Truss node count %d\n", fe.fNodes.size());
 	printf("Truss element count %d\n", fe.fElements.size());
 	printf("Writing to lua script...");
-	std::string content;
+	std::string content = "require(\"truss_structs\")\n";
+
+	content.append("--- FEM NODES\n");
 	for (int i = 0; i < nodes.size(); ++i){
-		content.append(str_format("%.3f\n","asdasd"));
+		content.append(str_format("fe_nodes[%d] = {x=%.3f,y=%.3f}\n", i, nodes[i].x, nodes[i].z));
 	}
-	printf("Saving to %s\n", FPATH(Project/fem_solver/default.lua));
-	writeFile(FPATH(sources/fem_solver/default.lua), content);
+
+	int elementSize;
+	if (elements.size() % 2) elementSize = elements.size() - 1;
+	else elementSize = elements.size();
+	content.append("--- FEM ELEMENTS\n");
+	for (int i = 0; i < elementSize; i+=2){
+		auto idx = vector_findi(nodes, elements[i]);
+		auto idx1 = vector_findi(nodes, elements[i+1]);
+		content.append(str_format("fe_elems[%d] = {n0=%d,n1=%d}\n", i/2, idx, idx1));
+	}
+
+	printf("Saving to %s\n", FPATH(Project/fem_solver/geometry.lua));
+	writeFile(FPATH(sources/fem_solver/geometry.lua), content);
 	printf("Stage 1 completed\n");
 	printf("--END--\n");
 }
@@ -183,11 +192,6 @@ static inline void run_data_analysis()
 // ---------------------------------------------------------------------------------------------------------
 static inline void processInput(GLFWwindow *window)
 {
-	if(mouse_event_listener.agenda == RUN_ANALYSIS)
-	{
-		//print text to console
-		printf("asdasdas");
-	}
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
@@ -449,4 +453,3 @@ inline static GLFWwindow* initApp() {
 
 	return window;
 }
-

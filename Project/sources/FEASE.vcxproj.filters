@@ -95,6 +95,9 @@
     <ClInclude Include="custom_gui_widgets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bm_parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\shaders\texture.vs">
