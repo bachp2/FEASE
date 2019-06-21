@@ -43,7 +43,7 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	text_painter = new TextPainter(shaderTable.getShader("texture"), configTable.getColor("text"));
+	text_painter = new TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
 
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/

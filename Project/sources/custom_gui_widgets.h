@@ -186,7 +186,7 @@ public:
 
 	int test_item_hit(int mx, int my){
 		int x0, x1, y0, y1;
-
+		auto padding = 7;
 		//check for text menu hit
 		//y0 = 0, y1 = 2 + painter->get_font_line_gap();
 		if (y0 = this->y, y1 = this->height, my <= y0 || my > y1){
@@ -200,16 +200,18 @@ public:
 		switch(_RowMenu)
 		{
 		case FIRST_ROW:
+			// to do make this into class variable
+			
 			for (int i = 0; i < menu_items.size(); ++i)
 			{
 				if(i==0) 
 				{
 					x0 = this->x; 
-					x1 = this->x + 26 + painter->get_line_length(menu_items[i]);
+					x1 = this->x + padding*2 + painter->get_str_length(menu_items[i]);
 				}
 				else {
 					x0 = x1; 
-					x1 = x0 + 20 + painter->get_line_length(menu_items[i]);
+					x1 = x0 + padding*2 + painter->get_str_length(menu_items[i]);
 				}
 
 				//printf("ln: %d\n", painter->get_line_length(menu_items[i]));
