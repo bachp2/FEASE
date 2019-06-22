@@ -83,6 +83,7 @@ void render_scene();
 void setup_scene();
 GLFWwindow* initApp();
 GLFWwindow* window;
+std::thread* console_thread = nullptr;
 std::vector< glm::vec3 > obj_vertices;
 
 int main(int, char**)
@@ -101,6 +102,7 @@ int main(int, char**)
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwMakeContextCurrent(NULL);
+
 	std::thread main_renderer(render_loop);
 
 	// optional: de-allocate all resources once they've outlived their purpose:
@@ -122,7 +124,10 @@ int main(int, char**)
 		processInput(window);
 		glfwWaitEvents();
 	}
-
+	if(console_thread) {
+		console_thread->join();
+		delete console_thread;
+	}
 	main_renderer.join();
 	glDeleteVertexArrays(1, &VAO_point);
 	//glDeleteBuffers(1, &VBO);
@@ -141,15 +146,23 @@ void inline static render_loop(){
 	// Render Loop
 	// -----------
 	glfwMakeContextCurrent(window);
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	// https://stackoverflow.com/questions/54893063/glew-causes-screen-to-flicker-between-red-and-black-glad-works
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return;
+	}
+	glfwSwapInterval( 1 );
 	while (!glfwWindowShouldClose(window))
 	{
 		// Render Scene
 		// ------
-		render_scene();
+		
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
-
+		glClear(GL_COLOR_BUFFER_BIT);
+		render_scene();
 		glfwSwapBuffers(window);
 	}
 	glfwMakeContextCurrent(NULL);
@@ -186,33 +199,35 @@ static inline void run_data_analysis()
 	writeFile(FPATH(sources/fem_solver/geometry.lua), content);
 	printf("Stage 1: geometry definition completed\n");
 
+	//console_input_loop();
+	console_thread = new std::thread(console_input_loop);
+	//std::thread idle_renderer(idle_render_loop);
+	//idle_renderer.join();
+}
+
+static inline void console_input_loop(){
 	printf("Boundary conditions stage...\n");
 	printf("Specify boundary conditions through command prompt...\n");
 	printf("Type away; press '~' to complete:\n");
 	printf("> ");
-	content = "require(\"truss_structs\")\n";
-	
-	console_input_loop();
-	/*std::thread console(console_input_loop);
-	std::thread idle_renderer(idle_render_loop);
-
-	
-	idle_renderer.join();
-	console.join();*/
+	std::string content = "require(\"truss_structs\")\n";
+	char c = 0;
+	std::string line;
+	while(c != '~'){
+		c = getchar();
+		if (c == '\n') { 
+			printf("> "); 
+			content += line;
+			line.clear(); 
+		}
+		if (c == 127 || c == 8) { line.pop_back(); continue; }
+		line += c;
+	}
 
 	printf("Saving to %s\n", FPATH(Project/fem_solver/boundary.lua));
 	writeFile(FPATH(sources/fem_solver/boundary.lua), content);
 	printf("Stage 2: boundary conditions setup completed\n");
 	printf("--END--\n");
-}
-
-static inline void console_input_loop(){
-	char c = 0;
-	while(c != '~'){
-		c = getchar();
-		if (c == '\n') printf("> ");
-		//content += c;
-	}
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
