@@ -1,3 +1,5 @@
+local matrix = require("lua_matrix")
+local symbol = matrix.symbol
 require("truss_structs")
 --- FEM NODES
 fe_nodes[1] = {x=0,y=0}
@@ -14,7 +16,7 @@ fe_elems[4] = {n0=3,n1=4}
 fe_elems[5] = {n0=3,n1=5}
 fe_elems[6] = {n0=4,n1=5}
 fe_elems[7] = {n0=4,n1=6}
-fe_elems[8] = {n0=6,n1=5}
+fe_elems[8] = {n0=5,n1=6}
 
 fe_forces[3] = {fy = -2000}
 fe_forces[5] = {fx = 2000}
@@ -29,5 +31,17 @@ for i = 1,8 do
 	element_stiffness[i] = A*E/elem_length(fe_elems[i])
 	--print(element_stiffness[i])
 end
+
+theta = {}
+for i = 1,8 do
+	theta[i] = elem_angle(fe_elems[i])
+	--print(theta[i]*180/math.pi)
+end
+
+element_stiffness_matrix = {}
+
+
+
+
 
 
