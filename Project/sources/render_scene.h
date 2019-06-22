@@ -43,11 +43,11 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	text_painter = new TextPainter(shaderTable.getShader("texture"), configTable.getColor("text"));
+	text_painter = new TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
 
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
-	std::vector<std::string> icon_names = {
+	const std::vector<std::string> icon_names = {
 		"document_new",
 		"document-save",
 		//"separator",
@@ -65,10 +65,10 @@ inline static void setup_scene() {
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
 	gui_widget_container.push_back((GUIForm *)menu_bar);
 
-	auto text_box = new cHelpText(30, 50, 200, 200);
+	/*auto text_box = new cHelpText(30, 50, 200, 200);
 	text_box->setPainter(text_painter);
 	text_box->include_text("The quick brown fox");
-	gui_widget_container.push_back((GUIForm *) text_box);
+	gui_widget_container.push_back((GUIForm *) text_box);*/
 	
 	// cartesian axis lines
 	axisLines.setup(&camera);

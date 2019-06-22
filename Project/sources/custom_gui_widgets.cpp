@@ -125,27 +125,26 @@ void cMainMenuBar::update()
 		last_index = -1;
 	}
 	//printf("hit %d item!\n", index);
-		
+	auto padding = 7;
 	int x0, x1;
 	for (int i = 0; i < menu_items.size(); ++i)
 	{
 		if(i==0) 
 		{
 			x0 = this->x; 
-			x1 = this->x + 30 + painter->get_line_length(menu_items[i]);
+			x1 = this->x + padding*2 + painter->get_str_length(menu_items[i]);
 		}
 		else {
 			x0 = x1; 
-			x1 = x0 + 20 + painter->get_line_length(menu_items[i]);
+			x1 = x0 + padding*2 + painter->get_str_length(menu_items[i]);
 		}
 		if (i == index) break;
 	}
 
 	if(last_index != index) {
-		auto padding = (x1 - x0) / 4;
 		if(index < menu_items.size())
-			highlighter = new cHightLightBox(x0-padding, this->y, x1-x0,  text_menu_height);
-		else
+			highlighter = new cHightLightBox(x0, this->y, x1-x0,  text_menu_height);
+		else // highlight second row
 			highlighter = new cHightLightBox(this->x + (index-menu_items.size())*24, text_menu_height, 24,  icon_menu_height);
 		last_index = index;
 	}
@@ -192,7 +191,7 @@ void GUIForm::render(Shader * s)
 void cHelpText::render(Shader * s)
 {
 	GUIForm::render(s);
-	painter->writeBitmap(text, x, y+painter->get_font_line_gap());
+	painter->writeBitmap(text, x, y); //to do: get skip line length
 }
 
 void cMainMenuBar::render(Shader * s)
@@ -202,12 +201,13 @@ void cMainMenuBar::render(Shader * s)
 		//painter->set_text_color(highlighter->textColor);
 		highlighter->render(s);
 	}
-	auto cx = 10;
-	auto cy = 2+painter->get_font_line_gap();
+	auto padding = 7;
+	auto cx = padding;
+	auto cy = 2;//to do: get skip line length
 	for(const auto& str : menu_items){
 		if(highlight_info.highlight) painter->writeBitmap(str, cx, cy);
 		else painter->writeBitmap(str, cx, cy);
-		cx += 20;
+		cx += padding*2+painter->get_str_length(str);
 	}
 	for(auto &a : icon_buttons){
 		a.render(shaderTable.getShader("texture"));

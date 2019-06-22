@@ -17,6 +17,8 @@ extern "C"
 #include <glm/gtc/type_ptr.hpp>
 #include <obj_loader.h>
 #include <file_system.h>
+#include <thread>
+#include <mutex>
 #include "fease_draw.h"
 #include "text_render.h"
 #include "shader_manager.h"
@@ -76,17 +78,20 @@ FEObject fe;
 MouseListener mouse_event_listener;
 
 void run_data_analysis();
+void render_loop();
 void processInput(GLFWwindow *window);
 void render_scene();
 void setup_scene();
 GLFWwindow* initApp();
-
+GLFWwindow* window;
+std::thread* console_thread = nullptr;
 std::vector< glm::vec3 > obj_vertices;
-
+std::mutex mu;
+bool window_resized = false;
 int main(int, char**)
 {
 	
-	GLFWwindow* window = initApp();
+	window = initApp();
 	// set up scene
 	// ------------------------------------------------------------------
 	setup_scene();
@@ -95,40 +100,38 @@ int main(int, char**)
 	fe.fNodes.push_back(Eigen::Vector2f(10, 0));
 	fe.fNodes.push_back(Eigen::Vector2f(10, 10));*/
 
-	// Render Loop
-	// -----------
-	while (!glfwWindowShouldClose(window))
-	{
+	
+	// glfw: terminate, clearing all previously allocated GLFW resources.
+	// ------------------------------------------------------------------
+	glfwMakeContextCurrent(NULL);
+
+	std::thread main_renderer(render_loop);
+
+	// optional: de-allocate all resources once they've outlived their purpose:
+	// ------------------------------------------------------------------------
+	while(!glfwWindowShouldClose(window)){
 		// Per-frame time logic
 		// --------------------
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		// Input
-		// -----
-		processInput(window);
-
-		// Render Scene
-		// ------
-		render_scene();
-
 		if (mouse_event_listener.agenda == Mouse_Agenda::RUN_ANALYSIS && mouse_event_listener.state == Mouse_State::NIL) {
 			// if condition allows one click only
 			run_data_analysis();
 			mouse_event_listener.agenda = Mouse_Agenda::ADD_NODE;
 		}
-			
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
-		glfwMakeContextCurrent(window);
-		glfwSwapBuffers(window);
-
+		// Input
+		// -----
+		processInput(window);
 		glfwWaitEvents();
 	}
-
-	// optional: de-allocate all resources once they've outlived their purpose:
-	// ------------------------------------------------------------------------
+	// to do tidy this up, hidden state everywhere
+	if(console_thread) {
+		console_thread->join();
+		delete console_thread;
+	}
+	main_renderer.join();
 	glDeleteVertexArrays(1, &VAO_point);
 	//glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &VBO_point);
@@ -137,29 +140,53 @@ int main(int, char**)
 	for(auto& o : obj_model_container){
 		delete o;
 	}
-	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
-
 	glfwDestroyWindow(window);
 	glfwTerminate();
-
 	return 0;
 }
 
+void inline static render_loop(){
+	// Render Loop
+	// -----------
+	glfwMakeContextCurrent(window);
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	// https://stackoverflow.com/questions/54893063/glew-causes-screen-to-flicker-between-red-and-black-glad-works
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return;
+	}
+	glfwSwapInterval(1);
+	while (!glfwWindowShouldClose(window))
+	{
+		// Render Scene
+		// ------
+		mu.lock();
+		if(window_resized){
+			for(const auto& w : gui_widget_container.get_container()){
+				if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
+					w->width = scrWidth;
+					w->resize();
+				}
+			}
+			window_resized = false;
+		}
+		mu.unlock();
+		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+		// -------------------------------------------------------------------------------
+		glClear(GL_COLOR_BUFFER_BIT);
+		render_scene();
+		glfwSwapBuffers(window);
+	}
+	glfwMakeContextCurrent(NULL);
+}
+
+void console_input_loop();
 static inline void run_data_analysis()
 {
 	fe.fNodes.clear();
 	fe.fElements.clear();
 	printf("Running truss analysis...\n");
 	printf("Geometry definition stage...\n");
-	
-
-	char c=0;
-	while (c != '\n')
-	{
-		putchar(c);
-		c = getchar();
-	}
 
 	printf("Truss node count %d\n", fe.fNodes.size());
 	printf("Truss element count %d\n", fe.fElements.size());
@@ -180,10 +207,34 @@ static inline void run_data_analysis()
 		auto idx1 = vector_findi(nodes, elements[i+1]);
 		content.append(str_format("fe_elems[%d] = {n0=%d,n1=%d}\n", i/2, idx, idx1));
 	}
-
 	printf("Saving to %s\n", FPATH(Project/fem_solver/geometry.lua));
 	writeFile(FPATH(sources/fem_solver/geometry.lua), content);
-	printf("Stage 1 completed\n");
+	printf("Stage 1: geometry definition completed\n");
+	console_thread = new std::thread(console_input_loop);
+}
+
+static inline void console_input_loop(){
+	printf("Boundary conditions stage...\n");
+	printf("Specify boundary conditions through command prompt...\n");
+	printf("Type away; press '~' to complete:\n");
+	printf("> ");
+	std::string content = "require(\"truss_structs\")\n";
+	char c = 0;
+	std::string line;
+	while(c != '~'){
+		c = getchar();
+		if (c == '\n') { 
+			printf("> "); 
+			content += line;
+			line.clear(); 
+		}
+		if (c == 127 || c == 8) { line.pop_back(); continue; }
+		line += c;
+	}
+
+	printf("Saving to %s\n", FPATH(Project/fem_solver/boundary.lua));
+	writeFile(FPATH(sources/fem_solver/boundary.lua), content);
+	printf("Stage 2: boundary conditions setup completed\n");
 	printf("--END--\n");
 }
 
@@ -213,12 +264,13 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
-	for(const auto& w : gui_widget_container.get_container()){
+	/*for(const auto& w : gui_widget_container.get_container()){
 		if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
 			w->width = scrWidth;
 			w->resize();
 		}
-	}
+	}*/
+	window_resized = true;
 	glViewport(0, 0, width, height);
 }
 
