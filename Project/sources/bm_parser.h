@@ -112,6 +112,6 @@ inline void static parse_bm_font_descriptor(const char * file_path, Font* font)
 	}
 	//Character chr = (*characters)['F'];
 	/*printf("id:%d, x:%d, y:%d, w:%d, h:%d, xoffset:%d, yoffset:%d, xadvance:%d\n", chr.id, chr.x, chr.y, chr.width, chr.height, chr.xoffset, chr.yoffset, chr.xadvance);*/
-	printf("size:%d, line h:%d, spacing: %d, %d\n", font->size, font->lspacing, font->hspacing, font->vspacing);
+	//printf("size:%d, line h:%d, spacing: %d, %d\n", font->size, font->lspacing);
 	infile.close();
 }
