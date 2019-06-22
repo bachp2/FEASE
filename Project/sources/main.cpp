@@ -18,6 +18,7 @@ extern "C"
 #include <obj_loader.h>
 #include <file_system.h>
 #include <thread>
+#include <mutex>
 #include "fease_draw.h"
 #include "text_render.h"
 #include "shader_manager.h"
@@ -85,7 +86,8 @@ GLFWwindow* initApp();
 GLFWwindow* window;
 std::thread* console_thread = nullptr;
 std::vector< glm::vec3 > obj_vertices;
-
+std::mutex mu;
+bool window_resized = false;
 int main(int, char**)
 {
 	
@@ -124,6 +126,7 @@ int main(int, char**)
 		processInput(window);
 		glfwWaitEvents();
 	}
+	// to do tidy this up, hidden state everywhere
 	if(console_thread) {
 		console_thread->join();
 		delete console_thread;
@@ -152,13 +155,22 @@ void inline static render_loop(){
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return;
 	}
-	glfwSwapInterval( 1 );
+	glfwSwapInterval(1);
 	while (!glfwWindowShouldClose(window))
 	{
 		// Render Scene
 		// ------
-		
-
+		mu.lock();
+		if(window_resized){
+			for(const auto& w : gui_widget_container.get_container()){
+				if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
+					w->width = scrWidth;
+					w->resize();
+				}
+			}
+			window_resized = false;
+		}
+		mu.unlock();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -198,11 +210,7 @@ static inline void run_data_analysis()
 	printf("Saving to %s\n", FPATH(Project/fem_solver/geometry.lua));
 	writeFile(FPATH(sources/fem_solver/geometry.lua), content);
 	printf("Stage 1: geometry definition completed\n");
-
-	//console_input_loop();
 	console_thread = new std::thread(console_input_loop);
-	//std::thread idle_renderer(idle_render_loop);
-	//idle_renderer.join();
 }
 
 static inline void console_input_loop(){
@@ -256,12 +264,13 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
-	for(const auto& w : gui_widget_container.get_container()){
+	/*for(const auto& w : gui_widget_container.get_container()){
 		if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
 			w->width = scrWidth;
 			w->resize();
 		}
-	}
+	}*/
+	window_resized = true;
 	glViewport(0, 0, width, height);
 }
 

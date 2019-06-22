@@ -55,6 +55,7 @@ public:
 	virtual void move(float _x, float _y);
 	
 	void resize(){
+		//glfwMakeContextCurrent(window);
 		float vertices[] = {
 			0, 0, 0.0f,
 			width, height, 0.0f,
@@ -75,7 +76,8 @@ public:
 		glEnableVertexAttribArray(0);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		//glfwMakeContextCurrent(NULL);
 	}
 
 	enum WidgetType;
