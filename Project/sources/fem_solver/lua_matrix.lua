@@ -122,7 +122,12 @@ function matrix:new( rows, columns, value )
 	if type( rows ) == "table" then
 		-- check for vector
 		if type(rows[1]) ~= "table" then -- expect a vector
-			return setmetatable( {{rows[1]},{rows[2]},{rows[3]}},matrix_meta )
+			local mtx = {}
+			for i=1,#rows do
+				mtx[i] = {rows[i]}
+			end
+			return setmetatable( mtx, matrix_meta )
+			--return setmetatable( {{rows[1]},{rows[2]},{rows[3]},{rows[4]}},matrix_meta )
 		end
 		return setmetatable( rows,matrix_meta )
 	end
@@ -159,6 +164,19 @@ end
 -- for matrix( ... ) as matrix.new( ... )
 setmetatable( matrix, { __call = function( ... ) return matrix.new( ... ) end } )
 
+
+
+function zeros(rows, cols)
+	return matrix(rows,cols)
+end
+
+function ones(rows, cols)
+	return matrix(rows, cols, 1)
+end
+
+function size(mtx)
+	return #mtx, #mtx[1]
+end
 
 -- functions are designed to be light on checks
 -- so we get Lua errors instead on wrong input
@@ -500,6 +518,8 @@ end
 -- on failure: returns nil,'rank of matrix'
 function matrix.invert( m1 )
 	assert(#m1 == #m1[1], "matrix not square")
+	--I should fizx this later
+	--local mtx = m1
 	local mtx = matrix.copy( m1 )
 	local ident = setmetatable( {},matrix_meta )
 	local e = m1[1][1]
@@ -513,6 +533,7 @@ function matrix.invert( m1 )
 		end
 	end
 	mtx = matrix.concath( mtx,ident )
+	--print(matrix.tostring(mtx, "%.5f"))
 	local done,rank = matrix.dogauss( mtx )
 	if done then
 		return matrix.subm( mtx, 1,(#mtx[1]/2)+1,#mtx,#mtx[1] )
