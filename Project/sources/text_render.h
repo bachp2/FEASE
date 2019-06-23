@@ -28,7 +28,8 @@ public:
 
 	//void render(std::string str);
 
-	void writeBitmap(std::string str, int px, int py);
+	void print_to_screen(const std::string& str, int px, int py);
+	void print_to_screen(const std::string& str, int px, int py, Color color);
 	//void writeBitmap(std::string str, int px, int py, Color c);
 	TextPainter(const TextPainter&) = default;
 	TextPainter& operator=(const TextPainter&) = default;
