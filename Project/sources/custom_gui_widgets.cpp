@@ -111,7 +111,12 @@ void WidgetContainer::_list_bump_member(WidgetIter & n1)
 int last_index = 0;
 void cMainMenuBar::update()
 {
-	if (!hit_test(mouse_event_listener._cx, mouse_event_listener._cy)) return;
+	if (!hit_test(mouse_event_listener._cx, mouse_event_listener._cy)) {
+		delete highlighter;
+		highlighter = nullptr;
+		last_index = -1;
+		return;
+	}
 
 	int index = test_item_hit(mouse_event_listener._cx, mouse_event_listener._cy);
 
