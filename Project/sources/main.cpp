@@ -115,7 +115,7 @@ int main(int, char**)
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
+		
 		if (mouse_event_listener.agenda == Mouse_Agenda::RUN_ANALYSIS && mouse_event_listener.state == Mouse_State::NIL) {
 			// if condition allows one click only
 			run_data_analysis();
@@ -132,16 +132,18 @@ int main(int, char**)
 		delete console_thread;
 	}
 	main_renderer.join();
+	
+	//gui_widget_container.~WidgetContainer();
+
 	glDeleteVertexArrays(1, &VAO_point);
 	//glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &VBO_point);
 	axisLines.cleanup();
 	grid.cleanup();
-	for(auto& o : obj_model_container){
-		delete o;
-	}
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
+	
 	return 0;
 }
 
@@ -160,7 +162,7 @@ void inline static render_loop(){
 	{
 		// Render Scene
 		// ------
-		mu.lock();
+		
 		if(window_resized){
 			for(const auto& w : gui_widget_container.get_container()){
 				if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
@@ -169,15 +171,28 @@ void inline static render_loop(){
 				}
 			}
 			window_resized = false;
+
 		}
-		mu.unlock();
+		if (mouse_event_listener.right_click_once() && mouse_event_listener.agenda != POPOPEN_SELECT){
+			printf("new popup\n");
+
+			auto mx = mouse_event_listener._cx;
+			auto my = mouse_event_listener._cy;
+			auto a = new cPopupMenu(mx, my, 50, 100);
+			gui_widget_container.push_back(a);
+			mouse_event_listener.agenda = POPOPEN_SELECT;
+			printf("pushed back\n");
+		}
+		//gui_widget_container.empty_wastes();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glClear(GL_COLOR_BUFFER_BIT);
 		render_scene();
 		glfwSwapBuffers(window);
 	}
+	
 	glfwMakeContextCurrent(NULL);
+	//std::terminate();
 }
 
 void console_input_loop();
@@ -275,12 +290,12 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 }
 
 
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
 
+//---------------------------------------------------------------------------------------------
+// MOUSE BUTTON CALLBACK FUNCTION
+//---------------------------------------------------------------------------------------------
 bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim);
 bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
-
 void inline mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	
@@ -338,9 +353,20 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			}
 		}
 	}
-	
+	if(mouse_event_listener.left_click() && mouse_event_listener.agenda == POPOPEN_SELECT){
+		mu.lock();
+		mouse_event_listener.agenda == ADD_NODE;
+		auto g = gui_widget_container.pop_back();
+		delete g;
+		mu.unlock();
+	}
 }
 
+//---------------------------------------------------------------------------------------------
+// MOUSE MOVEMENT CALLBACK FUNCTION
+//---------------------------------------------------------------------------------------------
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
 bool firstMouse = true;
 static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
@@ -361,7 +387,6 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	if (mouse_event_listener.state == CLICK) {
 		mouse_event_listener.state = DRAG;
-		//printf("dragging a dead mouse!\n");
 	}
 
 	lastX = xpos;
@@ -369,16 +394,23 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	
 	if (mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
 		camera.ProcessMouseMovement(xoffset, yoffset);
+
 	// hit detection when outside of any active widgets
-	gui_widget_container.generic_hit_testing_widgets();
+	//gui_widget_container.generic_hit_testing_widgets();
 
 	/*for(auto& w : gui_widget_container){
 		if(w->moveable && mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
 			w->move(xoffset, -yoffset);
 		}
 	}*/
+	//printf("%.2f %.2f\n", xoffset, yoffset);
+	
 }
 
+
+//---------------------------------------------------------------------------------------------
+// SCROLL CALLBACK FUNCTION
+//---------------------------------------------------------------------------------------------
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 static inline void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -439,10 +471,17 @@ inline static bool numCloseWithin(float num, float lim) {
 	return false;
 }
 
+//---------------------------------------------------------------------------------------------
+// ERROR CALLBACK
+//---------------------------------------------------------------------------------------------
 inline static void glfw_error_callback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
+
+//---------------------------------------------------------------------------------------------
+// PROGRAM INIT FUNCTION
+//---------------------------------------------------------------------------------------------
 
 inline static GLFWwindow* initApp() {
 	// glfw window creation

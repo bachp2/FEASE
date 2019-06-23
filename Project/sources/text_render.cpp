@@ -19,8 +19,8 @@ TextPainter::TextPainter() : _default(Color::Black()), _highlighted(Color::White
 
 void TextPainter::_initfont()
 {
-	parse_bm_font_descriptor(FPATH(resources/ms_font.txt), &font);
-	create_texture(&font.texture, FPATH(resources/ms_font.png));
+	parse_bm_font_descriptor(FPATH(resources/ms_font.fnt), &font);
+	create_texture(&font.texture, FPATH(resources/ms_font_0.png), false);
 }
 
 void TextPainter::set_text_color(Color c){

@@ -1,5 +1,6 @@
 #include "custom_gui_widgets.h"
-
+#include <mutex>
+extern std::mutex mu;
 bool GUIForm::hit_test(int mx, int my)
 {
 	int x0 = x; int x1 = x + width;
@@ -174,6 +175,11 @@ void cMainMenuBar::update()
 	}
 }
 
+//---------------------------------------------------------
+// RENDER VIRTUAL FUCNTIONS
+//---------------------------------------------------------
+
+// GENERIC GUIFORM
 void GUIForm::render(Shader * s)
 {
 	//glDisable(GL_CULL_FACE);
@@ -192,13 +198,14 @@ void GUIForm::render(Shader * s)
 	glEnable(GL_DEPTH_TEST);
 	
 }
-
+// HELP TEXTBOX
 void cHelpText::render(Shader * s)
 {
 	GUIForm::render(s);
-	painter->writeBitmap(text, x, y); //to do: get skip line length
+	if(painter) painter->writeBitmap(text, x, y); //to do: get skip line length
 }
 
+// MAIN MENU BAR
 void cMainMenuBar::render(Shader * s)
 {
 	GUIForm::render(s);
@@ -219,6 +226,13 @@ void cMainMenuBar::render(Shader * s)
 	}
 }
 
+// POPUP MENU
+void cPopupMenu::render(Shader * s)
+{
+	GUIForm::render(s);
+}
+
+// HIGHTLIGHT SELECTOR
 void cHightLightBox::render(Shader * s)
 {
 	GUIForm::render(s);

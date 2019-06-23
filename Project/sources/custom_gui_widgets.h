@@ -6,6 +6,7 @@
 #include "mouse_listener.h"
 #include "text_render.h"
 #include "shader_manager.h"
+#include <memory>
 #include <list>
 
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
@@ -91,25 +92,48 @@ public:
 	float x, y;
 	unsigned int width, height;
 	Color color;
-	bool draggable = false;
+	std::atomic<bool> draggable = false;
 	enum WidgetType{
 		_FORM, _HELPER,
 		_MAIN_MENU,
 		_DROP_DOWN,
-		_TEXTURE_QUAD
+		_TEXTURE_QUAD,
+		_POP_UP_MENU
 	};
 };
 
 class WidgetContainer {
 	using WidgetIter = std::list<GUIForm*>::iterator;
 	std::list<GUIForm*> gui_widget_container;
+	std::list<GUIForm*> to_be_deleted_objs;
 	void _list_swap_member(WidgetIter& n1, WidgetIter& n2);
 	void _list_bump_member(WidgetIter& n1);
 public:
-	void push_back(GUIForm* g) { gui_widget_container.push_back(g); };
+	void push_back(GUIForm* g) { 
+		gui_widget_container.push_back(g); 
+		printf("%d\n", gui_widget_container.size());
+	};
+	GUIForm* pop_back(){
+		GUIForm* g = gui_widget_container.back();
+		
+		//delete g;
+		//g = nullptr;
+		gui_widget_container.pop_back();
+		printf("%d\n", gui_widget_container.size());
+		//delete_this(g);
+		return g;
+	}
+	void delete_this(GUIForm* ptr) { to_be_deleted_objs.push_back(ptr); }
+	void empty_wastes(){
+		for(auto& p : to_be_deleted_objs)
+		{
+			if(p) delete p;
+		}
+	}
+
 	void update_widgets();
 	void render_widgets();
-	const std::list<GUIForm*> get_container() { return gui_widget_container; };
+	const std::list<GUIForm*>& get_container() { return gui_widget_container; };
 	~WidgetContainer() {
 		for(auto& w : gui_widget_container){
 			delete w;
@@ -159,14 +183,14 @@ public:
 			{
 				tq = TextureQuad(xx, this->y+text_menu_height, 1, isize);
 				xx += 1;
-				if (!separator) separator = new Texture(path + icon_names[i] + ".png", true);
+				if (!separator) separator = new Texture(path + icon_names[i] + ".png", false);
 				tq.set_texture_ptr(separator);
 			}
 			else
 			{
 				tq = TextureQuad(xx, this->y+text_menu_height, isize, isize);
 				xx += isize;
-				tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", true));
+				tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", false));
 			}
 			icon_buttons.push_back(tq);
 		}
@@ -241,22 +265,6 @@ public:
 	
 };
 
-class cMenuBar : public GUIForm {
-	TextPainter* painter;
-	cHightLightBox* highlighter = nullptr;
-public:
-	cMenuBar(int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = 19, Color _c = hexCodeToRGB("#C0C0C0")) : GUIForm(_x, _y, _w, _h, _c)
-	{};
-	void setPainter(TextPainter* tp){
-		painter = tp;
-	}
-	void render(Shader* s);
-
-	void move(float _x, float _y);
-
-	void update();
-};
-
 class cHelpText : public GUIForm {
 public:
 	cHelpText(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c)
@@ -284,6 +292,19 @@ private:
 	TextPainter* painter;
 };
 
+class cPopupMenu : public GUIForm {
+public:
+	cPopupMenu(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : GUIForm(_x, _y, _w, _h, _c)
+	{};
+
+	void render(Shader* s);
+
+	WidgetType type(){
+		return _POP_UP_MENU;
+	}
+private:
+
+};
 
 class cButton : public GUIForm
 {

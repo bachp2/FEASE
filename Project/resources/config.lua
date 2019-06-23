@@ -23,5 +23,5 @@ grid = {
 }
 
 text = {
-	color = "#000000"
+	color = "#1c1c1c"
 }
