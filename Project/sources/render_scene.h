@@ -23,6 +23,8 @@ inline static void setup_scene() {
 
 	configTable = ConfigParser(FPATH(resources/config.lua));
 
+	//configTable.initialize_shader_program_from_config(&shaderTable, FPATH(resources/config.lua));
+
 	shaderTable.emplaceShader("bitmapped_text", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
 	shaderTable.emplaceShader("texture", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/texture.fs));
 	shaderTable.emplaceShader("solid", FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));

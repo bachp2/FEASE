@@ -42,44 +42,63 @@ ConfigParser::ConfigParser(const char* path)
 		for(const std::string& t : table_vars){
 			lua_lookupTable(L, t.c_str(), "color");
 		}
-		
+	}
+	lua_close(L);
+}
 
+void ConfigParser::initialize_shader_program_from_config(ShaderManager* sm, const char* path)
+{
+	lua_State *L = luaL_newstate();
+	luaL_openlibs(L);
+	if( CheckLua(L, luaL_dofile(L, path)) ){
 		lua_getglobal(L, "shader_paths");
 		if(lua_istable(L, -1)){
-			lua_pushstring(L, "text_shader");
-			lua_gettable(L, -2);
-			if(lua_isnil(L, -1)){
-				//printf("return nil value\n");
-				lua_pop(L, 1);
-				return;
-			}
-			if(lua_istable(L,-1)){
-				lua_pushstring(L, "nid");
+			const char* shaders[] = {
+				"text_shader",
+				"solid_shader",
+				"object_shader"
+			};
+
+			std::string nid, vspath, fspath;
+			for(auto& s : shaders)
+			{
+				lua_pushstring(L, s);
 				lua_gettable(L, -2);
 				if(lua_isnil(L, -1)){
 					//printf("return nil value\n");
 					lua_pop(L, 1);
 					return;
 				}
-				printf("%s\n", lua_tostring(L, -1));
-				lua_pop(L, 1);
 
-				lua_rawgeti(L, -1, 1);
-				printf("%s\n", lua_tostring(L, -1));
-				lua_pop(L, 1);
+				if(lua_istable(L,-1)){
+					lua_pushstring(L, "nid");
+					lua_gettable(L, -2);
+					if(lua_isnil(L, -1)){
+						//printf("return nil value\n");
+						lua_pop(L, 1);
+						return;
+					}
+					//printf("%s\n", lua_tostring(L, -1));
+					nid = lua_tostring(L, -1);
+					lua_pop(L, 1);
 
-				lua_rawgeti(L, -1, 2);
-				printf("%s\n", lua_tostring(L, -1));
-				lua_pop(L, 1);
+					lua_rawgeti(L, -1, 1);
+					//printf("%s\n", lua_tostring(L, -1));
+					vspath = lua_tostring(L, -1);
+					lua_pop(L, 1);
+
+					lua_rawgeti(L, -1, 2);
+					//printf("%s\n", lua_tostring(L, -1));
+					fspath = lua_tostring(L, -1);
+					lua_pop(L, 1);
+				}
+				sm->emplaceShader(nid, vspath, fspath);
 			}
 			lua_pop(L, 1);
+
 		}
 	}
 	lua_close(L);
-}
-
-void ConfigParser::initialize_shader_program_from_config()
-{
 }
 
 Color ConfigParser::getColor(std::string n)
