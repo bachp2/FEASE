@@ -19,7 +19,7 @@ public:
 	~ConfigParser();
 
 	Color getColor(std::string n);
-
+	void initialize_shader_program_from_config();
 private:
 	std::map<std::string, Color> colorPallete;
 	inline void lua_lookupTable(lua_State *L, const char *name, const char *key);

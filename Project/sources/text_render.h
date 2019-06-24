@@ -14,6 +14,7 @@
 #include <glm/gtx/rotate_vector.hpp>
 
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
+extern int scrWidth, scrHeight;
 
 class TextPainter {
 	unsigned int vbo, vao, ebo;
@@ -30,7 +31,9 @@ public:
 
 	void print_to_screen(const std::string& str, int px, int py);
 	void print_to_screen(const std::string& str, int px, int py, Color color);
-	//void writeBitmap(std::string str, int px, int py, Color c);
+	void print_to_world(const std::string& str, float px, float py, float pz, Color color);
+	void print_to_world(const std::string& str, float px, float py, float pz);
+
 	TextPainter(const TextPainter&) = default;
 	TextPainter& operator=(const TextPainter&) = default;
 	void _initfont();

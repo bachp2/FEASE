@@ -5,7 +5,7 @@
 #include "color.h"
 #include "shader_manager.h"
 #include <array>
-
+#include "text_render.h"
 #ifndef PI
 #define PI 3.14159265358979323846
 #define TAU 2*PI
@@ -85,6 +85,7 @@ inline void vector_insert(std::vector<Node>& nv, Node n) {
 	nv.push_back(n);
 }
 
+extern TextPainter* text_painter;
 inline void static setup_points() {
 	// set point size
 	glPointSize(5.0f);
@@ -110,7 +111,7 @@ inline void static render_points(ShaderManager* sm) {
 	glEnableVertexAttribArray(0);
 
 	glDrawArrays(GL_POINTS, 0, nodes.size());
-	
+	text_painter->print_to_world("1", 0, 0, 0);
 	glEnable(GL_DEPTH_TEST);
 }
 

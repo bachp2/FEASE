@@ -10,6 +10,8 @@ extern "C"
 #pragma comment(lib, "lua535/liblua53.a")
 #endif
 
+#pragma warning(disable: 4244) // possible loss of data
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad/glad.h>
 

@@ -1,9 +1,17 @@
 
+
 shader_paths = {
-	text_shader = {"resources/shaders/texture.vs", "resources/shaders/text.fs"},
-	solid_shader = {"resources/shaders/solid.vs", "resources/shaders/solid.fs"},
-	object_shader = {"resources/shaders/object.vs", "resources/shaders/object.fs"}
+	-- for rendering text and bitmap icons
+	text_shader = { nid = "bitmap", "resources/shaders/texture.vs", "resources/shaders/text.fs"},
+	-- render line with one of 3 fundamental colors, eg. green, red, blue. Only usecase for this is rendering pointer axes
+	solid_shader = { nid = "sline", "resources/shaders/solid.vs", "resources/shaders/solid.fs"},
+	-- a generic shader to render object
+	object_shader = { nid = "object", "resources/shaders/object.vs", "resources/shaders/object.fs"}
 }
+
+-- print(shader_paths.text_shader.shader_id)
+-- print(shader_paths.text_shader[1])
+-- print(shader_paths.text_shader[2])
 
 dot = { 
 	color = "#FF002D"

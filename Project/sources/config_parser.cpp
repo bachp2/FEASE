@@ -42,8 +42,44 @@ ConfigParser::ConfigParser(const char* path)
 		for(const std::string& t : table_vars){
 			lua_lookupTable(L, t.c_str(), "color");
 		}
+		
+
+		lua_getglobal(L, "shader_paths");
+		if(lua_istable(L, -1)){
+			lua_pushstring(L, "text_shader");
+			lua_gettable(L, -2);
+			if(lua_isnil(L, -1)){
+				//printf("return nil value\n");
+				lua_pop(L, 1);
+				return;
+			}
+			if(lua_istable(L,-1)){
+				lua_pushstring(L, "nid");
+				lua_gettable(L, -2);
+				if(lua_isnil(L, -1)){
+					//printf("return nil value\n");
+					lua_pop(L, 1);
+					return;
+				}
+				printf("%s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+
+				lua_rawgeti(L, -1, 1);
+				printf("%s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+
+				lua_rawgeti(L, -1, 2);
+				printf("%s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			lua_pop(L, 1);
+		}
 	}
 	lua_close(L);
+}
+
+void ConfigParser::initialize_shader_program_from_config()
+{
 }
 
 Color ConfigParser::getColor(std::string n)

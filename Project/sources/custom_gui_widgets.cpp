@@ -1,6 +1,8 @@
 #include "custom_gui_widgets.h"
-#include <mutex>
-extern std::mutex mu;
+//#include <mutex>
+//extern std::mutex mu;
+
+
 bool GUIForm::hit_test(int mx, int my)
 {
 	int x0 = x; int x1 = x + width;
@@ -202,7 +204,7 @@ void GUIForm::render(Shader * s)
 void cHelpText::render(Shader * s)
 {
 	GUIForm::render(s);
-	if(painter) painter->writeBitmap(text, x, y); //to do: get skip line length
+	if(painter) painter->print_to_screen(text, x, y); //to do: get skip line length
 }
 
 // MAIN MENU BAR
@@ -217,8 +219,8 @@ void cMainMenuBar::render(Shader * s)
 	auto cx = padding;
 	auto cy = 2;//to do: get skip line length
 	for(const auto& str : menu_items){
-		if(highlight_info.highlight) painter->writeBitmap(str, cx, cy);
-		else painter->writeBitmap(str, cx, cy);
+		if(highlight_info.highlight) painter->print_to_screen(str, cx, cy);
+		else painter->print_to_screen(str, cx, cy);
 		cx += padding*2+painter->get_str_length(str);
 	}
 	for(auto &a : icon_buttons){
