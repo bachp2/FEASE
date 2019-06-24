@@ -8,8 +8,9 @@ shader_paths = {
 	-- a generic shader to render object
 	object_shader = { nid = "object", "resources/shaders/object.vs", "resources/shaders/object.fs"}
 }
-
--- print(shader_paths.text_shader.shader_id)
+-- local str = debug.getinfo(2, "S").source:sub(2)
+-- print(str:match("(.*[/\\])")
+-- -- print(shader_paths.text_shader.shader_id)
 -- print(shader_paths.text_shader[1])
 -- print(shader_paths.text_shader[2])
 

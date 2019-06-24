@@ -22,6 +22,7 @@ class TextPainter {
 	//stbtt_bakedchar cdata[96]; // ASCII 32..126 is 95 glyphs
 	//GLuint ftex;
 	Font font;
+	Font font2;
 public:
 	TextPainter();
 
@@ -37,7 +38,7 @@ public:
 	TextPainter(const TextPainter&) = default;
 	TextPainter& operator=(const TextPainter&) = default;
 	void _initfont();
-
+	void _initSecondaryFont();
 	void set_text_color(Color c);
 
 	int get_str_length(const std::string& str){

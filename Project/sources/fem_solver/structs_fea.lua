@@ -105,7 +105,26 @@ function get_forces_vector(f,c)
 	return _f
 end	
 
--- mtx = matrix{{1,2,3},{4,5,6},{7,8,9}}
--- for i=1,#mtx do 
--- 	print(mtx[i][1])
--- end
+function calc_axial_strain(U, constraints, elems, thetas)
+	local strains = zeros(#elems,1)
+	for i = 1,#constraints do
+		table.insert(U, constraints[i]*2-1, {0})
+		table.insert(U, constraints[i]*2, {0})
+	end
+	print()
+	print(matrix.tostring(U))
+	print(U[12][1])
+	print()
+	for i=1,#elems do 
+		local u1 = U[elems[i].n0*2-1][1]*math.cos(thetas[i]) + U[elems[i].n0*2][1]*math.sin(thetas[i])
+		local u2 = U[elems[i].n1*2-1][1]*math.cos(thetas[i]) + U[elems[i].n1*2][1]*math.sin(thetas[i]) 
+		-- print(elems[i].n0.." "..elems[i].n1)
+		-- local u1 = U[elems[i].n0*2-1][1] + U[elems[i].n0*2][1]
+		-- local u2 = U[elems[i].n1*2-1][1] + U[elems[i].n1*2][1]
+		strains[i][1] = (u2-u1)/elem_length(elems[i])
+		--print(strains[i])
+	end
+	--print(matrix.tostring(strains))
+	return strains
+end
+

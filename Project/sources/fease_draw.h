@@ -111,7 +111,10 @@ inline void static render_points(ShaderManager* sm) {
 	glEnableVertexAttribArray(0);
 
 	glDrawArrays(GL_POINTS, 0, nodes.size());
-	text_painter->print_to_world("1", 0, 0, 0);
+	for (auto i = 0; i < nodes.size(); ++i ) {
+		//printf("%.2f %.2f %.2f\n", nodes[i].x, nodes[i].y, nodes[i].z);
+		text_painter->print_to_world(std::to_string(i+1), nodes[i].x, nodes[i].y, nodes[i].z);
+	}
 	glEnable(GL_DEPTH_TEST);
 }
 
