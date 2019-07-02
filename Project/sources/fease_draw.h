@@ -100,7 +100,7 @@ inline void static render_points(ShaderManager* sm) {
 	glDisable(GL_DEPTH_TEST);
 	Shader* shader = sm->getShader("object");
 	shader->use();
-	shader->setColor("color", configTable.getColor("dot"));
+	shader->setColor("color", configTable.color("dot"));
 	
 	glBindVertexArray(VAO_point);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_point);
@@ -209,7 +209,7 @@ inline static void render_lines(ShaderManager* sm){
 	
 	glLineWidth(1.0f);
 
-	s->setColor("color", configTable.getColor("line"));
+	s->setColor("color", configTable.color("line"));
 
 	int elementsSize = (elements.size() % 2 == 0) ? elements.size() : elements.size() - 1;
 
@@ -341,7 +341,7 @@ struct Grid {
 		shader->setMat4("projection", proj);
 		shader->setMat4("view", view);
 		shader->setMat4("model", glm::mat4(1.0f));
-		shader->setColor("color", configTable.getColor("grid"));
+		shader->setColor("color", configTable.color("grid"));
 		glLineWidth(0.5f);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_LINES, 0, vertices_size);

@@ -7,7 +7,7 @@ extern ArcBallCamera camera;
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
 
 extern ShaderManager shaderTable;
-extern MouseListener mouse_event_listener;
+extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
 extern TextPainter* text_painter;
 //terry cube
@@ -16,7 +16,7 @@ extern unsigned int VBO, VAO;
 extern std::vector<OBJModel*> obj_model_container;
 extern ConfigParser configTable;
 //extern std::vector<GUIForm*> gui_widget_container;
-extern WidgetContainer gui_widget_container;
+extern FormContainer gui_container;
 //#define STR(x) #x
 Texture texture;
 
@@ -59,19 +59,19 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	text_painter = new TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
+	text_painter = new TextPainter(shaderTable.getShader("bitmapped_text"), configTable.color("text"));
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
 	
-	auto menu_bar = new cMainMenuBar(icon_names);
+	auto menu_bar = new MainMenu(icon_names);
 	menu_bar->setPainter(text_painter);
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
-	gui_widget_container.push_back((GUIForm *)menu_bar);
+	gui_container.push_back((Form *)menu_bar);
 
 	auto text_box = new cHelpText(30, 50, 400, 400);
 	text_box->setPainter(text_painter);
 	text_box->include_text("the quick brown fox jumps oer the laz dog");
-	gui_widget_container.push_back((GUIForm *) text_box);
+	gui_container.push_back((Form *) text_box);
 	
 	// cartesian axis lines
 	axisLines.setup(&camera);
@@ -167,7 +167,7 @@ static inline void render_scene() {
 	// draw axis lines
 	axisLines.render(&shaderTable, scrWidth, scrHeight);
 
-	gui_widget_container.update_widgets();
-	gui_widget_container.render_widgets();
+	gui_container.update_widgets();
+	gui_container.render_widgets();
 }
 

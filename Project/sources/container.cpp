@@ -1,11 +1,11 @@
 #include "custom_gui_widgets.h"
-void WidgetContainer::update_widgets()
+void FormContainer::update_widgets()
 {
-	auto mx = mouse_event_listener._cx;
-	auto my = mouse_event_listener._cy;
-	if (mouse_event_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT)){
+	auto mx = mouse_listener._cx;
+	auto my = mouse_listener._cy;
+	if (mouse_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT)){
 		//printf("Clicked\n");
-		for (WidgetIter it = gui_widget_container.end(); it != gui_widget_container.begin(); )
+		for (FormIter it = gui_widget_container.end(); it != gui_widget_container.begin(); )
 		{
 			--it;
 			if((*it)->hit_test(mx, my))
@@ -20,24 +20,24 @@ void WidgetContainer::update_widgets()
 		mouseInteractWithWidget = false;
 	}
 
-	if(mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT))
+	if(mouse_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT))
 	{
-		auto dx = mouse_event_listener._dx;
-		auto dy = mouse_event_listener._dy;
+		auto dx = mouse_listener._dx;
+		auto dy = mouse_listener._dy;
 		auto current_widget = gui_widget_container.back();
 		//sanity check
 		if(current_widget->draggable)
 		{
 			mu.lock();
 			current_widget->move(dx, -dy);
-			mouse_event_listener._dx = 0;
-			mouse_event_listener._dy = 0;
+			mouse_listener._dx = 0;
+			mouse_listener._dy = 0;
 			printf("dragged %.2f, %.2f\n", dx, dy);
 			mu.unlock();
 		}
 	}
 
-	if (mouse_event_listener.nilState()) 
+	if (mouse_listener.nilState()) 
 	{
 		// safe check
 		auto current_widget = gui_widget_container.back();
@@ -51,10 +51,10 @@ void WidgetContainer::update_widgets()
 	//mouseInteractWithWidget = false;
 }
 
-void WidgetContainer::generic_hit_testing_widgets(){
-	auto mx = mouse_event_listener._cx;
-	auto my = mouse_event_listener._cy;
-	for (WidgetIter it = gui_widget_container.end(); it != gui_widget_container.begin(); )
+void FormContainer::generic_hit_testing_widgets(){
+	auto mx = mouse_listener._cx;
+	auto my = mouse_listener._cy;
+	for (FormIter it = gui_widget_container.end(); it != gui_widget_container.begin(); )
 	{
 		--it;
 		if((*it)->hit_test(mx, my))
@@ -66,7 +66,7 @@ void WidgetContainer::generic_hit_testing_widgets(){
 	}
 }
 
-void WidgetContainer::render_widgets()
+void FormContainer::render_widgets()
 {
 	Shader* s = shaderTable.getShader("2D");
 	for(auto& w : gui_widget_container){
@@ -75,16 +75,16 @@ void WidgetContainer::render_widgets()
 	if (popup_menu) popup_menu->render(s);
 }
 
-void WidgetContainer::_list_swap_member(WidgetIter& n1, WidgetIter& n2)
+void FormContainer::_list_swap_member(FormIter& n1, FormIter& n2)
 {
-	GUIForm* tmp = *n1;
+	Form* tmp = *n1;
 	*n1 = *n2;
 	*n2 = tmp;
 }
 
-void WidgetContainer::_list_bump_member(WidgetIter & n1)
+void FormContainer::_list_bump_member(FormIter & n1)
 {
-	GUIForm* tmp = *n1;
+	Form* tmp = *n1;
 	gui_widget_container.erase(n1);
 	gui_widget_container.push_back(tmp);
 }

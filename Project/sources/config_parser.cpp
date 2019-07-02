@@ -101,11 +101,15 @@ void ConfigParser::initialize_shader_program_from_config(ShaderManager* sm, cons
 	lua_close(L);
 }
 
-Color ConfigParser::getColor(std::string n)
-{	
-	return colorPallete[n];
+Color ConfigParser::color(std::string n)
+{
+	auto it = colorPallete.find(n);
+	if (it == colorPallete.end())
+		printf("ERROR: invalid key no color return\n");
+	return it->second;
 }
 
 ConfigParser::~ConfigParser()
 {
+
 }

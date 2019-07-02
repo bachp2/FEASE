@@ -8,14 +8,14 @@
 // HELP TEXTBOX
 void cHelpText::render(Shader * s)
 {
-	GUIForm::render(s);
+	Form::render(s);
 	if(painter) painter->print_to_screen(text, x, y); //to do: get skip line length
 }
 
 // POPUP MENU
 void cPopupMenu::render(Shader * s)
 {
-	GUIForm::render(s);
+	Form::render(s);
 }
 
 // HIGHTLIGHT SELECTOR

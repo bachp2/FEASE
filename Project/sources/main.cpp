@@ -72,12 +72,12 @@ ShaderManager shaderTable;
 ConfigParser configTable;
 TextPainter* text_painter;
 
-WidgetContainer gui_widget_container;
+FormContainer gui_container;
 //TextureQuad tq;
 unsigned int VBO, VAO;
 std::vector<OBJModel*> obj_model_container;
 FEObject fe;
-MouseListener mouse_event_listener;
+MouseListener mouse_listener;
 
 void run_data_analysis();
 void render_loop();
@@ -118,10 +118,10 @@ int main(int, char**)
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		
-		if (mouse_event_listener.agenda == Mouse_Agenda::RUN_ANALYSIS && mouse_event_listener.state == Mouse_State::NIL) {
+		if (mouse_listener.agenda == Mouse_Agenda::RUN_ANALYSIS && mouse_listener.state == Mouse_State::NIL) {
 			// if condition allows one click only
 			run_data_analysis();
-			mouse_event_listener.agenda = Mouse_Agenda::ADD_NODE;
+			mouse_listener.agenda = Mouse_Agenda::ADD_NODE;
 		}
 
 		// Input
@@ -167,8 +167,8 @@ void inline static render_loop(){
 		// ------
 		
 		if(window_resized){
-			for(const auto& w : gui_widget_container.get_container()){
-				if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
+			for(const auto& w : gui_container.get_container()){
+				if(w->type() == Form::WidgetType::_MAIN_MENU){
 					w->width = scrWidth;
 					w->resize();
 				}
@@ -176,16 +176,16 @@ void inline static render_loop(){
 			window_resized = false;
 
 		}
-		if(mouse_event_listener.left_click()){
-			mouse_event_listener.agenda == ADD_NODE;
-			gui_widget_container.reset_popup();
+		if(mouse_listener.left_click()){
+			mouse_listener.agenda == ADD_NODE;
+			gui_container.reset_popup();
 		}
 
-		if (mouse_event_listener.right_click_once()){
-			auto mx = mouse_event_listener._cx;
-			auto my = mouse_event_listener._cy;
-			if (gui_widget_container.isPopup()) gui_widget_container.reset_popup();
-			gui_widget_container.set_popup(new cPopupMenu(mx, my, 80, 100));
+		if (mouse_listener.right_click_once()){
+			auto mx = mouse_listener._cx;
+			auto my = mouse_listener._cy;
+			if (gui_container.isPopup()) gui_container.reset_popup();
+			gui_container.set_popup(new cPopupMenu(mx, my, 80, 100));
 		}
 
 		//gui_widget_container.empty_wastes();
@@ -305,20 +305,20 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 {
 	
 	if (action == GLFW_PRESS) {
-		mouse_event_listener.button = button;
-		mouse_event_listener.state = CLICK;
+		mouse_listener.button = button;
+		mouse_listener.state = CLICK;
 		//printf("Click\n");
 	}
 	
 
 	if (action == GLFW_RELEASE) {
-		mouse_event_listener.state = NIL;
+		mouse_listener.state = NIL;
 		//printf("Nil\n");
 	} 
 
-	if (mouse_event_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
+	if (mouse_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
 	{
-		if (gui_widget_container.mouseInteractWithWidget) return;
+		if (gui_container.mouseInteractWithWidget) return;
 
 		double mouseX, mouseY;
 		//getting cursor position
@@ -330,7 +330,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		//printf("hit? %d\n", r);
 		//assert(mouseListener.agenda == SELECT_NODE);
 
-		if (mouse_event_listener.agenda == CONNECT_ELE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
+		if (mouse_listener.agenda == CONNECT_ELE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
 			//printf("select node success");
 			glm::ivec2 coord(0);
 			if (selectGrid(coord, hit, lim))
@@ -346,7 +346,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			}
 		}
 
-		if (mouse_event_listener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
+		if (mouse_listener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
 		{
 			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
 			//printf("add node success");
@@ -358,7 +358,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			}
 		}
 	}
-	mouse_event_listener.callback = BUTTON_CALLBACK;
+	mouse_listener.callback = BUTTON_CALLBACK;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -379,19 +379,19 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	mu.lock();
-	mouse_event_listener._cx = xpos;
-	mouse_event_listener._cy = ypos;
-	mouse_event_listener._dx = xoffset;
-	mouse_event_listener._dy = yoffset;
+	mouse_listener._cx = xpos;
+	mouse_listener._cy = ypos;
+	mouse_listener._dx = xoffset;
+	mouse_listener._dy = yoffset;
 	mu.unlock();
-	if (mouse_event_listener.state == CLICK) {
-		mouse_event_listener.state = DRAG;
+	if (mouse_listener.state == CLICK) {
+		mouse_listener.state = DRAG;
 	}
 
 	lastX = xpos;
 	lastY = ypos;
 	
-	if (mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
+	if (mouse_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
 		camera.ProcessMouseMovement(xoffset, yoffset);
 
 	// hit detection when outside of any active widgets
@@ -403,7 +403,7 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		}
 	}*/
 	//printf("%.2f %.2f\n", xoffset, yoffset);
-	mouse_event_listener.callback = MOVING_CALLBACK;
+	mouse_listener.callback = MOVING_CALLBACK;
 	printf("%.2f %.2f\n", xoffset, yoffset);
 }
 

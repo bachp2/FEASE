@@ -18,7 +18,7 @@ public:
 	ConfigParser();
 	~ConfigParser();
 
-	Color getColor(std::string n);
+	Color color(std::string n);
 	void initialize_shader_program_from_config(ShaderManager* sm, const char* path);
 private:
 	std::map<std::string, Color> colorPallete;

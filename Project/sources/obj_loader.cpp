@@ -17,7 +17,7 @@ void OBJModel::render(ShaderManager* sm)
 {
 	auto shader = sm->getShader("object");
 	shader->use();
-	shader->setColor("color", configTable.getColor("line"));
+	shader->setColor("color", configTable.color("line"));
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glBindVertexArray(face_vao);
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -27,7 +27,7 @@ void OBJModel::render(ShaderManager* sm)
 	{
 		glBindVertexArray(line_vao);
 		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		shader->setColor("color", configTable.getColor("arrow_line"));
+		shader->setColor("color", configTable.color("arrow_line"));
 		glDrawElements(GL_LINES, line_indices.size(), GL_UNSIGNED_INT, 0);
 	}
 
