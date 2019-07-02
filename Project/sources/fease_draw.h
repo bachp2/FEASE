@@ -5,7 +5,7 @@
 #include "color.h"
 #include "shader_manager.h"
 #include <array>
-#include "text_render.h"
+#include "text.h"
 #ifndef PI
 #define PI 3.14159265358979323846
 #define TAU 2*PI

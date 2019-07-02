@@ -144,13 +144,17 @@
   <ItemGroup>
     <ClCompile Include="..\dependencies\glad\glad.c" />
     <ClCompile Include="config_parser.cpp" />
+    <ClCompile Include="container.cpp" />
     <ClCompile Include="custom_gui_widgets.cpp" />
     <ClCompile Include="fe_structs.cpp" />
+    <ClCompile Include="form.cpp" />
+    <ClCompile Include="grad_bkgrnd.h" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="main_menu_bar.cpp" />
     <ClCompile Include="obj_loader.cpp" />
     <ClCompile Include="shader_manager.cpp" />
     <ClCompile Include="stb_implement.cpp" />
-    <ClCompile Include="text_render.cpp" />
+    <ClCompile Include="text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bm_parser.h" />
@@ -168,7 +172,7 @@
     <ClInclude Include="render_scene.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shader_manager.h" />
-    <ClInclude Include="text_render.h" />
+    <ClInclude Include="text.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\shaders\object.fs" />

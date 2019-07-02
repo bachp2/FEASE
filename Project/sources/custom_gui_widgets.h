@@ -1,10 +1,9 @@
 #pragma once
 #include "shader.h"
 #include "color.h"
-#include "text_render.h"
+#include "text.h"
 #include "config_parser.h"
 #include "mouse_listener.h"
-#include "text_render.h"
 #include "shader_manager.h"
 #include <memory>
 #include <list>

@@ -19,21 +19,24 @@
     <Filter Include="Source Files\dep">
       <UniqueIdentifier>{be0cb192-5ace-49f1-aae7-76a609227e7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\widgets">
+      <UniqueIdentifier>{37b0a20a-ee2c-491e-a8c0-3608ade67ec0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics">
+      <UniqueIdentifier>{815e894e-260a-4424-b4bf-e56e282a095d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\text">
+      <UniqueIdentifier>{3716c324-5ea2-4ae7-9ae9-f655d3ecf4f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\config">
+      <UniqueIdentifier>{4a588051-2ea9-41ae-b8c0-a30591c22fd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\scene">
+      <UniqueIdentifier>{6c91b285-53fd-461b-b2ed-bdbffbb19e23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="text_render.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="obj_loader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="config_parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="shader_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\dependencies\glad\glad.c">
@@ -45,8 +48,32 @@
     <ClCompile Include="stb_implement.cpp">
       <Filter>Source Files\dep</Filter>
     </ClCompile>
+    <ClCompile Include="main_menu_bar.cpp">
+      <Filter>Source Files\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="container.cpp">
+      <Filter>Source Files\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="form.cpp">
+      <Filter>Source Files\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="text.cpp">
+      <Filter>Source Files\text</Filter>
+    </ClCompile>
+    <ClCompile Include="obj_loader.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="shader_manager.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
     <ClCompile Include="custom_gui_widgets.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="config_parser.cpp">
+      <Filter>Source Files\config</Filter>
+    </ClCompile>
+    <ClCompile Include="grad_bkgrnd.h">
+      <Filter>Header Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -80,9 +107,6 @@
     <ClInclude Include="mouse_listener.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="text_render.h">
-      <Filter>Header Files\core</Filter>
-    </ClInclude>
     <ClInclude Include="create_texture.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
@@ -97,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="bm_parser.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="text.h">
+      <Filter>Header Files\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

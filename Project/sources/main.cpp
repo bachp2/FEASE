@@ -22,7 +22,7 @@ extern "C"
 #include <thread>
 #include <mutex>
 #include "fease_draw.h"
-#include "text_render.h"
+#include "text.h"
 #include "shader_manager.h"
 #include <iostream>
 #include "custom_gui_widgets.h"

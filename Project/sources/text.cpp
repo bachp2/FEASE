@@ -1,5 +1,4 @@
-#include "text_render.h"
-
+#include "text.h"
 #include <memory>
 TextPainter::TextPainter(Shader * s, Color default_c) : _default(default_c), _highlighted(Color::White()) {
 	shader = s;
