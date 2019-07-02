@@ -181,8 +181,9 @@ public:
 			TextureQuad tq;
 			if(icon_names[i] == "separator")	
 			{
-				tq = TextureQuad(xx, this->y+text_menu_height, 1, isize);
-				xx += 1;
+				xx += 5;
+				tq = TextureQuad(xx, this->y+text_menu_height, 2, isize);
+				xx += 5;
 				if (!separator) separator = new Texture(path + icon_names[i] + ".png", false);
 				tq.set_texture_ptr(separator);
 			}

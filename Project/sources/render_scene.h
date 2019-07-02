@@ -52,7 +52,7 @@ inline static void setup_scene() {
 	const std::vector<std::string> icon_names = {
 		"document_new",
 		"document-save",
-		//"separator",
+		"separator",
 		"edit-copy",
 		"edit-cut",
 		"edit-redo",
