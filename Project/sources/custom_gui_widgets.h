@@ -210,7 +210,7 @@ public:
 		icon_buttons.reserve(10);
 		Texture* separator = nullptr;
 		for (int isize = 24, xx = 0, i = 0; i < icon_names.size(); i++) {
-			std::string path = FPATH(resources/gui_icons/);
+			std::string path = FPATH(res/gui_icons/);
 			TextureQuad tq;
 			if(icon_names[i] == "separator")	
 			{

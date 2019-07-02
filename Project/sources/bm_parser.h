@@ -39,6 +39,11 @@ inline void static get_char_quad(CharacterQuad* q, Character& chr, float px, flo
 
 inline void static parse_bm_font_descriptor(const char * file_path, Font* font)
 {
+	if(!checkIfFileExist(file_path)){
+		printf("ERROR: font descriptor not found\n");
+		return;
+	}
+
 	std::ifstream infile(file_path);
 	char ch;
 	std::string word;

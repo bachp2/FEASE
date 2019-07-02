@@ -19,14 +19,14 @@ TextPainter::TextPainter() : _default(Color::Black()), _highlighted(Color::White
 
 void TextPainter::_initfont()
 {
-	parse_bm_font_descriptor(FPATH(resources/ms_font.fnt), &font);
-	create_texture(&font.texture, FPATH(resources/ms_font_0.png), false);
+	parse_bm_font_descriptor(FPATH(res/ms_font.fnt), &font);
+	create_texture(&font.texture, FPATH(res/ms_font_0.png), false);
 }
 
 void TextPainter::_initSecondaryFont()
 {
-	parse_bm_font_descriptor(FPATH(resources/IBM8X8.fnt), &font2);
-	create_texture(&font2.texture, FPATH(resources/IBM8X8_0.png), false);
+	parse_bm_font_descriptor(FPATH(res/IBM8X8.fnt), &font2);
+	create_texture(&font2.texture, FPATH(res/IBM8X8_0.png), false);
 }
 
 void TextPainter::set_text_color(Color c){

@@ -2,6 +2,9 @@
 #include <stb_image.h>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad/glad.h>
+
+#include "file_system.h"
+
 extern glm::mat4 view, model, orthogonal_projection;
 class Texture;
 void create_texture(Texture* texture, const char* filepath, bool mipmap);
@@ -12,6 +15,10 @@ struct Texture{
 	Texture(){}
 
 	Texture(std::string filepath, bool mipmap){
+		if(!checkIfFileExist(filepath)){
+			printf("ERROR: file texture not found\n");
+			return;
+		}
 		create_texture(this, filepath.c_str(), mipmap);
 	}
 };

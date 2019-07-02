@@ -22,16 +22,16 @@ Texture texture;
 inline static void setup_scene() {
 	//colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
-	configTable = ConfigParser(FPATH(resources/config.lua));
+	configTable = ConfigParser(FPATH(res/config.lua));
 
 	//configTable.initialize_shader_program_from_config(&shaderTable, FPATH(resources/config.lua));
 
-	shaderTable.emplaceShader("bitmapped_text", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/text.fs));
-	shaderTable.emplaceShader("texture", FPATH(resources/shaders/texture.vs), FPATH(resources/shaders/texture.fs));
-	shaderTable.emplaceShader("solid", FPATH(resources/shaders/solid.vs), FPATH(resources/shaders/solid.fs));
-	shaderTable.emplaceShader("object", FPATH(resources/shaders/object.vs), FPATH(resources/shaders/object.fs));
-	shaderTable.emplaceShader("2D", FPATH(resources/shaders/_2dobject.vs), FPATH(resources/shaders/object.fs));
-
+	shaderTable.emplaceShader("bitmapped_text", FPATH(res/shaders/texture.vs), FPATH(res/shaders/text.fs));
+	shaderTable.emplaceShader("texture", FPATH(res/shaders/texture.vs), FPATH(res/shaders/texture.fs));
+	shaderTable.emplaceShader("solid", FPATH(res/shaders/solid.vs), FPATH(res/shaders/solid.fs));
+	shaderTable.emplaceShader("object", FPATH(res/shaders/object.vs), FPATH(res/shaders/object.fs));
+	shaderTable.emplaceShader("2D", FPATH(res/shaders/_2dobject.vs), FPATH(res/shaders/object.fs));
+	
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -47,7 +47,6 @@ inline static void setup_scene() {
 	glEnableVertexAttribArray(1);
 
 	text_painter = new TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
-
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
 	const std::vector<std::string> icon_names = {
@@ -63,6 +62,7 @@ inline static void setup_scene() {
 		"node",
 		"media-playback-start"
 	};
+	
 	auto menu_bar = new cMainMenuBar(icon_names);
 	menu_bar->setPainter(text_painter);
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
@@ -88,7 +88,7 @@ inline static void setup_scene() {
 	// load and create a texture 
 	// -------------------------
 	auto textShader = shaderTable.getShader("texture");
-	create_texture(&texture, FPATH(resources/terry.jpg));
+	create_texture(&texture, FPATH(res/terry.jpg));
 	
 	textShader->setInt("texture1", 0);
 
@@ -96,7 +96,7 @@ inline static void setup_scene() {
 	
 
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
-	obj_model_container.push_back( new OBJModel(FPATH(resources/assets/suzanne.obj)) );
+	obj_model_container.push_back( new OBJModel(FPATH(res/assets/suzanne.obj)) );
 	//sphere = model.ToIndexedModel();
 	for (auto& o : obj_model_container){
 		o->render_setup();
@@ -105,8 +105,6 @@ inline static void setup_scene() {
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
 }
-
-static void GradientBackground(float top_r, float top_g, float top_b, float top_a, float bot_r, float bot_g, float bot_b, float bot_a);
 
 static inline void render_scene() {
 	//auto background = colorConfig.pallete["background"];

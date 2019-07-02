@@ -58,6 +58,10 @@ inline static bool checkIfFileExist(const char *name) {
 	return (stat(name, &buffer) == 0);
 }
 
+inline static bool checkIfFileExist(std::string name) {
+	return checkIfFileExist(name.c_str());
+}
+
 inline static void writeFile(const char * path, const std::string& content = "")
 {
 	std::ofstream outfile (path);
