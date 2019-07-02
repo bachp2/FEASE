@@ -886,10 +886,20 @@ function matrix.tostring( mtx, formatstr )
 	local e = mtx[1][1]
 	local tostring = mtype == "tensor" and tensor_tostring or
 	      type(e) == "table" and e.tostring or number_tostring
+
+	local maxstrlen = 0;
+  	for i = 1,#mtx do
+		for j = 1,#mtx[1] do
+			local strlen = string.len(tostring(mtx[i][j],formatstr))
+			if strlen > maxstrlen then maxstrlen = strlen end
+		end
+	end
+
 	for i = 1,#mtx do
 		local tstr = {}
 		for j = 1,#mtx[1] do
-			tstr[j] = tostring(mtx[i][j],formatstr)
+			local strlen = string.len(tostring(mtx[i][j],formatstr))
+			tstr[j] = string.rep(" ", maxstrlen-strlen)..tostring(mtx[i][j],formatstr)
 		end
 		ts[i] = table.concat(tstr, "\t")
 	end

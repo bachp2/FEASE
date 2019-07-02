@@ -1,4 +1,4 @@
-require("default")
+require("geometry")
 local matrix = require("lua_matrix")
 local symbol = matrix.symbol
 
@@ -15,7 +15,7 @@ for i = 1,#fe_elems do
 	theta[i] = elem_angle(fe_elems[i])
 	--print(theta[i]*180/math.pi)
 end
-theta[6] = math.pi*0.75
+-- theta[6] = math.pi*0.75
 
 element_stiffness_matrix = {}
 for i = 1,#fe_elems do
@@ -50,10 +50,14 @@ for i=#fe_constraints,1,-1 do
 		table.remove(K_f[j], fe_constraints[i]*2-1)
 	end
 end
+
+--print(K_f)
+
 force_at_boundary_conds = K_f*U
-print(matrix.tostring(force_at_boundary_conds,"%f"))
+--print(matrix.tostring(force_at_boundary_conds,"%f"))
 
 axial_strains = calc_axial_strain(U, fe_constraints, fe_elems, theta)
 --print(matrix.tostring(axial_strains))
 axial_stresses = E*axial_strains
-print(matrix.tostring(axial_stresses))
+--print(axial_stresses)
+--print("asd".."basdasdasd")
