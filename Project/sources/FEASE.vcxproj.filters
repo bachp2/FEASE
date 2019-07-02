@@ -34,6 +34,12 @@
     <Filter Include="Header Files\scene">
       <UniqueIdentifier>{6c91b285-53fd-461b-b2ed-bdbffbb19e23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\text">
+      <UniqueIdentifier>{6b4ef93a-9e59-486b-9d68-090153eea28c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\graphics">
+      <UniqueIdentifier>{086dfef4-00aa-43cf-94cd-58e798eca5fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -77,17 +83,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="render_scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="config_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shader_manager.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>Header Files\core</Filter>
     </ClInclude>
     <ClInclude Include="color.h">
       <Filter>Header Files\core</Filter>
@@ -95,34 +95,40 @@
     <ClInclude Include="file_system.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="shader.h">
-      <Filter>Header Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="fease_draw.h">
-      <Filter>Header Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="obj_loader.h">
-      <Filter>Header Files\core</Filter>
-    </ClInclude>
     <ClInclude Include="mouse_listener.h">
-      <Filter>Header Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="create_texture.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
     <ClInclude Include="fe_structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="custom_gui_widgets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render_scene.h">
+      <Filter>Header Files\scene</Filter>
+    </ClInclude>
     <ClInclude Include="bm_parser.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\text</Filter>
     </ClInclude>
     <ClInclude Include="text.h">
+      <Filter>Header Files\text</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="create_texture.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="fease_draw.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="obj_loader.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
   </ItemGroup>

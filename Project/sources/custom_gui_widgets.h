@@ -210,21 +210,20 @@ public:
 		icon_buttons.reserve(10);
 		Texture* separator = nullptr;
 		for (int isize = 24, xx = 0, i = 0; i < icon_names.size(); i++) {
-			std::string path = FPATH(res/gui_icons/);
 			TextureQuad tq;
 			if(icon_names[i] == "separator")	
 			{
 				xx += 5;
 				tq = TextureQuad(xx, this->y+text_menu_height, 2, isize);
 				xx += 5;
-				if (!separator) separator = new Texture(path + icon_names[i] + ".png", false);
+				if (!separator) separator = new Texture(ICON_FOLDER + icon_names[i] + ".png", false);
 				tq.set_texture_ptr(separator);
 			}
 			else
 			{
 				tq = TextureQuad(xx, this->y+text_menu_height, isize, isize);
 				xx += isize;
-				tq.set_texture_ptr(new Texture(path + icon_names[i] + ".png", false));
+				tq.set_texture_ptr(new Texture(ICON_FOLDER + icon_names[i] + ".png", false));
 			}
 			icon_buttons.push_back(tq);
 		}

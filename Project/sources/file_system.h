@@ -8,7 +8,11 @@
 #include <stdlib.h>
 #include <direct.h>
 
+#define ICON_FOLDER pathTo("res/gui_icons/")
+
 #define FPATH(X) pathTo(#X).c_str()
+#define RES(X) pathTo("res/" #X).c_str()
+#define SHAD(X) pathTo("res/shaders/" #X).c_str()
 
 //work only for Windows system
 std::string GetFulProjectlPath(const char * partialPath);

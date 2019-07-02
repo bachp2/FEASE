@@ -19,18 +19,31 @@ extern ConfigParser configTable;
 extern WidgetContainer gui_widget_container;
 //#define STR(x) #x
 Texture texture;
-inline static void setup_scene() {
-	//colorConfig.parseColorConfig(FPATH(resources/_config.txt));
 
+static const std::vector<std::string> icon_names = {
+	"document_new",
+	"document-save",
+	"separator",
+	"edit-copy",
+	"edit-cut",
+	"edit-redo",
+	"edit-undo",
+	"separator",
+	"truss",
+	"node",
+	"media-playback-start"
+};
+
+inline static void setup_scene() {
 	configTable = ConfigParser(FPATH(res/config.lua));
 
 	//configTable.initialize_shader_program_from_config(&shaderTable, FPATH(resources/config.lua));
 
-	shaderTable.emplaceShader("bitmapped_text", FPATH(res/shaders/texture.vs), FPATH(res/shaders/text.fs));
-	shaderTable.emplaceShader("texture", FPATH(res/shaders/texture.vs), FPATH(res/shaders/texture.fs));
-	shaderTable.emplaceShader("solid", FPATH(res/shaders/solid.vs), FPATH(res/shaders/solid.fs));
-	shaderTable.emplaceShader("object", FPATH(res/shaders/object.vs), FPATH(res/shaders/object.fs));
-	shaderTable.emplaceShader("2D", FPATH(res/shaders/_2dobject.vs), FPATH(res/shaders/object.fs));
+	shaderTable.emplaceShader("bitmapped_text", SHAD(texture.vs), SHAD(text.fs));
+	shaderTable.emplaceShader("texture", SHAD(texture.vs), SHAD(texture.fs));
+	shaderTable.emplaceShader("solid", SHAD(solid.vs), SHAD(solid.fs));
+	shaderTable.emplaceShader("object", SHAD(object.vs), SHAD(object.fs));
+	shaderTable.emplaceShader("2D", SHAD(_2dobject.vs), SHAD(object.fs));
 	
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -49,19 +62,6 @@ inline static void setup_scene() {
 	text_painter = new TextPainter(shaderTable.getShader("bitmapped_text"), configTable.getColor("text"));
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
-	const std::vector<std::string> icon_names = {
-		"document_new",
-		"document-save",
-		"separator",
-		"edit-copy",
-		"edit-cut",
-		"edit-redo",
-		"edit-undo",
-		"separator",
-		"truss",
-		"node",
-		"media-playback-start"
-	};
 	
 	auto menu_bar = new cMainMenuBar(icon_names);
 	menu_bar->setPainter(text_painter);
