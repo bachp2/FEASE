@@ -31,12 +31,7 @@ F = get_forces_vector(fe_forces, fe_constraints)
 
 K = strike_out_zeros_constraint(global_stiffness_matrix, fe_constraints)
 --F = force_strike_out_zero_constraints(forces_vec, fe_constraints)
-for i=1,#K do
-	for j=1,#K[1] do
-		K[i][j] = tonumber(string.format("%.7f", K[i][j]))
-	end
-end
-U = matrix.invert(K)*F
+U = matrix.invert(K:round(6))*F
 
 K_f = zeros(#fe_constraints*2,matrix.rows(U))
 for i=1,#fe_constraints do
@@ -51,7 +46,7 @@ for i=#fe_constraints,1,-1 do
 	end
 end
 
---print(K_f)
+--print(K_f:round(5))
 
 force_at_boundary_conds = K_f*U
 --print(matrix.tostring(force_at_boundary_conds,"%f"))
