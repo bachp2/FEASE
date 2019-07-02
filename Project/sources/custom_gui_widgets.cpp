@@ -40,10 +40,10 @@ void WidgetContainer::update_widgets()
 				_list_bump_member(it);
 				//printf("hit\n");
 				mouseInteractWithWidget = true;
-				break;
+				return;
 			}
-			mouseInteractWithWidget = false;
 		}
+		mouseInteractWithWidget = false;
 	}
 
 	if(mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT))
@@ -54,9 +54,12 @@ void WidgetContainer::update_widgets()
 		//sanity check
 		if(current_widget->draggable)
 		{
+			mu.lock();
 			current_widget->move(dx, -dy);
 			mouse_event_listener._dx = 0;
 			mouse_event_listener._dy = 0;
+			printf("dragged %.2f, %.2f\n", dx, dy);
+			mu.unlock();
 		}
 	}
 
@@ -95,6 +98,7 @@ void WidgetContainer::render_widgets()
 	for(auto& w : gui_widget_container){
 		w->render(s);
 	}
+	if (popup_menu) popup_menu->render(s);
 }
 
 void WidgetContainer::_list_swap_member(WidgetIter& n1, WidgetIter& n2)
@@ -237,5 +241,18 @@ void cPopupMenu::render(Shader * s)
 // HIGHTLIGHT SELECTOR
 void cHightLightBox::render(Shader * s)
 {
-	GUIForm::render(s);
+	//glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+
+	s->use();
+	glm::mat4 _model = glm::mat4(1.0f);
+	_model = glm::translate(_model, glm::vec3(x, y, 0));
+	s->setMat4("model", _model);
+	s->setMat4("projection", orthogonal_projection);
+	s->setColor("color", color);
+
+	glBindVertexArray(vao);
+	glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
+
+	glEnable(GL_DEPTH_TEST);
 }

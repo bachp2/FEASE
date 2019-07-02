@@ -5,10 +5,16 @@
 #include <GLFW/glfw3.h>
 #include <atomic>
 enum Mouse_State {
-	NIL,//means the same as neutral but I'm too lazy to type such a long word!
+	NIL,
 	CLICK,
 	DRAG,
-	LIMBO //between Heaven and HEll !!
+	LIMBO
+};
+
+enum Mouse_CallBack {
+	BUTTON_CALLBACK,
+	MOVING_CALLBACK,
+	CNIL
 };
 
 enum Mouse_Agenda {
@@ -16,14 +22,14 @@ enum Mouse_Agenda {
 	CONNECT_ELE,
 	SELECT_NODE,
 	RUN_ANALYSIS,
-	POPOPEN_SELECT
 };
 
 struct MouseListener {
 	//note to myself, validate state first
 	Mouse_State state = NIL;
 	Mouse_Agenda agenda = ADD_NODE;
-	std::atomic<int> button=0;
+	Mouse_CallBack callback = CNIL;
+	int button=0;
 	double _cx, _cy; //capture mouse's position from mouse button callback function
 	double _dx, _dy; //capture mouse's vector from mouse callback function
 	inline bool draggedBy(int btn) {
@@ -44,7 +50,13 @@ struct MouseListener {
 
 	inline bool middle_click() { return clickedBy(GLFW_MOUSE_BUTTON_MIDDLE); }
 	inline bool right_click() { return clickedBy(GLFW_MOUSE_BUTTON_RIGHT); }
-	inline bool right_click_once() { return button == GLFW_MOUSE_BUTTON_RIGHT && state == NIL; }
+	inline bool right_click_once() { 
+		auto r = (button == GLFW_MOUSE_BUTTON_RIGHT && state == NIL);
+		if(r) {
+			button = 0;
+		}
+		return r; 
+	}
 	inline bool left_click_once() { return button == GLFW_MOUSE_BUTTON_LEFT && state == NIL; }
 
 	inline bool nilState() {

@@ -123,6 +123,7 @@ int main(int, char**)
 			run_data_analysis();
 			mouse_event_listener.agenda = Mouse_Agenda::ADD_NODE;
 		}
+
 		// Input
 		// -----
 		processInput(window);
@@ -175,16 +176,18 @@ void inline static render_loop(){
 			window_resized = false;
 
 		}
-		if (mouse_event_listener.right_click_once() && mouse_event_listener.agenda != POPOPEN_SELECT){
-			printf("new popup\n");
+		if(mouse_event_listener.left_click()){
+			mouse_event_listener.agenda == ADD_NODE;
+			gui_widget_container.reset_popup();
+		}
 
+		if (mouse_event_listener.right_click_once()){
 			auto mx = mouse_event_listener._cx;
 			auto my = mouse_event_listener._cy;
-			auto a = new cPopupMenu(mx, my, 50, 100);
-			gui_widget_container.push_back(a);
-			mouse_event_listener.agenda = POPOPEN_SELECT;
-			printf("pushed back\n");
+			if (gui_widget_container.isPopup()) gui_widget_container.reset_popup();
+			gui_widget_container.set_popup(new cPopupMenu(mx, my, 80, 100));
 		}
+
 		//gui_widget_container.empty_wastes();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -355,13 +358,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			}
 		}
 	}
-	if(mouse_event_listener.left_click() && mouse_event_listener.agenda == POPOPEN_SELECT){
-		mu.lock();
-		mouse_event_listener.agenda == ADD_NODE;
-		auto g = gui_widget_container.pop_back();
-		delete g;
-		mu.unlock();
-	}
+	mouse_event_listener.callback = BUTTON_CALLBACK;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -381,12 +378,12 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-	
+	mu.lock();
 	mouse_event_listener._cx = xpos;
 	mouse_event_listener._cy = ypos;
 	mouse_event_listener._dx = xoffset;
 	mouse_event_listener._dy = yoffset;
-
+	mu.unlock();
 	if (mouse_event_listener.state == CLICK) {
 		mouse_event_listener.state = DRAG;
 	}
@@ -406,7 +403,8 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		}
 	}*/
 	//printf("%.2f %.2f\n", xoffset, yoffset);
-	
+	mouse_event_listener.callback = MOVING_CALLBACK;
+	printf("%.2f %.2f\n", xoffset, yoffset);
 }
 
 

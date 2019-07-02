@@ -8,8 +8,9 @@
 #include "shader_manager.h"
 #include <memory>
 #include <list>
-
+#include <mutex>
 extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
+extern std::mutex mu;
 extern ConfigParser configTable;
 extern ShaderManager shaderTable;
 extern MouseListener mouse_event_listener;
@@ -105,13 +106,12 @@ public:
 class WidgetContainer {
 	using WidgetIter = std::list<GUIForm*>::iterator;
 	std::list<GUIForm*> gui_widget_container;
-	std::list<GUIForm*> to_be_deleted_objs;
 	void _list_swap_member(WidgetIter& n1, WidgetIter& n2);
 	void _list_bump_member(WidgetIter& n1);
+	GUIForm* popup_menu = nullptr;
 public:
 	void push_back(GUIForm* g) { 
 		gui_widget_container.push_back(g); 
-		printf("%d\n", gui_widget_container.size());
 	};
 	GUIForm* pop_back(){
 		GUIForm* g = gui_widget_container.back();
@@ -119,20 +119,19 @@ public:
 		//delete g;
 		//g = nullptr;
 		gui_widget_container.pop_back();
-		printf("%d\n", gui_widget_container.size());
 		//delete_this(g);
 		return g;
-	}
-	void delete_this(GUIForm* ptr) { to_be_deleted_objs.push_back(ptr); }
-	void empty_wastes(){
-		for(auto& p : to_be_deleted_objs)
-		{
-			if(p) delete p;
-		}
 	}
 
 	void update_widgets();
 	void render_widgets();
+	void set_popup(GUIForm* g) { popup_menu = g; }
+	GUIForm* get_popup() { return popup_menu; }
+	void reset_popup() { 
+		if(popup_menu) delete popup_menu; 
+		popup_menu = nullptr; 
+	}
+	bool isPopup() { return popup_menu != nullptr; }
 	const std::list<GUIForm*>& get_container() { return gui_widget_container; };
 	~WidgetContainer() {
 		for(auto& w : gui_widget_container){
@@ -143,12 +142,42 @@ public:
 	bool mouseInteractWithWidget = false;
 };
 
-class cHightLightBox : public GUIForm
+class cHightLightBox
 {
 public:
-	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#7f7f7f")) : 
-		GUIForm(_x, _y, _w, _h, _c)
-	{};
+	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#633939")) {
+		width = _w; height = _h; x = _x; y = _y; color = _c;
+		float vertices[] = {
+			0, 0, 0.0f,
+			width, height, 0.0f,
+			0, height, 0.0f,
+			width, 0, 0.0f,
+		};
+
+		unsigned int indices[] = {
+			0, 2,
+			0, 3, 
+			1, 2,
+			1, 3
+		}; 
+
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+		glGenBuffers(1, &vbo);
+
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		glGenBuffers(1, &ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
+	
+	};
 
 	~cHightLightBox(){
 		glDeleteVertexArrays(1, &this->vao);
@@ -159,6 +188,11 @@ public:
 	void render(Shader* s);
 	void move(float _x, float _y){};
 	const Color textColor = hexCodeToRGB("#ffffff");
+
+	unsigned int vbo, vao, ebo;
+	float x, y;
+	unsigned int width, height;
+	Color color;
 };
 
 class cMainMenuBar : public GUIForm

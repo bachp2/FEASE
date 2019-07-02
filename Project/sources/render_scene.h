@@ -67,9 +67,9 @@ inline static void setup_scene() {
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
 	gui_widget_container.push_back((GUIForm *)menu_bar);
 
-	auto text_box = new cHelpText(30, 50, 200, 200);
+	auto text_box = new cHelpText(30, 50, 400, 400);
 	text_box->setPainter(text_painter);
-	text_box->include_text("The quick brown fox");
+	text_box->include_text("the quick brown fox jumps oer the laz dog");
 	gui_widget_container.push_back((GUIForm *) text_box);
 	
 	// cartesian axis lines
