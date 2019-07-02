@@ -1,7 +1,9 @@
 #include "custom_gui_widgets.h"
-int last_index = 0;
+//int last_index = 0;
 void MainMenu::update()
 {
+	static int last_index = 0;
+
 	if (!hit_test(mouse_listener._cx, mouse_listener._cy)) {
 		delete highlighter;
 		highlighter = nullptr;

@@ -9,27 +9,27 @@ Color hexCodeToRGB(std::string input);
 struct Color {
 	float r, g, b;
 	static Color White(){
-		const auto c = hexCodeToRGB("#000000");
+		static auto c = hexCodeToRGB("#000000");
 		return c;
 	}
 	static Color Red(){
-		const auto c = hexCodeToRGB("#FF0000");
+		static auto c = hexCodeToRGB("#FF0000");
 		return c;
 	}
 	static Color Orange(){
-		const auto c = hexCodeToRGB("#FFA500");
+		static auto c = hexCodeToRGB("#FFA500");
 		return c;
 	}
 	static Color Purple(){
-		const auto c = hexCodeToRGB("#800080");
+		static auto c = hexCodeToRGB("#800080");
 		return c;
 	}
 	static Color Blue(){
-		const auto c = hexCodeToRGB("#000080");
+		static auto c = hexCodeToRGB("#000080");
 		return c;
 	}
 	static Color Black(){
-		const auto c = hexCodeToRGB("#000000");
+		static auto c = hexCodeToRGB("#000000");
 		return c;
 	}
 };

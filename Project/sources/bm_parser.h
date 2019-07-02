@@ -60,6 +60,11 @@ inline void static parse_bm_font_descriptor(const char * file_path, Font* font)
 			for (auto it = word.cbegin(); it != word.cend(); ++it) {
 				if(*it == '='){
 					it++;
+					int sign = 1;
+					if(*it == '-'){
+						sign = -1;
+						it++;
+					}
 					for(auto it1 = it; it1 != word.cend(); ++it1){
 						if(*it1 == ','){ 
 							num_value = 0;
@@ -67,6 +72,7 @@ inline void static parse_bm_font_descriptor(const char * file_path, Font* font)
 						}
 						num_value = num_value*10 + (*it1-'0');
 					}
+					num_value *= sign;
 					break;
 				}
 				var += *it;

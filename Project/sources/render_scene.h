@@ -70,7 +70,7 @@ inline static void setup_scene() {
 
 	auto text_box = new cHelpText(30, 50, 400, 400);
 	text_box->setPainter(text_painter);
-	text_box->include_text("the quick brown fox jumps oer the laz dog");
+	text_box->include_text("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG");
 	gui_container.push_back((Form *) text_box);
 	
 	// cartesian axis lines
