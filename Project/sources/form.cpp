@@ -1,4 +1,36 @@
 #include "custom_gui_widgets.h"
+Form::Form(int _x, int _y, unsigned int _w, unsigned int _h, Color _c) : 
+	x(_x), y(_y), width(_w), height(_h), color(_c)
+{
+	const float vertices[] = {
+		0, 0, 0.0f,
+		width, height, 0.0f,
+		0, height, 0.0f,
+		width, 0, 0.0f,
+	};
+
+	const unsigned int indices[] = {
+		0, 1, 2, 
+		0, 3, 1 
+	}; 
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glGenBuffers(1, &vbo);
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
+}
+
 // GENERIC GUIFORM
 void Form::render(Shader * s)
 {

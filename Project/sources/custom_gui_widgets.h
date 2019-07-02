@@ -18,36 +18,7 @@ extern int scrWidth, scrHeight;
 class Form {
 
 public:
-	Form(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#C1C1C1")) : x(_x), y(_y), width(_w), height(_h), color(_c) {
-
-		float vertices[] = {
-			0, 0, 0.0f,
-			width, height, 0.0f,
-			0, height, 0.0f,
-			width, 0, 0.0f,
-		};
-
-		unsigned int indices[] = {
-			0, 1, 2, 
-			0, 3, 1 
-		}; 
-
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-		glGenBuffers(1, &vbo);
-
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-
-		glGenBuffers(1, &ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
-	};
+	Form(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#C1C1C1"));
 
 	bool hit_test(int mx, int my);
 
@@ -90,16 +61,13 @@ public:
 	};
 	Form* pop_back(){
 		Form* g = gui_widget_container.back();
-		
-		//delete g;
-		//g = nullptr;
 		gui_widget_container.pop_back();
-		//delete_this(g);
 		return g;
 	}
 
 	void update_widgets();
 	void render_widgets();
+	
 	void set_popup(Form* g) { popup_menu = g; }
 	Form* get_popup() { return popup_menu; }
 	void reset_popup() { 
@@ -107,12 +75,15 @@ public:
 		popup_menu = nullptr; 
 	}
 	bool isPopup() { return popup_menu != nullptr; }
+	
 	const std::list<Form*>& get_container() { return gui_widget_container; };
+	
 	~FormContainer() {
 		for(auto& w : gui_widget_container){
 			delete w;
 		}
 	};
+	
 	void generic_hit_testing_widgets();
 	bool mouseInteractWithWidget = false;
 };
@@ -177,33 +148,18 @@ class MainMenu : public Form
 	std::vector<TextureQuad> icon_buttons;
 	cHightLightBox* highlighter = nullptr;
 	struct { int index = 0; bool highlight = false; } highlight_info;
-	static const int text_menu_height = 22;
+	static const int text_menu_height = 18;
 	static const int icon_menu_height = 26;
+	static const int hpadding = 7;
+	static const int ipadding = 5;
+	static const int vpadding = 2;
 public:
 	// !! careful raw value input prone to bug >> should make into const
-	MainMenu(std::vector<std::string> icon_names, int _x = 0, int _y = 0, unsigned int _w = scrWidth, unsigned int _h = text_menu_height+icon_menu_height, Color _c = hexCodeToRGB("#C0C0C0") ) : Form(_x, _y, _w, _h, _c)
-	{
-		icon_buttons.reserve(10);
-		Texture* separator = nullptr;
-		for (int isize = 24, xx = 0, i = 0; i < icon_names.size(); i++) {
-			TextureQuad tq;
-			if(icon_names[i] == "separator")	
-			{
-				xx += 5;
-				tq = TextureQuad(xx, this->y+text_menu_height, 2, isize);
-				xx += 5;
-				if (!separator) separator = new Texture(ICON_FOLDER + icon_names[i] + ".png", false);
-				tq.set_texture_ptr(separator);
-			}
-			else
-			{
-				tq = TextureQuad(xx, this->y+text_menu_height, isize, isize);
-				xx += isize;
-				tq.set_texture_ptr(new Texture(ICON_FOLDER + icon_names[i] + ".png", false));
-			}
-			icon_buttons.push_back(tq);
-		}
-	};
+	MainMenu(
+		std::vector<std::string> icon_names, 
+		int _x = 0, int _y = 0, 
+		unsigned int _w = scrWidth, unsigned int _h = text_menu_height + icon_menu_height + vpadding * 2,
+		Color _c = hexCodeToRGB("#C0C0C0"));
 
 	void setPainter(TextPainter* tp){
 		painter = tp;

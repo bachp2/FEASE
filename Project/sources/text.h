@@ -30,10 +30,10 @@ public:
 
 	//void render(std::string str);
 
-	void print_to_screen(const std::string& str, int px, int py);
-	void print_to_screen(const std::string& str, int px, int py, Color color);
-	void print_to_world(const std::string& str, float px, float py, float pz, Color color);
-	void print_to_world(const std::string& str, float px, float py, float pz);
+	void print_to_screen(const std::string& str, int px, int py, int fid = 0);
+	void print_to_screen(const std::string& str, int px, int py, Color color, int fid = 0);
+	void print_to_world(const std::string& str, float px, float py, float pz, Color color, int fid = 0);
+	void print_to_world(const std::string& str, float px, float py, float pz, int fid = 0);
 
 	TextPainter(const TextPainter&) = default;
 	TextPainter& operator=(const TextPainter&) = default;

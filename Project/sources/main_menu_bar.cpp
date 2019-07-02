@@ -1,4 +1,32 @@
 #include "custom_gui_widgets.h"
+
+MainMenu::MainMenu(
+	std::vector<std::string> icon_names, int _x, int _y, 
+	unsigned int _w, unsigned int _h, Color _c ) : Form(_x, _y, _w, _h, _c)
+{
+	icon_buttons.reserve(10);
+	Texture* separator = nullptr;
+	auto yy = this->y + text_menu_height + vpadding;
+	for (int isize = 24, xx = 0, i = 0; i < icon_names.size(); i++) {
+		TextureQuad tq;
+		if(icon_names[i] == "separator")	
+		{
+			xx += 5;
+			tq = TextureQuad(xx, yy, 2, isize);
+			xx += 2+5;
+			if (!separator) separator = new Texture(ICON_FOLDER + icon_names[i] + ".png", false);
+			tq.set_texture_ptr(separator);
+		}
+		else
+		{
+			tq = TextureQuad(xx, yy, isize, isize);
+			xx += isize+ipadding;
+			tq.set_texture_ptr(new Texture(ICON_FOLDER + icon_names[i] + ".png", false));
+		}
+		icon_buttons.push_back(tq);
+	}
+}
+
 //int last_index = 0;
 void MainMenu::update()
 {
@@ -23,18 +51,18 @@ void MainMenu::update()
 		last_index = -1;
 	}
 	//printf("hit %d item!\n", index);
-	auto padding = 7;
+	
 	int x0, x1;
 	for (int i = 0; i < menu_items.size(); ++i)
 	{
 		if(i==0) 
 		{
 			x0 = this->x; 
-			x1 = this->x + padding*2 + painter->get_str_length(menu_items[i]);
+			x1 = this->x + hpadding*2 + painter->get_str_length(menu_items[i]);
 		}
 		else {
 			x0 = x1; 
-			x1 = x0 + padding*2 + painter->get_str_length(menu_items[i]);
+			x1 = x0 + hpadding*2 + painter->get_str_length(menu_items[i]);
 		}
 		if (i == index) break;
 	}
@@ -75,13 +103,12 @@ void MainMenu::render(Shader * s)
 		//painter->set_text_color(highlighter->textColor);
 		highlighter->render(s);
 	}
-	auto padding = 7;
-	auto cx = padding;
-	auto cy = 2;//to do: get skip line length
+	auto cx = hpadding;
+	auto cy = 0;//to do: get skip line length
 	for(const auto& str : menu_items){
 		if(highlight_info.highlight) painter->print_to_screen(str, cx, cy);
 		else painter->print_to_screen(str, cx, cy);
-		cx += padding*2+painter->get_str_length(str);
+		cx += hpadding*2+painter->get_str_length(str);
 	}
 	for(auto &a : icon_buttons){
 		a.render(shaderTable.getShader("texture"));

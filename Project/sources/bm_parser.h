@@ -37,6 +37,7 @@ inline void static get_char_quad(CharacterQuad* q, Character& chr, float px, flo
 	q->t1 = (chr.y + chr.height)*1.0f / 128;
 }
 
+int str2num(std::string::const_iterator& it, std::string& word);
 inline void static parse_bm_font_descriptor(const char * file_path, Font* font)
 {
 	if(!checkIfFileExist(file_path)){
@@ -60,19 +61,7 @@ inline void static parse_bm_font_descriptor(const char * file_path, Font* font)
 			for (auto it = word.cbegin(); it != word.cend(); ++it) {
 				if(*it == '='){
 					it++;
-					int sign = 1;
-					if(*it == '-'){
-						sign = -1;
-						it++;
-					}
-					for(auto it1 = it; it1 != word.cend(); ++it1){
-						if(*it1 == ','){ 
-							num_value = 0;
-							break;
-						}
-						num_value = num_value*10 + (*it1-'0');
-					}
-					num_value *= sign;
+					num_value = str2num(it, word);
 					break;
 				}
 				var += *it;
@@ -125,4 +114,21 @@ inline void static parse_bm_font_descriptor(const char * file_path, Font* font)
 	/*printf("id:%d, x:%d, y:%d, w:%d, h:%d, xoffset:%d, yoffset:%d, xadvance:%d\n", chr.id, chr.x, chr.y, chr.width, chr.height, chr.xoffset, chr.yoffset, chr.xadvance);*/
 	//printf("size:%d, line h:%d, spacing: %d, %d\n", font->size, font->lspacing);
 	infile.close();
+}
+
+inline static int str2num(std::string::const_iterator& it, std::string& word){
+	int sign = 1;
+	int num_value = 0;
+	if(*it == '-'){
+		sign = -1;
+		it++;
+	}
+	for(auto it1 = it; it1 != word.cend(); ++it1){
+		if(*it1 == ','){ 
+			num_value = 0;
+			break;
+		}
+		num_value = num_value*10 + (*it1-'0');
+	}
+	return num_value*sign;
 }

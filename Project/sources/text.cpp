@@ -33,14 +33,14 @@ void TextPainter::set_text_color(Color c){
 	shader->setColor("textColor", c);
 }
 
-void TextPainter::print_to_screen(const std::string &str, int px, int py, Color color)
+void TextPainter::print_to_screen(const std::string &str, int px, int py, Color color, int fid)
 {
 	shader->use();
 	shader->setColor("textColor", color);
 	print_to_screen(str, px, py);
 }
 
-void TextPainter::print_to_screen(const std::string &str, int px, int py)
+void TextPainter::print_to_screen(const std::string &str, int px, int py, int fid)
 {
 	float xad = px;
 	// assume orthographic projection with units = screen pixels, origin at top left
@@ -112,14 +112,14 @@ void TextPainter::print_to_screen(const std::string &str, int px, int py)
 	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
 }
 
-void TextPainter::print_to_world(const std::string & str, float px, float py, float pz, Color color)
+void TextPainter::print_to_world(const std::string & str, float px, float py, float pz, Color color, int fid)
 {
 	this->shader->use();
 	shader->setColor("textColor", color);
 	this->print_to_world(str, px, py, pz);
 }
 
-void TextPainter::print_to_world(const std::string& str, float px, float py, float pz)
+void TextPainter::print_to_world(const std::string& str, float px, float py, float pz, int fid)
 {
 	float xad = 0;
 	// assume orthographic projection with units = screen pixels, origin at top left
