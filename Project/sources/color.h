@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include "error.h"
 //////////////////////////////
 //COLOR STRUCT AND UTILS
 //////////////////////////////
@@ -8,8 +8,15 @@ class Color;
 Color hexCodeToRGB(std::string input);
 struct Color {
 	float r, g, b;
+	Color color(std::string i){
+		return hexCodeToRGB(i);
+	}
 	static Color White(){
 		static auto c = hexCodeToRGB("#ffffff");
+		return c;
+	}
+	static Color Grey(){
+		static auto c = hexCodeToRGB("#C1C1C1");
 		return c;
 	}
 	static Color Red(){
@@ -37,6 +44,7 @@ struct Color {
 inline static Color hexCodeToRGB(std::string input) {
 	if (input[0] == '#')
 		input.erase(0, 1);
+	else ERR("invalid color input");
 
 	unsigned int value = stoul(input, nullptr, 16);
 

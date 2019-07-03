@@ -4,6 +4,34 @@ MainMenu::MainMenu(
 	std::vector<std::string> icon_names, int _x, int _y, 
 	unsigned int _w, unsigned int _h, Color _c ) : Form(_x, _y, _w, _h, _c)
 {
+	const float vertices[] = {
+		0, 0, 0.0f,
+		width, height, 0.0f,
+		0, height, 0.0f,
+		width, 0, 0.0f,
+	};
+
+	const unsigned int indices[] = {
+		0, 1, 2, 
+		0, 3, 1 
+	}; 
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glGenBuffers(1, &vbo);
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
+
 	icon_buttons.reserve(icon_names.size());
 	Texture* separator = nullptr;
 	auto yy = this->y + text_menu_height + padding.vertical;
@@ -56,7 +84,7 @@ void MainMenu::update()
 			delete highlighter;
 			highlighter = nullptr;
 		}
-		highlighter = new cHightLightBox(q.x, q.y, q.w, q.h);
+		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 		last_index = index;
 	}
 	highlight_info.index = index;
@@ -71,7 +99,22 @@ void MainMenu::update()
 // MAIN MENU BAR
 void MainMenu::render(Shader * s)
 {
-	Form::render(s);
+	//Form::render(s);
+	//glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+
+	s->use();
+	glm::mat4 _model = glm::mat4(1.0f);
+	_model = glm::translate(_model, glm::vec3(x, y, 0));
+	s->setMat4("model", _model);
+	s->setMat4("projection", orthogonal_projection);
+	s->setColor("color", color);
+
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glEnable(GL_DEPTH_TEST);
+
 	if (highlighter != nullptr) {
 		//painter->set_text_color(highlighter->textColor);
 		highlighter->render(s);
@@ -83,8 +126,9 @@ void MainMenu::render(Shader * s)
 		else painter->print_to_screen(str, cx, cy);
 		cx += padding.horizontal*2+painter->get_str_length(str);
 	}
+	auto ss = shaderTable.shader("texture");
 	for(auto &a : icon_buttons){
-		a.render(shaderTable.shader("texture"));
+		a.render(ss);
 	}
 }
 

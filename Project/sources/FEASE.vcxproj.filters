@@ -81,6 +81,12 @@
     <ClCompile Include="..\dep\glad\glad.c">
       <Filter>Source Files\dep</Filter>
     </ClCompile>
+    <ClCompile Include="highlight_quad.cpp">
+      <Filter>Source Files\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="textbox.cpp">
+      <Filter>Source Files\forms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config_parser.h">
@@ -129,6 +135,9 @@
       <Filter>Header Files\graphics</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="error.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
   </ItemGroup>

@@ -149,12 +149,14 @@
     <ClCompile Include="fe_structs.cpp" />
     <ClCompile Include="form.cpp" />
     <ClCompile Include="grad_bkgrnd.h" />
+    <ClCompile Include="highlight_quad.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu_bar.cpp" />
     <ClCompile Include="obj_loader.cpp" />
     <ClCompile Include="shader_manager.cpp" />
     <ClCompile Include="stb_implement.cpp" />
     <ClCompile Include="text.cpp" />
+    <ClCompile Include="textbox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bm_parser.h" />
@@ -167,6 +169,7 @@
     <ClInclude Include="fe_structs.h" />
     <ClInclude Include="file_system.h" />
     <ClInclude Include="color.h" />
+    <ClInclude Include="error.h" />
     <ClInclude Include="mouse_listener.h" />
     <ClInclude Include="obj_loader.h" />
     <ClInclude Include="render_scene.h" />

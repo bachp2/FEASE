@@ -26,7 +26,7 @@ public:
 
 	bool hit_test(int mx, int my);
 
-	virtual void render(Shader* s);
+	virtual void render(Shader* s){};
 	virtual void update(){};
 	virtual void move(float _x, float _y);
 	
@@ -37,13 +37,6 @@ public:
 	{
 		return _FORM;
 	};
-
-public:
-	unsigned int vbo, vao, ebo;
-	float x, y;
-	unsigned int width, height;
-	Color color;
-	std::atomic<bool> draggable = false;
 	enum WidgetType{
 		_FORM, _HELPER,
 		_MAIN_MENU,
@@ -51,6 +44,12 @@ public:
 		_TEXTURE_QUAD,
 		_POP_UP_MENU
 	};
+public:
+	unsigned int vbo, vao, ebo;
+	float x, y;
+	unsigned int width, height;
+	Color color;
+	std::atomic<bool> draggable = false;
 };
 
 class FormContainer {
@@ -92,64 +91,25 @@ public:
 	bool mouseInteractWithWidget = false;
 };
 
-class cHightLightBox
+class HighlightQuad
 {
 public:
-	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::White()) {
-		width = _w; height = _h; x = _x; y = _y; color = _c;
+	HighlightQuad(int _x, int _y, unsigned int _w, unsigned int _h, float border_width = -1.0);
 
-		float vertices[] = {
-			0, 0, 0.0f,
-			width, height, 0.0f,
-			0, height, 0.0f,
-			width, 0, 0.0f,
-			0, 0, 0.0f,
-			width, height, 0.0f,
-			0, height, 0.0f,
-			width, 0, 0.0f,
-		};
-
-		unsigned int indices[] = {
-			0, 2,
-			0, 3, 
-			1, 2,
-			1, 3
-		}; 
-
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-		glGenBuffers(1, &vbo);
-
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-
-		glGenBuffers(1, &ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
-	
-	};
-
-	~cHightLightBox(){
+	~HighlightQuad(){
 		glDeleteVertexArrays(1, &this->vao);
 		glDeleteBuffers(1, &this->vbo);
-		glDeleteBuffers(1, &this->ebo);
+		glDeleteBuffers(1, &this->ebo[0]);
+		glDeleteBuffers(1, &this->ebo[1]);
 	};
 
 	void render(Shader* s);
 	void move(float _x, float _y){};
-	const Color textColor = hexCodeToRGB("#ffffff");
 
-	unsigned int vbo, vao, ebo;
+	unsigned int vbo, vao, ebo[2];
 	float x, y;
 	unsigned int width, height;
-	Color color;
 };
-
 
 // TODO refactor this struct inside main menu class
 static struct {
@@ -163,7 +123,7 @@ class MainMenu : public Form
 	std::vector<std::string> menu_items;
 	TextPainter* painter;
 	std::vector<TextureQuad> icon_buttons;
-	cHightLightBox* highlighter = nullptr;
+	HighlightQuad* highlighter = nullptr;
 	struct { int index = 0; bool highlight = false; } highlight_info;
 	static const int text_menu_height = 18;
 	static const int icon_menu_height = 26;
@@ -198,10 +158,9 @@ public:
 	}
 };
 
-class cHelpText : public Form {
+class TextBox : public Form {
 public:
-	cHelpText(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : Form(_x, _y, _w, _h, _c)
-	{};
+	TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE"));
 
 	void include_text(std::string t){
 		text = t;
@@ -223,6 +182,7 @@ public:
 private:
 	std::string text;
 	TextPainter* painter;
+	unsigned int border_ebo;
 };
 
 class cPopupMenu : public Form {
