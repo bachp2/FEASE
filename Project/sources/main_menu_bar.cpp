@@ -68,6 +68,10 @@ void MainMenu::update()
 	}
 
 	if(last_index != index) {
+		if(highlighter){
+			delete highlighter;
+			highlighter = nullptr;
+		}
 		if(index < menu_items.size())
 			highlighter = new cHightLightBox(x0, this->y, x1-x0,  text_menu_height);
 		else // highlight second row
