@@ -95,7 +95,7 @@ public:
 class cHightLightBox
 {
 public:
-	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#633939")) {
+	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::White()) {
 		width = _w; height = _h; x = _x; y = _y; color = _c;
 		float vertices[] = {
 			0, 0, 0.0f,

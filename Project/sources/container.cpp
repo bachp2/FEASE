@@ -32,7 +32,6 @@ void FormContainer::update_widgets()
 			current_widget->move(dx, -dy);
 			mouse_listener._dx = 0;
 			mouse_listener._dy = 0;
-			printf("dragged %.2f, %.2f\n", dx, dy);
 			mu.unlock();
 		}
 	}
@@ -68,7 +67,7 @@ void FormContainer::generic_hit_testing_widgets(){
 
 void FormContainer::render_widgets()
 {
-	Shader* s = shaderTable.shader("2D");
+	Shader* s = shaderTable.shader("screen");
 	for(auto& w : gui_widget_container){
 		w->render(s);
 	}

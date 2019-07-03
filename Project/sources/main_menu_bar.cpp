@@ -52,7 +52,7 @@ void MainMenu::update()
 	}
 	//printf("hit %d item!\n", index);
 	
-	int x0, x1;
+	/*int x0, x1;
 	for (int i = 0; i < menu_items.size(); ++i)
 	{
 		if(i==0) 
@@ -65,17 +65,14 @@ void MainMenu::update()
 			x1 = x0 + padding.horizontal*2 + painter->get_str_length(menu_items[i]);
 		}
 		if (i == index) break;
-	}
+	}*/
 
 	if(last_index != index) {
 		if(highlighter){
 			delete highlighter;
 			highlighter = nullptr;
 		}
-		if(index < menu_items.size())
-			highlighter = new cHightLightBox(x0, this->y, x1-x0,  text_menu_height);
-		else // highlight second row
-			highlighter = new cHightLightBox(q.x, q.y, q.w, q.h);
+		highlighter = new cHightLightBox(q.x, q.y, q.w, q.h);
 		last_index = index;
 	}
 	highlight_info.index = index;
@@ -159,6 +156,10 @@ int MainMenu::test_item_hit(int mx, int my, quad* q)
 			if (mx < x1 && mx > x0) 
 			{
 				//printf("i : %d\n", i);
+				q->x = x0;
+				q->w = x1 - x0;
+				q->y = this->y;
+				q->h = text_menu_height;
 				return i;
 			}
 		}

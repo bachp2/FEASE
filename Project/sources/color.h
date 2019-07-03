@@ -9,7 +9,7 @@ Color hexCodeToRGB(std::string input);
 struct Color {
 	float r, g, b;
 	static Color White(){
-		static auto c = hexCodeToRGB("#000000");
+		static auto c = hexCodeToRGB("#ffffff");
 		return c;
 	}
 	static Color Red(){

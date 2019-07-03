@@ -404,7 +404,6 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	}*/
 	//printf("%.2f %.2f\n", xoffset, yoffset);
 	mouse_listener.callback = MOVING_CALLBACK;
-	printf("%.2f %.2f\n", xoffset, yoffset);
 }
 
 

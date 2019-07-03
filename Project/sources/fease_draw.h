@@ -261,9 +261,8 @@ struct Axis {
 		glEnableVertexAttribArray(1);
 	}
 
-	inline void render(ShaderManager* sm, const int scrWidth, const int scrHeight) {
+	inline void render(Shader* shader, const int scrWidth, const int scrHeight) {
 		glDisable(GL_DEPTH_TEST);
-		Shader* shader = sm->shader("solid");
 		shader->use();
 		int ww = 320;
 		glLineWidth(1.7f);
@@ -305,7 +304,7 @@ struct Grid {
 	float step;
 	unsigned int vertices_size;
 
-	inline void setup(ShaderManager* sm, unsigned int grid_num = 20) {
+	inline void setup(Shader* s, unsigned int grid_num = 20) {
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
 
@@ -332,7 +331,7 @@ struct Grid {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
-		shader = sm->shader("object");
+		shader = s;
 		vertices_size = grid_vertices.size();
 	}
 

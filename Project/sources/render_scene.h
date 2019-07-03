@@ -41,9 +41,9 @@ inline static void setup_scene() {
 
 	shaderTable.emplaceShader("bitmapped_text", SHAD(texture.vs), SHAD(text.fs));
 	shaderTable.emplaceShader("texture", SHAD(texture.vs), SHAD(texture.fs));
-	shaderTable.emplaceShader("solid", SHAD(solid.vs), SHAD(solid.fs));
+	shaderTable.emplaceShader("sline", SHAD(solid.vs), SHAD(solid.fs));
 	shaderTable.emplaceShader("object", SHAD(object.vs), SHAD(object.fs));
-	shaderTable.emplaceShader("2D", SHAD(screen.vs), SHAD(object.fs));
+	shaderTable.emplaceShader("screen", SHAD(screen.vs), SHAD(object.fs));
 	
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -83,7 +83,7 @@ inline static void setup_scene() {
 	setup_lines();
 
 	//grid
-	grid.setup(&shaderTable);
+	grid.setup(shaderTable.shader("object"));
 
 	// load and create a texture 
 	// -------------------------
@@ -165,7 +165,7 @@ static inline void render_scene() {
 	//text_painter->writeBitmap("Carole & Tuesday", 0, 300+text_painter->get_font_line_gap());
 
 	// draw axis lines
-	axisLines.render(&shaderTable, scrWidth, scrHeight);
+	axisLines.render(shaderTable.shader("sline"), scrWidth, scrHeight);
 
 	gui_container.update_widgets();
 	gui_container.render_widgets();
