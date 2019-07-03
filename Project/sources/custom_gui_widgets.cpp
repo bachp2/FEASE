@@ -19,6 +19,7 @@ void cPopupMenu::render(Shader * s)
 void cHightLightBox::render(Shader * s)
 {
 	//glDisable(GL_CULL_FACE);
+	glLineWidth(0.5);
 	glDisable(GL_DEPTH_TEST);
 
 	s->use();

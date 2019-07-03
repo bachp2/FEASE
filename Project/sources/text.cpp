@@ -189,15 +189,16 @@ void TextPainter::print_to_world(const std::string& str, float px, float py, flo
 	glm::mat4 nmodel = glm::mat4(1.0f);
 	//nmodel = glm::scale(nmodel, glm::vec3(0.5, 0.5, 1));
 	//nmodel = glm::scale(nmodel, glm::vec3(scale_factor, scale_factor, scale_factor));
-	const float npadding = 0.01;
+	const float npadding = 0.001;
 	px += npadding; py += npadding;
 	nmodel = glm::translate(nmodel, glm::vec3(px, 0, py));
 
 	shader->setMat4("model", nmodel);
 	shader->setMat4("view", view);
 	shader->setMat4("projection", perspective_projection);
-
+	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vao);
 	glBindTexture(GL_TEXTURE_2D, font.texture.tex_id);
 	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
+	glEnable(GL_DEPTH_TEST);
 }

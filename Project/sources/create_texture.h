@@ -102,11 +102,12 @@ public:
 	void render(Shader* s){
 		if (!tex) printf("TextureQuad error: uninitialized texture\n");
 		s->use();
+		static auto v = glm::mat4(1.0f);
 		glm::mat4 _model = glm::mat4(1.0f);
 		_model = glm::translate(_model, glm::vec3(x, y, 0));
 		s->setMat4("model", _model);
 		s->setMat4("projection", orthogonal_projection);
-		s->setMat4("view", view);
+		s->setMat4("view", v);
 		glBindVertexArray(vao);
 		glBindTexture(GL_TEXTURE_2D, tex->tex_id);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
