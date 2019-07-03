@@ -1,5 +1,6 @@
 #include "text.h"
 #include <memory>
+#include <glm/gtx/string_cast.hpp>
 TextPainter::TextPainter(Shader * s, Color default_c) : _default(default_c), _highlighted(Color::White()) {
 	shader = s;
 	shader->use();
@@ -98,13 +99,10 @@ void TextPainter::print_to_screen(const std::string &str, int px, int py, int fi
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * text_indices.size(), &text_indices[0], GL_DYNAMIC_DRAW);
 
 	shader->use();
-	glm::mat4 nmodel = glm::mat4(1.0f);
-	//nmodel = glm::scale(nmodel, glm::vec3(0.5, 0.5, 1));
-	//nmodel = glm::scale(nmodel, glm::vec3(scale_factor, scale_factor, scale_factor));
-	//nmodel = glm::translate(nmodel, glm::vec3(px, py, 0));
+	static glm::mat4 iden = glm::mat4(1.0f);
 
-	shader->setMat4("model", nmodel);
-	shader->setMat4("view", view);
+	shader->setMat4("model", iden);
+	shader->setMat4("view", iden);
 	shader->setMat4("projection", orthogonal_projection);
 
 	glBindVertexArray(vao);
@@ -189,12 +187,13 @@ void TextPainter::print_to_world(const std::string& str, float px, float py, flo
 	glm::mat4 nmodel = glm::mat4(1.0f);
 	//nmodel = glm::scale(nmodel, glm::vec3(0.5, 0.5, 1));
 	//nmodel = glm::scale(nmodel, glm::vec3(scale_factor, scale_factor, scale_factor));
-	const float npadding = 0.001;
+	const float npadding = 0.000;
 	px += npadding; py += npadding;
-	nmodel = glm::translate(nmodel, glm::vec3(px, 0, py));
-
+	nmodel = glm::translate(nmodel, glm::vec3(px, py, 0));
 	shader->setMat4("model", nmodel);
 	shader->setMat4("view", view);
+	//std::cout << "m " << glm::to_string(nmodel) << std::endl;
+	//std::cout << "mv " << glm::to_string(view*nmodel) << std::endl;
 	shader->setMat4("projection", perspective_projection);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vao);

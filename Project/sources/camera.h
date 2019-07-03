@@ -125,7 +125,7 @@ public:
 
 private:
 	//glm::mat4 LookAtMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 LookAtMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
+	const glm::mat4 LookAtMat = glm::lookAt(Vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 GetModelMatrix()
 	{
 		glm::mat4 model = glm::mat4(1.0f);

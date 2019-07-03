@@ -68,10 +68,10 @@ inline static void setup_scene() {
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
 	gui_container.push_back((Form *)menu_bar);
 
-	auto text_box = new cHelpText(30, 50, 400, 400);
+	/*auto text_box = new cHelpText(30, 50, 400, 400);
 	text_box->setPainter(text_painter);
 	text_box->include_text("1234567890");
-	gui_container.push_back((Form *) text_box);
+	gui_container.push_back((Form *) text_box);*/
 	
 	// cartesian axis lines
 	axisLines.setup(&camera);

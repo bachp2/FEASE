@@ -51,22 +51,6 @@ void MainMenu::update()
 		last_index = -1;
 	}
 	//printf("hit %d item!\n", index);
-	
-	/*int x0, x1;
-	for (int i = 0; i < menu_items.size(); ++i)
-	{
-		if(i==0) 
-		{
-			x0 = this->x; 
-			x1 = this->x + padding.horizontal*2 + painter->get_str_length(menu_items[i]);
-		}
-		else {
-			x0 = x1; 
-			x1 = x0 + padding.horizontal*2 + painter->get_str_length(menu_items[i]);
-		}
-		if (i == index) break;
-	}*/
-
 	if(last_index != index) {
 		if(highlighter){
 			delete highlighter;
@@ -78,21 +62,9 @@ void MainMenu::update()
 	highlight_info.index = index;
 	highlight_info.highlight = true;
 
-	if(mouse_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT)){
+	if(mouse_listener.left_click_once()){
 		//mouse_event_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
-		switch(index-menu_items.size()){
-		case 6:
-			mouse_listener.agenda = Mouse_Agenda::CONNECT_ELE;
-			//printf("connect element\n");
-			break;
-		case 7:
-			mouse_listener.agenda = Mouse_Agenda::ADD_NODE;
-			//printf("select node\n");
-			break;
-		case 8:
-			mouse_listener.agenda = Mouse_Agenda::RUN_ANALYSIS;
-			break;
-		}
+		mouse_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
 	}
 }
 

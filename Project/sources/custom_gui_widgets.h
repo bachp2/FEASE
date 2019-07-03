@@ -97,7 +97,12 @@ class cHightLightBox
 public:
 	cHightLightBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::White()) {
 		width = _w; height = _h; x = _x; y = _y; color = _c;
+
 		float vertices[] = {
+			0, 0, 0.0f,
+			width, height, 0.0f,
+			0, height, 0.0f,
+			width, 0, 0.0f,
 			0, 0, 0.0f,
 			width, height, 0.0f,
 			0, height, 0.0f,
