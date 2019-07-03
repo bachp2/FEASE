@@ -68,7 +68,7 @@ void FormContainer::generic_hit_testing_widgets(){
 
 void FormContainer::render_widgets()
 {
-	Shader* s = shaderTable.getShader("2D");
+	Shader* s = shaderTable.shader("2D");
 	for(auto& w : gui_widget_container){
 		w->render(s);
 	}

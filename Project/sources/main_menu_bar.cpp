@@ -4,23 +4,23 @@ MainMenu::MainMenu(
 	std::vector<std::string> icon_names, int _x, int _y, 
 	unsigned int _w, unsigned int _h, Color _c ) : Form(_x, _y, _w, _h, _c)
 {
-	icon_buttons.reserve(10);
+	icon_buttons.reserve(icon_names.size());
 	Texture* separator = nullptr;
-	auto yy = this->y + text_menu_height + vpadding;
-	for (int isize = 24, xx = 0, i = 0; i < icon_names.size(); i++) {
+	auto yy = this->y + text_menu_height + padding.vertical;
+	for (int isize = 24, xx = padding.icon, i = 0; i < icon_names.size(); i++) {
 		TextureQuad tq;
 		if(icon_names[i] == "separator")	
 		{
 			xx += 5;
-			tq = TextureQuad(xx, yy, 2, isize);
-			xx += 2+5;
+			tq = TextureQuad(xx, yy, separator_width, isize);
+			xx += separator_width+5;
 			if (!separator) separator = new Texture(ICON_FOLDER + icon_names[i] + ".png", false);
 			tq.set_texture_ptr(separator);
 		}
 		else
 		{
 			tq = TextureQuad(xx, yy, isize, isize);
-			xx += isize+ipadding;
+			xx += isize+padding.icon;
 			tq.set_texture_ptr(new Texture(ICON_FOLDER + icon_names[i] + ".png", false));
 		}
 		icon_buttons.push_back(tq);
@@ -38,8 +38,8 @@ void MainMenu::update()
 		last_index = -1;
 		return;
 	}
-
-	int index = test_item_hit(mouse_listener._cx, mouse_listener._cy);
+	quad q;
+	int index = test_item_hit(mouse_listener._cx, mouse_listener._cy, &q);
 
 	if (index == -1) {
 		//if(highlighter) highlighter->color = hexCodeToRGB("#C0C0C0");
@@ -58,11 +58,11 @@ void MainMenu::update()
 		if(i==0) 
 		{
 			x0 = this->x; 
-			x1 = this->x + hpadding*2 + painter->get_str_length(menu_items[i]);
+			x1 = this->x + padding.horizontal*2 + painter->get_str_length(menu_items[i]);
 		}
 		else {
 			x0 = x1; 
-			x1 = x0 + hpadding*2 + painter->get_str_length(menu_items[i]);
+			x1 = x0 + padding.horizontal*2 + painter->get_str_length(menu_items[i]);
 		}
 		if (i == index) break;
 	}
@@ -71,7 +71,7 @@ void MainMenu::update()
 		if(index < menu_items.size())
 			highlighter = new cHightLightBox(x0, this->y, x1-x0,  text_menu_height);
 		else // highlight second row
-			highlighter = new cHightLightBox(this->x + (index-menu_items.size())*24, text_menu_height, 24,  icon_menu_height);
+			highlighter = new cHightLightBox(q.x, q.y, q.w, q.h);
 		last_index = index;
 	}
 	highlight_info.index = index;
@@ -103,15 +103,15 @@ void MainMenu::render(Shader * s)
 		//painter->set_text_color(highlighter->textColor);
 		highlighter->render(s);
 	}
-	auto cx = hpadding;
+	auto cx = padding.horizontal;
 	auto cy = 0;//to do: get skip line length
 	for(const auto& str : menu_items){
 		if(highlight_info.highlight) painter->print_to_screen(str, cx, cy);
 		else painter->print_to_screen(str, cx, cy);
-		cx += hpadding*2+painter->get_str_length(str);
+		cx += padding.horizontal*2+painter->get_str_length(str);
 	}
 	for(auto &a : icon_buttons){
-		a.render(shaderTable.getShader("texture"));
+		a.render(shaderTable.shader("texture"));
 	}
 }
 
@@ -120,7 +120,7 @@ void MainMenu::move(float _x, float _y)
 	// empty to make this object immovable
 }
 
-int MainMenu::test_item_hit(int mx, int my)
+int MainMenu::test_item_hit(int mx, int my, quad* q)
 {
 	int x0, x1, y0, y1;
 	auto padding = 7;
@@ -160,12 +160,19 @@ int MainMenu::test_item_hit(int mx, int my)
 		}
 		break;
 	case SECOND_ROW:
-		auto i = mx / 24;
-		if (i >= icon_buttons.size()) return -1;
-		return i + menu_items.size();
-		break;
+		//auto i = mx / 24;
+		for (auto i = 0; i < icon_buttons.size(); ++i){
+			float _x, _y; unsigned int _w, _h;
+			icon_buttons[i].get_dims(&_x, &_y, &_w, &_h);
+			if(_x <= mx && mx <= _x+_w && _w != 2){
+				// return -1 for separator
+				q->x = _x;
+				q->w = _w;
+				q->y = _y;
+				q->h = _h;
+				return i + menu_items.size();
+			}
+		}
 	}
-
-
 	return -1;
 }

@@ -23,7 +23,7 @@ ShaderManager::ShaderManager()
 {
 }
 
-Shader* ShaderManager::getShader(std::string name)
+Shader* ShaderManager::shader(std::string name)
 {
 	return shaderTable[name];
 }

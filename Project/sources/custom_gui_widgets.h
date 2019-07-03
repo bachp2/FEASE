@@ -15,6 +15,10 @@ extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
 
+struct quad {
+	float x, y, w, h;
+};
+
 class Form {
 
 public:
@@ -141,6 +145,14 @@ public:
 	Color color;
 };
 
+
+// TODO refactor this struct inside main menu class
+static struct {
+	const int horizontal = 7;
+	const int vertical = 5;
+	const int icon = 5;
+} padding;
+
 class MainMenu : public Form
 {
 	std::vector<std::string> menu_items;
@@ -150,15 +162,14 @@ class MainMenu : public Form
 	struct { int index = 0; bool highlight = false; } highlight_info;
 	static const int text_menu_height = 18;
 	static const int icon_menu_height = 26;
-	static const int hpadding = 7;
-	static const int ipadding = 5;
-	static const int vpadding = 2;
+	static const int separator_width = 2;
 public:
 	// !! careful raw value input prone to bug >> should make into const
 	MainMenu(
 		std::vector<std::string> icon_names, 
 		int _x = 0, int _y = 0, 
-		unsigned int _w = scrWidth, unsigned int _h = text_menu_height + icon_menu_height + vpadding * 2,
+		unsigned int _w = scrWidth, 
+		unsigned int _h = text_menu_height + icon_menu_height + padding.vertical * 2,
 		Color _c = hexCodeToRGB("#C0C0C0"));
 
 	void setPainter(TextPainter* tp){
@@ -175,7 +186,7 @@ public:
 
 	void update();
 
-	int test_item_hit(int mx, int my);
+	int test_item_hit(int mx, int my, quad* q);
 
 	WidgetType type(){
 		return _MAIN_MENU;

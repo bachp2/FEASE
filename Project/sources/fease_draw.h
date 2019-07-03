@@ -98,7 +98,7 @@ inline void static setup_points() {
 
 inline void static render_points(ShaderManager* sm) {
 	glDisable(GL_DEPTH_TEST);
-	Shader* shader = sm->getShader("object");
+	Shader* shader = sm->shader("object");
 	shader->use();
 	shader->setColor("color", configTable.color("dot"));
 	
@@ -202,7 +202,7 @@ inline static void setup_lines(){
 }
 
 inline static void render_lines(ShaderManager* sm){
-	Shader* s = sm->getShader("object");
+	Shader* s = sm->shader("object");
 	s->use();
 
 	glDisable(GL_DEPTH_TEST);
@@ -263,7 +263,7 @@ struct Axis {
 
 	inline void render(ShaderManager* sm, const int scrWidth, const int scrHeight) {
 		glDisable(GL_DEPTH_TEST);
-		Shader* shader = sm->getShader("solid");
+		Shader* shader = sm->shader("solid");
 		shader->use();
 		int ww = 320;
 		glLineWidth(1.7f);
@@ -332,7 +332,7 @@ struct Grid {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
-		shader = sm->getShader("object");
+		shader = sm->shader("object");
 		vertices_size = grid_vertices.size();
 	}
 

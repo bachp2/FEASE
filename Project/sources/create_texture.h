@@ -74,6 +74,13 @@ public:
 	void set_texture_ptr(Texture* t) { tex = t; tex->ref++; }
 	bool isEmptyTexture() { return this->tex; };
 
+	void get_dims(float* _x, float* _y, unsigned int *w, unsigned int *h){
+		if(_x) *_x = this->x;
+		if(_y) *_y = this->y;
+		if(w) *w = width;
+		if(h) *h = height;
+	}
+
 	~TextureQuad(){
 		if (tex == nullptr) return;
 		if(tex->ref) {

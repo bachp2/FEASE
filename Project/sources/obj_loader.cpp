@@ -15,7 +15,7 @@ static inline std::vector<std::string> SplitString(const std::string &s, char de
 
 void OBJModel::render(ShaderManager* sm)
 {
-	auto shader = sm->getShader("object");
+	auto shader = sm->shader("object");
 	shader->use();
 	shader->setColor("color", configTable.color("line"));
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );

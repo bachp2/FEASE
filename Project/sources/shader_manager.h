@@ -7,7 +7,6 @@
 class ShaderRecipe {
 	std::vector<std::string> uniforms;
 	std::string shader_template;
-
 };
 
 class ShaderManager
@@ -17,7 +16,7 @@ public:
 	ShaderManager();
 	void emplaceShader(std::string name, std::string vert_path, std::string frag_path);
 	void pushShader(std::string name, Shader* s);
-	Shader* getShader(std::string name);
+	Shader* shader(std::string name);
 	~ShaderManager();
 };
 

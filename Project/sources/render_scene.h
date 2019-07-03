@@ -43,7 +43,7 @@ inline static void setup_scene() {
 	shaderTable.emplaceShader("texture", SHAD(texture.vs), SHAD(texture.fs));
 	shaderTable.emplaceShader("solid", SHAD(solid.vs), SHAD(solid.fs));
 	shaderTable.emplaceShader("object", SHAD(object.vs), SHAD(object.fs));
-	shaderTable.emplaceShader("2D", SHAD(_2dobject.vs), SHAD(object.fs));
+	shaderTable.emplaceShader("2D", SHAD(screen.vs), SHAD(object.fs));
 	
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -59,7 +59,7 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	text_painter = new TextPainter(shaderTable.getShader("bitmapped_text"), configTable.color("text"));
+	text_painter = new TextPainter(shaderTable.shader("bitmapped_text"), configTable.color("text"));
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
 	
@@ -87,7 +87,7 @@ inline static void setup_scene() {
 
 	// load and create a texture 
 	// -------------------------
-	auto textShader = shaderTable.getShader("texture");
+	auto textShader = shaderTable.shader("texture");
 	create_texture(&texture, FPATH(res/terry.jpg));
 	
 	textShader->setInt("texture1", 0);
@@ -131,7 +131,7 @@ static inline void render_scene() {
 
 	//// Draw box
 	//// bind textures on corresponding texture units
-	auto textShader = shaderTable.getShader("texture");
+	auto textShader = shaderTable.shader("texture");
 	textShader->use();
 	textShader->setMat4("projection", perspective_projection);
 	textShader->setMat4("view", view);

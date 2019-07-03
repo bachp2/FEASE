@@ -133,28 +133,28 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\resources\shaders\texture.vs">
+    <None Include="..\res\shaders\object.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\shaders\object.fs">
+    <None Include="..\res\shaders\object.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\shaders\object.vs">
+    <None Include="..\res\shaders\screen.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\shaders\solid.vs">
+    <None Include="..\res\shaders\solid.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\shaders\solid.fs">
+    <None Include="..\res\shaders\solid.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\shaders\text.fs">
+    <None Include="..\res\shaders\text.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\resources\shaders\texture.fs">
+    <None Include="..\res\shaders\texture.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="text_billboarding.vs">
+    <None Include="..\res\shaders\texture.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

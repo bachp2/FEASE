@@ -33,7 +33,6 @@ void main()
 	//gl_Position = projection * view  * model * vec4(aPos, 1.0f);
 	
 	mat4 billboard_view = get_spherical_billboard_view_matrix();
-	//{1}
 	gl_Position = projection * billboard_view  * model * vec4(aPos, 1.0f);
 	
 	//gl_Position = billboard_view  * model * vec4(aPos, 1.0f);
