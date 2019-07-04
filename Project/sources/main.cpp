@@ -15,30 +15,24 @@ extern "C"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad/glad.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <obj_loader.h>
-#include <file_system.h>
 #include <thread>
-#include <mutex>
+//#include <mutex>
+
+#include "obj_loader.h"
 #include "fease_draw.h"
-#include "text.h"
-#include "shader_manager.h"
-#include <iostream>
 #include "custom_gui_widgets.h"
 #include "render_scene.h"
 #include "config_parser.h"
 #include "fe_structs.h"
-#include <windows.h>
 #include "bm_parser.h"
+
 #define GLFW_INCLUDE_GLU // for gluErrorString
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 
 #ifdef _WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
 #endif
-
-#include <GLFW/glfw3native.h>
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.

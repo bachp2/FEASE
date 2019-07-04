@@ -19,7 +19,6 @@ extern std::vector<OBJModel*> obj_model_container;
 extern ConfigParser configTable;
 //extern std::vector<GUIForm*> gui_widget_container;
 extern FormContainer gui_container;
-//#define STR(x) #x
 Texture texture;
 
 static const std::vector<std::string> icon_names = {
