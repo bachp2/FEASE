@@ -92,10 +92,10 @@ std::mutex mu;
 bool window_resized = false;
 int main(int, char**)
 {
-	
 	window = initApp();
 	// set up scene
 	// ------------------------------------------------------------------
+	
 	setup_scene();
 	
 	/*fe.fNodes.push_back(Eigen::Vector2f(0, 0));
@@ -128,6 +128,7 @@ int main(int, char**)
 		// -----
 		processInput(window);
 		glfwWaitEvents();
+		
 	}
 	// to do tidy this up, hidden state everywhere
 	if(console_thread) {
@@ -153,6 +154,7 @@ int main(int, char**)
 void inline static render_loop(){
 	// Render Loop
 	// -----------
+	
 	glfwMakeContextCurrent(window);
 	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 	// https://stackoverflow.com/questions/54893063/glew-causes-screen-to-flicker-between-red-and-black-glad-works
@@ -189,7 +191,7 @@ void inline static render_loop(){
 			if (gui_container.isPopup()) gui_container.reset_popup();
 			gui_container.set_popup(new cPopupMenu(mx, my, 80, 100));
 		}
-
+		
 		//gui_widget_container.empty_wastes();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

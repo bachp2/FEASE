@@ -303,8 +303,8 @@ struct Grid {
 	unsigned int gnum; //number of grids
 	float gridThickness;
 	float step;
-	unsigned int vertices_size;
-
+	int vertices_size;
+	
 	inline void setup(Shader* s, unsigned int grid_num = 20) {
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
@@ -326,9 +326,10 @@ struct Grid {
 			grid_vertices.push_back(Vec3(0.5f, 0.0f, i));
 		}
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vec3)*grid_vertices.size(), &grid_vertices[0], GL_STATIC_DRAW);
+		glBufferData(
+			GL_ARRAY_BUFFER, sizeof(Vec3)*grid_vertices.size(), 
+			grid_vertices.data(), GL_DYNAMIC_DRAW );
 
-		
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
@@ -344,6 +345,7 @@ struct Grid {
 		shader->setColor("color", configTable.color("grid"));
 		glLineWidth(0.5f);
 		glBindVertexArray(vao);
+		//printf("%d\n", vertices_size);
 		glDrawArrays(GL_LINES, 0, vertices_size);
 	}
 

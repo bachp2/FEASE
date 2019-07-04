@@ -118,7 +118,7 @@ static inline void render_scene() {
 	auto top = hexCodeToRGB("#42b0ce");
 	auto bot = hexCodeToRGB("#002530");
 	GradientBackground(top.r, top.g, top.b, 1.0, bot.r, bot.g, bot.b, 1.0 );
-
+	
 	// View Projection Model matrices
 
 	//float a = float(scrWidth)/scrHeight;
@@ -129,7 +129,7 @@ static inline void render_scene() {
 	// Draw grid
 	
 	grid.render();
-
+	
 	//// Draw box
 	//// bind textures on corresponding texture units
 	auto textShader = shaderTable.shader("texture");
