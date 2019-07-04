@@ -16,6 +16,8 @@ MainMenu::MainMenu(
 		0, 3, 1 
 	}; 
 
+	const unsigned int border[] = {1, 2};
+
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	glGenBuffers(1, &vbo);
@@ -30,7 +32,11 @@ MainMenu::MainMenu(
 
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &b_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, b_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(border), border, GL_STATIC_DRAW);
 
 	icon_buttons.reserve(icon_names.size());
 	Texture* separator = nullptr;
@@ -55,7 +61,6 @@ MainMenu::MainMenu(
 	}
 }
 
-//int last_index = 0;
 void MainMenu::update()
 {
 	static int last_index = 0;
@@ -108,10 +113,16 @@ void MainMenu::render(Shader * s)
 	_model = glm::translate(_model, glm::vec3(x, y, 0));
 	s->setMat4("model", _model);
 	s->setMat4("projection", orthogonal_projection);
-	s->setColor("color", color);
+	
 
 	glBindVertexArray(vao);
+	s->setColor("color", color);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	s->setColor("color", Color::Black());
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, b_ebo);
+	glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
 
 	glEnable(GL_DEPTH_TEST);
 

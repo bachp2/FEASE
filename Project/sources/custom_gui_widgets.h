@@ -114,7 +114,7 @@ public:
 // TODO refactor this struct inside main menu class
 static struct {
 	const int horizontal = 7;
-	const int vertical = 5;
+	const int vertical = 2;
 	const int icon = 5;
 } padding;
 
@@ -124,6 +124,7 @@ class MainMenu : public Form
 	TextPainter* painter;
 	std::vector<TextureQuad> icon_buttons;
 	HighlightQuad* highlighter = nullptr;
+	unsigned int b_ebo;
 	struct { int index = 0; bool highlight = false; } highlight_info;
 	static const int text_menu_height = 18;
 	static const int icon_menu_height = 26;
