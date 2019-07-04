@@ -9,20 +9,14 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		DebugNoHiccup|x64 = DebugNoHiccup|x64
-		DebugNoHiccup|x86 = DebugNoHiccup|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Debug|x64.ActiveCfg = DebugNoHiccup|x64
-		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Debug|x64.Build.0 = DebugNoHiccup|x64
-		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Debug|x86.ActiveCfg = DebugNoHiccup|Win32
-		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Debug|x86.Build.0 = DebugNoHiccup|Win32
-		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.DebugNoHiccup|x64.ActiveCfg = DebugNoHiccup|x64
-		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.DebugNoHiccup|x64.Build.0 = DebugNoHiccup|x64
-		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.DebugNoHiccup|x86.ActiveCfg = DebugNoHiccup|Win32
-		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.DebugNoHiccup|x86.Build.0 = DebugNoHiccup|Win32
+		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Debug|x64.ActiveCfg = Debug|x64
+		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Debug|x64.Build.0 = Debug|x64
+		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Debug|x86.ActiveCfg = Debug|Win32
+		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Debug|x86.Build.0 = Debug|Win32
 		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Release|x64.ActiveCfg = Release|x64
 		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Release|x64.Build.0 = Release|x64
 		{3FDDC091-02D1-4DCC-ADC8-6025753F015E}.Release|x86.ActiveCfg = Release|Win32
