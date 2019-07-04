@@ -4,7 +4,6 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform vec3 textColor;//new var
-// texture samplers
 uniform sampler2D texture1;
 //uniform sampler2D texture2;
 

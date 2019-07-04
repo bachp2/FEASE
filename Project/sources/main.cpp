@@ -106,9 +106,9 @@ int main(int, char**)
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwMakeContextCurrent(NULL);
-
+	
 	std::thread main_renderer(render_loop);
-
+	
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
 	while(!glfwWindowShouldClose(window)){
@@ -160,7 +160,9 @@ void inline static render_loop(){
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return;
 	}
+	
 	glfwSwapInterval(1);
+	
 	while (!glfwWindowShouldClose(window))
 	{
 		// Render Scene
@@ -291,6 +293,7 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 		}
 	}*/
 	window_resized = true;
+	
 	glViewport(0, 0, width, height);
 }
 

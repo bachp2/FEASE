@@ -122,7 +122,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Bool> OpenGL error: " << error << std::endl;
+			std::cout << " " << name <<" <Bool> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -132,7 +132,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Int> OpenGL error: " << error << std::endl;
+			std::cout << " " << name <<" <Int> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -142,7 +142,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Float> OpenGL error: " << error << std::endl;
+			std::cout << " " << name <<" <Float> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -152,7 +152,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Vec2> OpenGL error: " << error << std::endl;
+			std::cout << " " << name <<" <Vec2> OpenGL error: " << error << std::endl;
 		}
 	}
 	void setVec2(const std::string &name, float x, float y) const
@@ -161,7 +161,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Vec2> OpenGL error: " << error << std::endl;
+			std::cout << " " << name <<" <Vec2> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -171,7 +171,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout <<  " <Vec3> OpenGL error: " << error << std::endl;
+			std::cout <<  " " << name << " <Vec3> OpenGL error: " << error << std::endl;
 		}
 	}
 
@@ -182,7 +182,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Color> OpenGL error: " << error << std::endl;
+			std::cout << " " << name << " <Color> OpenGL error: " << error << std::endl;
 		}
 	}
 
@@ -192,7 +192,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Vec3> OpenGL error: " << error << std::endl;
+			std::cout << " " << name << " <Vec3> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -202,7 +202,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Vec4> OpenGL error: " << error << std::endl;
+			std::cout << " " << name << " <Vec4> OpenGL error: " << error << std::endl;
 		}
 	}
 	void setVec4(const std::string &name, float x, float y, float z, float w)
@@ -211,7 +211,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout <<  " <Vec4> OpenGL error: " << error << std::endl;
+			std::cout << " " << name << " <Vec4> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -221,7 +221,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Mat2> OpenGL error: " << error << std::endl;
+			std::cout << " " << name <<" <Mat2> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -231,7 +231,7 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Mat3> OpenGL error: " << error << std::endl;
+			std::cout << " " << name << " <Mat3> OpenGL error: " << error << std::endl;
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -241,9 +241,8 @@ public:
 		GLenum error = GL_NO_ERROR;
 		while ((error = glGetError()) != GL_NO_ERROR) {
 			log_error_fline();
-			std::cout << " <Mat4> OpenGL error: " << error << std::endl;
+			std::cout << " " << name << " <Mat4> OpenGL error: " << error << std::endl;
 		}
-		
 	}
 
 private:

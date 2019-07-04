@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "text.h"
 #include "grad_bkgrnd.h"
+#include "error.h"
+
 class ArcBallCamera;
 class Shader;
 extern ArcBallCamera camera;
@@ -58,7 +60,7 @@ inline static void setup_scene() {
 	// texture coord attribute
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
+	
 	text_painter = new TextPainter(shaderTable.shader("bitmapped_text"), configTable.color("text"));
 	/*auto tw = new GUIForm(15, 50, 100, 100);
 	gui_widget_container.push_back(tw);*/
@@ -81,20 +83,19 @@ inline static void setup_scene() {
 
 	// lines
 	setup_lines();
-
+	
 	//grid
 	grid.setup(shaderTable.shader("object"));
-
+	
 	// load and create a texture 
 	// -------------------------
 	auto textShader = shaderTable.shader("texture");
 	create_texture(&texture, FPATH(res/terry.jpg));
 	
-	textShader->setInt("texture1", 0);
-
+	//textShader->setInt("texture1", texture.tex_id);
+	
 	//text = RenderText();
 	
-
 	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
 	obj_model_container.push_back( new OBJModel(FPATH(res/assets/suzanne.obj)) );
 	//sphere = model.ToIndexedModel();
@@ -104,6 +105,7 @@ inline static void setup_scene() {
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
+	
 }
 
 static inline void render_scene() {
@@ -123,19 +125,19 @@ static inline void render_scene() {
 	//projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
 
 	view = camera.GetViewMatrix();
-
+	
 	// Draw grid
-
-	grid.render(view, perspective_projection);
-
+	
+	grid.render();
 
 	//// Draw box
 	//// bind textures on corresponding texture units
 	auto textShader = shaderTable.shader("texture");
 	textShader->use();
+	
 	textShader->setMat4("projection", perspective_projection);
 	textShader->setMat4("view", view);
-
+	
 	/*model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
 	textShader->setMat4("model", model);

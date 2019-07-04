@@ -118,9 +118,6 @@ function calc_axial_strain(U, constraints, elems, thetas)
 	for i=1,#elems do 
 		local u1 = U[elems[i].n0*2-1][1]*math.cos(thetas[i]) + U[elems[i].n0*2][1]*math.sin(thetas[i])
 		local u2 = U[elems[i].n1*2-1][1]*math.cos(thetas[i]) + U[elems[i].n1*2][1]*math.sin(thetas[i]) 
-		-- print(elems[i].n0.." "..elems[i].n1)
-		-- local u1 = U[elems[i].n0*2-1][1] + U[elems[i].n0*2][1]
-		-- local u2 = U[elems[i].n1*2-1][1] + U[elems[i].n1*2][1]
 		strains[i][1] = (u2-u1)/elem_length(elems[i])
 		--print(strains[i])
 	end
