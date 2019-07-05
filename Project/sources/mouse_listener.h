@@ -1,10 +1,10 @@
 #pragma once
 #include <glad/glad.h>
-
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
+
 #include "camera.h"
-#include <atomic>
+
 enum Mouse_State {
 	NIL,
 	CLICK,
@@ -31,18 +31,45 @@ struct MouseListener {
 	Mouse_Agenda agenda = ADD_NODE;
 	Mouse_CallBack callback = CNIL;
 	int button=-1;
-	double _cx, _cy; //capture mouse's position from mouse button callback function
-	double _dx, _dy; //capture mouse's vector from mouse callback function
+	double _cx{0}, _cy{0}; //capture mouse's position from mouse button callback function
+	double _dx{0}, _dy{0}; //capture mouse's vector from mouse callback function
+	
 	inline bool draggedBy(int btn) {
 		if (button == btn && state == DRAG) return true;
 		return false;
 	}
-
+	
 	inline bool clickedBy(int btn) {
 		if (button == btn && state == CLICK) {
 			return true;
 		}
 		return false;
+	}
+	inline bool left_drag(){
+		auto r = draggedBy(GLFW_MOUSE_BUTTON_LEFT);
+		if(r){
+			_dx = _cx;
+			_dy = _cy;
+		}
+		return r;
+	}
+
+	inline bool right_drag(){
+		auto r = draggedBy(GLFW_MOUSE_BUTTON_RIGHT);
+		if(r){
+			_dx = _cx;
+			_dy = _cy;
+		}
+		return r;
+	}
+
+	inline bool middle_drag(){
+		auto r = draggedBy(GLFW_MOUSE_BUTTON_MIDDLE);
+		if(r){
+			_dx = _cx;
+			_dy = _cy;
+		}
+		return r;
 	}
 
 	inline bool left_click(){
@@ -71,7 +98,6 @@ struct MouseListener {
 	}
 };
 
-
 //---------------------------------------------------------------------------------------------
 // MOUSE MOVEMENT CALLBACK FUNCTION
 //---------------------------------------------------------------------------------------------
@@ -88,8 +114,8 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	mouse_listener._cx = xpos;
 	mouse_listener._cy = ypos;
-	mouse_listener._dx = xoffset;
-	mouse_listener._dy = yoffset;
+	/*mouse_listener._dx = xoffset;
+	mouse_listener._dy = yoffset;*/
 	if (mouse_listener.state == CLICK) {
 		mouse_listener.state = DRAG;
 	}
@@ -97,7 +123,7 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	if (mouse_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
+	if (mouse_listener.middle_drag())
 		camera.ProcessMouseMovement(xoffset, yoffset);
 
 	// hit detection when outside of any active widgets

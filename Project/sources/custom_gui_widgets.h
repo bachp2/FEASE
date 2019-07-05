@@ -49,7 +49,7 @@ public:
 	float x, y;
 	unsigned int width, height;
 	Color color;
-	std::atomic<bool> draggable = false;
+	bool draggable = false;
 };
 
 class FormContainer {
