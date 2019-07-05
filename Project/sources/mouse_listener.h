@@ -3,6 +3,7 @@
 
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
+#include "camera.h"
 #include <atomic>
 enum Mouse_State {
 	NIL,
@@ -69,3 +70,44 @@ struct MouseListener {
 		state = NIL; 
 	}
 };
+
+
+//---------------------------------------------------------------------------------------------
+// MOUSE MOVEMENT CALLBACK FUNCTION
+//---------------------------------------------------------------------------------------------
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
+extern MouseListener mouse_listener;
+extern ArcBallCamera camera;
+static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	static float lastX = xpos;
+	static float lastY = ypos;
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	mouse_listener._cx = xpos;
+	mouse_listener._cy = ypos;
+	mouse_listener._dx = xoffset;
+	mouse_listener._dy = yoffset;
+	if (mouse_listener.state == CLICK) {
+		mouse_listener.state = DRAG;
+	}
+
+	lastX = xpos;
+	lastY = ypos;
+
+	if (mouse_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
+		camera.ProcessMouseMovement(xoffset, yoffset);
+
+	// hit detection when outside of any active widgets
+	//gui_widget_container.generic_hit_testing_widgets();
+
+	/*for(auto& w : gui_widget_container){
+	if(w->moveable && mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
+	w->move(xoffset, -yoffset);
+	}
+	}*/
+	//printf("%.2f %.2f\n", xoffset, yoffset);
+	mouse_listener.callback = MOVING_CALLBACK;
+}

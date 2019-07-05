@@ -58,9 +58,6 @@ glm::mat4 perspective_projection, view, model, orthogonal_projection;
 
 ArcBallCamera camera(glm::radians(-30.0f), glm::radians(20.0f));
 
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-
 //Shader textShader, solidShader, objectShader;
 ShaderManager shaderTable;
 ConfigParser configTable;
@@ -359,52 +356,6 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 	}
 	mouse_listener.callback = BUTTON_CALLBACK;
 }
-
-//---------------------------------------------------------------------------------------------
-// MOUSE MOVEMENT CALLBACK FUNCTION
-//---------------------------------------------------------------------------------------------
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-bool firstMouse = true;
-static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-	mu.lock();
-	mouse_listener._cx = xpos;
-	mouse_listener._cy = ypos;
-	mouse_listener._dx = xoffset;
-	mouse_listener._dy = yoffset;
-	mu.unlock();
-	if (mouse_listener.state == CLICK) {
-		mouse_listener.state = DRAG;
-	}
-
-	lastX = xpos;
-	lastY = ypos;
-	
-	if (mouse_listener.draggedBy(GLFW_MOUSE_BUTTON_MIDDLE))
-		camera.ProcessMouseMovement(xoffset, yoffset);
-
-	// hit detection when outside of any active widgets
-	//gui_widget_container.generic_hit_testing_widgets();
-
-	/*for(auto& w : gui_widget_container){
-		if(w->moveable && mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
-			w->move(xoffset, -yoffset);
-		}
-	}*/
-	//printf("%.2f %.2f\n", xoffset, yoffset);
-	mouse_listener.callback = MOVING_CALLBACK;
-}
-
 
 //---------------------------------------------------------------------------------------------
 // SCROLL CALLBACK FUNCTION
