@@ -65,14 +65,14 @@ void MainMenu::update()
 {
 	static int last_index = 0;
 
-	if (!hit_test(mouse_listener._cx, mouse_listener._cy)) {
+	if (!hit_test(mouse_listener.cx, mouse_listener.cy)) {
 		delete highlighter;
 		highlighter = nullptr;
 		last_index = -1;
 		return;
 	}
 	quad q;
-	int index = test_item_hit(mouse_listener._cx, mouse_listener._cy, &q);
+	int index = test_item_hit(mouse_listener.cx, mouse_listener.cy, &q);
 
 	if (index == -1) {
 		//if(highlighter) highlighter->color = hexCodeToRGB("#C0C0C0");

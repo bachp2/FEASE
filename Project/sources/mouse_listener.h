@@ -31,8 +31,8 @@ struct MouseListener {
 	Mouse_Agenda agenda = ADD_NODE;
 	Mouse_CallBack callback = CNIL;
 	int button=-1;
-	double _cx{0}, _cy{0}; //capture mouse's position from mouse button callback function
-	double _dx{0}, _dy{0}; //capture mouse's vector from mouse callback function
+	double cx{0}, cy{0}; //capture mouse's position from mouse button callback function
+	double ox{0}, oy{0}; //capture mouse's vector from mouse callback function
 	
 	inline bool draggedBy(int btn) {
 		if (button == btn && state == DRAG) return true;
@@ -45,20 +45,24 @@ struct MouseListener {
 		}
 		return false;
 	}
-	inline bool left_drag(){
+	inline bool left_drag(double* dx, double* dy){
 		auto r = draggedBy(GLFW_MOUSE_BUTTON_LEFT);
 		if(r){
-			_dx = _cx;
-			_dy = _cy;
+			*dx = cx-ox;
+			*dy = cy-oy;
+			ox = cx;
+			oy = cy;
 		}
 		return r;
 	}
 
-	inline bool right_drag(){
+	inline bool right_drag(double* dx, double* dy){
 		auto r = draggedBy(GLFW_MOUSE_BUTTON_RIGHT);
 		if(r){
-			_dx = _cx;
-			_dy = _cy;
+			*dx = cx-ox;
+			*dy = cy-oy;
+			ox = cx;
+			oy = cy;
 		}
 		return r;
 	}
@@ -66,8 +70,8 @@ struct MouseListener {
 	inline bool middle_drag(){
 		auto r = draggedBy(GLFW_MOUSE_BUTTON_MIDDLE);
 		if(r){
-			_dx = _cx;
-			_dy = _cy;
+			ox = cx;
+			oy = cy;
 		}
 		return r;
 	}
@@ -92,10 +96,6 @@ struct MouseListener {
 	inline bool nilState() {
 		return state == NIL;
 	}
-	
-	inline void resetState() { 
-		state = NIL; 
-	}
 };
 
 //---------------------------------------------------------------------------------------------
@@ -107,21 +107,19 @@ extern MouseListener mouse_listener;
 extern ArcBallCamera camera;
 static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	static float lastX = xpos;
-	static float lastY = ypos;
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-	mouse_listener._cx = xpos;
-	mouse_listener._cy = ypos;
+	float xoffset = xpos - mouse_listener.cx;
+	float yoffset = mouse_listener.cy - ypos; // reversed since y-coordinates go from bottom to top
+	
+	mouse_listener.cx = xpos;
+	mouse_listener.cy = ypos;
 	/*mouse_listener._dx = xoffset;
 	mouse_listener._dy = yoffset;*/
+
 	if (mouse_listener.state == CLICK) {
 		mouse_listener.state = DRAG;
+		mouse_listener.ox = mouse_listener.cx;
+		mouse_listener.oy = mouse_listener.cy;
 	}
-
-	lastX = xpos;
-	lastY = ypos;
 
 	if (mouse_listener.middle_drag())
 		camera.ProcessMouseMovement(xoffset, yoffset);

@@ -177,8 +177,8 @@ void inline static render_loop(){
 		}
 
 		if (mouse_listener.right_click_once()){
-			auto mx = mouse_listener._cx;
-			auto my = mouse_listener._cy;
+			auto mx = mouse_listener.cx;
+			auto my = mouse_listener.cy;
 			if (gui_container.isPopup()) gui_container.reset_popup();
 			gui_container.set_popup(new cPopupMenu(mx, my, 80, 100));
 		}

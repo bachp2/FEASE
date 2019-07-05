@@ -1,8 +1,8 @@
 #include "custom_gui_widgets.h"
 void FormContainer::update_widgets()
 {
-	auto mx = mouse_listener._cx;
-	auto my = mouse_listener._cy;
+	auto mx = mouse_listener.cx;
+	auto my = mouse_listener.cy;
 	if (mouse_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT)){
 		//printf("Clicked\n");
 		for (FormIter it = gui_widget_container.end(); it != gui_widget_container.begin(); )
@@ -19,20 +19,14 @@ void FormContainer::update_widgets()
 		}
 		mouseInteractWithWidget = false;
 	}
-
-	if(mouse_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT))
+	double dx, dy;
+	if(mouse_listener.left_drag(&dx, &dy))
 	{
-		auto dx = mouse_listener._dx;
-		auto dy = mouse_listener._dy;
 		auto current_widget = gui_widget_container.back();
 		//sanity check
 		if(current_widget->draggable)
 		{
-			mu.lock();
-			current_widget->move(dx, -dy);
-			mouse_listener._dx = 0;
-			mouse_listener._dy = 0;
-			mu.unlock();
+			current_widget->move(dx, dy);
 		}
 	}
 
@@ -51,8 +45,8 @@ void FormContainer::update_widgets()
 }
 
 void FormContainer::generic_hit_testing_widgets(){
-	auto mx = mouse_listener._cx;
-	auto my = mouse_listener._cy;
+	auto mx = mouse_listener.cx;
+	auto my = mouse_listener.cy;
 	for (FormIter it = gui_widget_container.end(); it != gui_widget_container.begin(); )
 	{
 		--it;
