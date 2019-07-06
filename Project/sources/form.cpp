@@ -1,4 +1,4 @@
-#include "custom_gui_widgets.h"
+#include "gui.h"
 
 Form::Form(int _x, int _y, unsigned int _w, unsigned int _h, Color _c) : 
 	x(_x), y(_y), width(_w), height(_h), color(_c)

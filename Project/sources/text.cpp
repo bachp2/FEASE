@@ -43,24 +43,22 @@ void TextPainter::print_to_screen(const std::string &str, int px, int py, Color 
 
 void TextPainter::print_to_screen(const std::string &str, int px, int py, int fid)
 {
-	float xad = px;
 	// assume orthographic projection with units = screen pixels, origin at top left
 	std::vector<std::array<float, 5>> text_vertices;
 	std::vector<std::array<unsigned int, 3>> text_indices;
-
-	/*glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, ftex);*/
-
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	const char *text = str.c_str();
 
 	//printf("%d %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\n", chr.id, q.x0, q.x1, q.y0, q.y1, q.s0, q.s1, q.t0, q.t1);
-
-	//xad += chr.xadvance;
-
+	auto xad = px;
 	while (*text) {
+		if(*text == '\n'){
+			py += font.lspacing;
+			xad = px;
+		}
+
 		if (*text >= ' ' && *text < 128) {
 			Character chr = font.characters[*text];
 			//printf("id:%d, x:%d, y:%d, w:%d, h:%d, xoffset\n", chr.id);

@@ -1,4 +1,4 @@
-#include "custom_gui_widgets.h"
+#include "gui.h"
 
 MainMenu::MainMenu(
 	std::vector<std::string> icon_names, int _x, int _y, 
@@ -75,11 +75,8 @@ void MainMenu::update()
 	int index = test_item_hit(mouse_listener.cx, mouse_listener.cy, &q);
 
 	if (index == -1) {
-		//if(highlighter) highlighter->color = hexCodeToRGB("#C0C0C0");
-		//printf("yo\n");
 		delete highlighter;
 		highlighter = nullptr;
-		//last_index = menu_items.size();
 		highlight_info.highlight = false;
 		last_index = -1;
 	}
@@ -90,13 +87,41 @@ void MainMenu::update()
 			highlighter = nullptr;
 		}
 		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
+
+		if(index < menu_items.size() && index != -1){
+			if(popup){
+				delete popup;
+				popup = nullptr;
+			}
+			popup = new Popup(q.x, q.y+q.h, 80, 100);
+		}
+
 		last_index = index;
 	}
+
 	highlight_info.index = index;
 	highlight_info.highlight = true;
 
 	if(mouse_listener.left_click_once()){
-		//mouse_event_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
+		printf("bingo\n");
+		//TODO investigate memory leak
+		if(popup){
+			delete popup;
+			popup = nullptr;
+		}
+		switch(index){
+		case 0:
+			popup = new Popup(q.x, q.y+q.h, 80, 100);
+			break;
+		case 1:
+			popup = new Popup(q.x, q.y+q.h, 80, 100);
+			break;
+		case 2:
+			popup = new Popup(q.x, q.y+q.h, 80, 100);
+			break;
+		default:
+			break;
+		}
 		mouse_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
 	}
 }
@@ -141,6 +166,8 @@ void MainMenu::render(Shader * s)
 	for(auto &a : icon_buttons){
 		a.render(ss);
 	}
+
+	if (popup) popup->render(s);
 }
 
 void MainMenu::move(float _x, float _y)

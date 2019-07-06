@@ -25,8 +25,9 @@ class Form {
 public:
 	Form(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#C1C1C1"));
 	Form() {};
-	bool hit_test(int mx, int my);
+	virtual ~Form() {};
 
+	bool hit_test(int mx, int my);
 	virtual void render(Shader* s){};
 	virtual void update(){};
 	virtual void move(float _x, float _y);
@@ -85,6 +86,7 @@ public:
 		for(auto& w : gui_form_container){
 			delete w;
 		}
+		if (popup_menu) delete popup_menu;
 	};
 	
 	bool generic_hit_testing_widgets();
@@ -117,11 +119,19 @@ static struct {
 	const int icon = 5;
 } padding;
 
+struct MenuPopupItem {
+	std::string label;
+	int id;
+	std::vector<MenuPopupItem*> sublevel_items;
+	quad q;
+};
+
 class MainMenu : public Form
 {
 	std::vector<std::string> menu_items;
 	std::vector<TextureQuad> icon_buttons;
 	HighlightQuad* highlighter = nullptr;
+	Form* popup{nullptr};
 	unsigned int b_ebo;
 	struct { int index = 0; bool highlight = false; } highlight_info;
 	static const int text_menu_height = 18;
@@ -186,8 +196,14 @@ private:
 
 class Popup : public Form {
 public:
-	Popup(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : Form(_x, _y, _w, _h, _c)
-	{};
+	Popup(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::hex("#D4D0C8"));
+	~Popup(){
+		glDeleteVertexArrays(1, &this->vao);
+		glDeleteBuffers(1, &this->vbo);
+		glDeleteBuffers(1, &(Form::ebo));
+		glDeleteBuffers(1, &this->ebo[0]);
+		glDeleteBuffers(1, &this->ebo[1]);
+	}
 
 	void render(Shader* s);
 
@@ -195,7 +211,7 @@ public:
 		return _POP_UP_MENU;
 	}
 private:
-
+	unsigned int ebo[2];
 };
 
 class cButton : public Form

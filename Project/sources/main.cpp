@@ -20,7 +20,7 @@ extern "C"
 
 #include "obj_loader.h"
 #include "fease_draw.h"
-#include "custom_gui_widgets.h"
+#include "gui.h"
 #include "render_scene.h"
 #include "config_parser.h"
 #include "bm_parser.h"

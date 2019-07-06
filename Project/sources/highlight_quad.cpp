@@ -1,4 +1,4 @@
-#include "custom_gui_widgets.h"
+#include "gui.h"
 // HIGHTLIGHT SELECTOR
 HighlightQuad::HighlightQuad(int _x, int _y, unsigned int _w, unsigned int _h, float border_width)
 {
