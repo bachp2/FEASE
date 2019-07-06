@@ -65,7 +65,7 @@ TextPainter* text_painter;
 FormContainer gui_container;
 //TextureQuad tq;
 unsigned int VBO, VAO;
-std::vector<OBJModel*> obj_model_container;
+std::vector<OBJModel*> asset_container;
 MouseListener mouse_listener;
 
 void run_data_analysis();
@@ -479,7 +479,7 @@ inline void static prog_cleanup(){
 	axisLines.cleanup();
 	grid.cleanup();
 
-	for(auto& p : obj_model_container){
+	for(auto& p : asset_container){
 		delete p;
 		p = nullptr;
 	}

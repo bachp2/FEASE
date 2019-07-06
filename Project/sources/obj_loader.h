@@ -40,7 +40,9 @@ public:
 	OBJModel(const std::string& fileName);
 	void render_setup();
 	void render(Shader* s);
-
+	void scale(float s){
+		Model = glm::scale(Model, glm::vec3(s, s, s));
+	}
 private:
 	void CreateOBJFace(const std::string& line);
 	void CreateOBJLine(const std::string& line);
@@ -48,6 +50,8 @@ private:
 	glm::vec2 ParseOBJVec2(const std::string& line);
 	glm::vec3 ParseOBJVec3(const std::string& line);
 	OBJIndex ParseOBJIndex(const std::string& token);
+
+	glm::mat4 Model{1.0f};
 };
 
 

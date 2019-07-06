@@ -15,7 +15,7 @@ extern TextPainter* text_painter;
 //terry cube
 extern unsigned int VBO, VAO;
 //IndexedModel sphere;
-extern std::vector<OBJModel*> obj_model_container;
+extern std::vector<OBJModel*> asset_container;
 extern ConfigParser configTable;
 //extern std::vector<GUIForm*> gui_widget_container;
 extern FormContainer gui_container;
@@ -90,10 +90,11 @@ inline static void setup_scene() {
 	
 	//textShader->setInt("texture1", texture.tex_id);
 
-	obj_model_container.push_back( new OBJModel(FPATH(res/assets/sun-dial-arrow.obj)) );
-	for (auto& o : obj_model_container){
+	asset_container.push_back( new OBJModel(FPATH(res/assets/sun-dial-arrow.obj)) );
+	for (auto& o : asset_container){
 		o->render_setup();
 	}
+	asset_container[0]->scale(0.1);
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
@@ -146,7 +147,7 @@ static inline void render_scene() {
 
 	//// render obj mesh
 	auto s = shaderTable.shader("object");
-	for(auto& o : obj_model_container){
+	for(auto& o : asset_container){
 		o->render(s);
 	}
 
