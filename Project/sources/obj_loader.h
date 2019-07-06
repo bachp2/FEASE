@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
-#include "shader_manager.h"
+#include "shader.h"
 #include "config_parser.h"
 
 // Inspired from BennyQBD's obj loader code : https://github.com/BennyQBD/ModernOpenGLTutorial/blob/master/obj_loader.h
@@ -39,7 +39,7 @@ public:
 	OBJModel(){};
 	OBJModel(const std::string& fileName);
 	void render_setup();
-	void render(ShaderManager* sm);
+	void render(Shader* s);
 
 private:
 	void CreateOBJFace(const std::string& line);

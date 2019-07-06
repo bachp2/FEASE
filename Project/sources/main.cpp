@@ -73,7 +73,8 @@ void render_loop();
 void processInput(GLFWwindow *window);
 void render_scene();
 void setup_scene();
-GLFWwindow* initApp();
+void prog_cleanup();
+GLFWwindow* prog_init();
 GLFWwindow* window;
 std::thread* console_thread = nullptr;
 std::vector< glm::vec3 > obj_vertices;
@@ -81,17 +82,12 @@ std::mutex mu;
 bool window_resized = false;
 int main(int, char**)
 {
-	window = initApp();
+	window = prog_init();
 	// set up scene
 	// ------------------------------------------------------------------
 	
 	setup_scene();
-	
-	/*fe.fNodes.push_back(Eigen::Vector2f(0, 0));
-	fe.fNodes.push_back(Eigen::Vector2f(10, 0));
-	fe.fNodes.push_back(Eigen::Vector2f(10, 10));*/
 
-	
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwMakeContextCurrent(NULL);
@@ -125,18 +121,8 @@ int main(int, char**)
 		delete console_thread;
 	}
 	main_renderer.join();
-	
+	prog_cleanup();
 	//gui_widget_container.~WidgetContainer();
-
-	glDeleteVertexArrays(1, &VAO_point);
-	//glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &VBO_point);
-	axisLines.cleanup();
-	grid.cleanup();
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
-	
 	return 0;
 }
 
@@ -250,7 +236,7 @@ static inline void console_input_loop(){
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------
 static inline void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -284,67 +270,6 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	window_resized = true;
 	
 	glViewport(0, 0, width, height);
-}
-
-//---------------------------------------------------------------------------------------------
-// MOUSE BUTTON CALLBACK FUNCTION
-//---------------------------------------------------------------------------------------------
-bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim);
-bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
-void inline mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-	
-	if (action == GLFW_PRESS) {
-		mouse_listener.button = button;
-		mouse_listener.state = CLICK;
-		//printf("Click\n");
-	}
-	
-
-	if (action == GLFW_RELEASE) {
-		mouse_listener.state = NIL;
-	} 
-
-	if (mouse_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
-	{
-		if (gui_container.generic_hit_testing_widgets()) return;
-
-		double mouseX, mouseY;
-		//getting cursor position
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-		//std::cout << "Cursor Position at (" << mouseX << " : " << mouseY << ")" << std::endl;
-		glm::vec3 hit;
-		auto lim = 0.2;
-
-		if (mouse_listener.agenda == CONNECT_ELE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
-			//printf("select node success");
-			glm::ivec2 coord(0);
-			if (selectGrid(coord, hit, lim))
-			{
-				//printf("i: %d, j: %d\n", coord.x, coord.y);
-				auto n = vector_find(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
-				if (n!=nullptr)
-				{
-					//printf("tes!!");
-					insert_by_unique_pair(elements, n);
-				}
-
-			}
-		}
-
-		if (mouse_listener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
-		{
-			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
-			//printf("add node success");
-			glm::ivec2 coord(0);
-			if (selectGrid(coord, hit, lim))
-			{
-				printf("i: %d, j: %d\n", coord.x, coord.y);
-				vector_insert(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
-			}
-		}
-	}
-	mouse_listener.callback = BUTTON_CALLBACK;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -419,10 +344,71 @@ inline static void glfw_error_callback(int error, const char* description)
 }
 
 //---------------------------------------------------------------------------------------------
+// MOUSE BUTTON CALLBACK FUNCTION
+//---------------------------------------------------------------------------------------------
+bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim);
+bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim);
+void inline mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+
+	if (action == GLFW_PRESS) {
+		mouse_listener.button = button;
+		mouse_listener.state = CLICK;
+		//printf("Click\n");
+	}
+
+
+	if (action == GLFW_RELEASE) {
+		mouse_listener.state = NIL;
+	} 
+
+	if (mouse_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
+	{
+		if (gui_container.generic_hit_testing_widgets()) return;
+
+		double mouseX, mouseY;
+		//getting cursor position
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		//std::cout << "Cursor Position at (" << mouseX << " : " << mouseY << ")" << std::endl;
+		glm::vec3 hit;
+		auto lim = 0.2;
+
+		if (mouse_listener.agenda == CONNECT_ELE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
+			//printf("select node success");
+			glm::ivec2 coord(0);
+			if (selectGrid(coord, hit, lim))
+			{
+				//printf("i: %d, j: %d\n", coord.x, coord.y);
+				auto n = vector_find(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
+				if (n!=nullptr)
+				{
+					//printf("tes!!");
+					insert_by_unique_pair(elements, n);
+				}
+
+			}
+		}
+
+		if (mouse_listener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
+		{
+			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
+			//printf("add node success");
+			glm::ivec2 coord(0);
+			if (selectGrid(coord, hit, lim))
+			{
+				printf("i: %d, j: %d\n", coord.x, coord.y);
+				vector_insert(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
+			}
+		}
+	}
+	mouse_listener.callback = BUTTON_CALLBACK;
+}
+
+//---------------------------------------------------------------------------------------------
 // PROGRAM INIT FUNCTION
 //---------------------------------------------------------------------------------------------
 
-inline static GLFWwindow* initApp() {
+inline static GLFWwindow* prog_init() {
 	// glfw window creation
 	// --------------------
 	//GLFWwindow* window = initApp();
@@ -481,4 +467,23 @@ inline static GLFWwindow* initApp() {
 	//glEnable(GL_CULL_FACE);
 
 	return window;
+}
+
+//---------------------------------------------------------------------------------------------
+// PROGRAM'S CLEANUP FUNC
+//---------------------------------------------------------------------------------------------
+inline void static prog_cleanup(){
+	glDeleteVertexArrays(1, &VAO_point);
+	//glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &VBO_point);
+	axisLines.cleanup();
+	grid.cleanup();
+
+	for(auto& p : obj_model_container){
+		delete p;
+		p = nullptr;
+	}
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }

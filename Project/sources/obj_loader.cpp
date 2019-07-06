@@ -13,9 +13,8 @@ unsigned int ParseOBJIndexValue(const std::string& token);
 static inline float ParseOBJFloatValue(const std::string& token, unsigned int start, unsigned int end);
 static inline std::vector<std::string> SplitString(const std::string &s, char delim);
 
-void OBJModel::render(ShaderManager* sm)
+void OBJModel::render(Shader* shader)
 {
-	auto shader = sm->shader("object");
 	shader->use();
 	shader->setColor("color", configTable.color("line"));
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );

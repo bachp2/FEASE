@@ -63,11 +63,14 @@ void HighlightQuad::render(Shader * s)
 	s->setMat4("projection", orthogonal_projection);
 
 	glBindVertexArray(vao);
-	s->setColor("color", Color::White());
+
+	if(!state) s->setColor("color", Color::White());
+	else s->setColor("color", Color::Black());
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
 	glDrawElements(GL_TRIANGLES, 8*2, GL_UNSIGNED_INT, 0);
 
-	s->setColor("color", Color::Black());
+	if(!state) s->setColor("color", Color::Black());
+	else s->setColor("color", Color::White());
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
 	glDrawElements(GL_TRIANGLES, 8*2, GL_UNSIGNED_INT, 0);
 

@@ -71,30 +71,28 @@ void MainMenu::update()
 		last_index = -1;
 		return;
 	}
+
 	quad q;
 	int index = test_item_hit(mouse_listener.cx, mouse_listener.cy, &q);
 
-	if (index == -1) {
-		delete highlighter;
-		highlighter = nullptr;
-		highlight_info.highlight = false;
-		last_index = -1;
-	}
 	//printf("hit %d item!\n", index);
 	if(last_index != index) {
-		if(highlighter){
-			delete highlighter;
-			highlighter = nullptr;
-		}
-		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
-
-		if(index < menu_items.size() && index != -1){
-			if(popup){
-				delete popup;
-				popup = nullptr;
-			}
+		if(popup && index < menu_items.size() && index != -1){
+			delete popup;
+			popup = nullptr;
+			//highlighter->shift();
 			popup = new Popup(q.x, q.y+q.h, 80, 100);
 		}
+
+		if(highlighter){
+			auto r = highlighter->get_reg();
+			delete highlighter;
+			highlighter = nullptr;
+			highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
+			if(index == -1) highlighter->set_reg(r);
+		}
+		else
+			highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 
 		last_index = index;
 	}
@@ -103,8 +101,8 @@ void MainMenu::update()
 	highlight_info.highlight = true;
 
 	if(mouse_listener.left_click_once()){
-		printf("bingo\n");
 		//TODO investigate memory leak
+		//highlighter->shift();
 		if(popup){
 			delete popup;
 			popup = nullptr;

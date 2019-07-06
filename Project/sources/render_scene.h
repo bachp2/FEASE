@@ -68,8 +68,8 @@ inline static void setup_scene() {
 	menu_bar->set_menu_items({"File", "Edit", "Tools"});
 	gui_container.push_back((Form *)menu_bar);
 
-	auto text_box = new StaticTextMessage("1234567890", 30, 52);
-	gui_container.push_back((Form *) text_box);
+	/*auto text_box = new StaticTextMessage("1234567890", 30, 52);
+	gui_container.push_back((Form *) text_box);*/
 	
 	// cartesian axis lines
 	axisLines.setup(&camera);
@@ -89,19 +89,14 @@ inline static void setup_scene() {
 	create_texture(&texture, FPATH(res/terry.jpg));
 	
 	//textShader->setInt("texture1", texture.tex_id);
-	
-	//text = RenderText();
-	
-	//bool res = loadOBJ(FPATH(resources/assets/suzanne.obj), obj_vertices, uvs, normals);
-	obj_model_container.push_back( new OBJModel(FPATH(res/assets/suzanne.obj)) );
-	//sphere = model.ToIndexedModel();
+
+	obj_model_container.push_back( new OBJModel(FPATH(res/assets/sun-dial-arrow.obj)) );
 	for (auto& o : obj_model_container){
 		o->render_setup();
 	}
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
-	
 }
 
 static inline void render_scene() {
@@ -150,17 +145,13 @@ static inline void render_scene() {
 	render_points(&shaderTable);
 
 	//// render obj mesh
-	/*for(auto& o : obj_model_container){
-		o->render(&shaderTable);
-	}*/
+	auto s = shaderTable.shader("object");
+	for(auto& o : obj_model_container){
+		o->render(s);
+	}
 
 	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);
-
-	//text.render("Sleep Deprived");
-
-	//text_painter->writeBitmap("The GLFW_CURSOR input mode provides several cursor modes for special forms of mouse motion input. By default, the cursor mode is ", 8, 300);
-	//text_painter->writeBitmap("Carole & Tuesday", 0, 300+text_painter->get_font_line_gap());
 
 	// draw axis lines
 	axisLines.render(shaderTable.shader("sline"), scrWidth, scrHeight);

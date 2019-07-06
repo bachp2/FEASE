@@ -106,10 +106,16 @@ public:
 
 	void render(Shader* s);
 	void move(float _x, float _y){};
+	void shift() { state = true; }
+	void pop() { state = false; }
+	void set_reg(unsigned int s) { state = s; }
+	unsigned int get_reg() { return state; }
 
+private:
 	unsigned int vbo, vao, ebo[2];
 	float x, y;
 	unsigned int width, height;
+	bool state{false};
 };
 
 // TODO refactor this struct inside main menu class
@@ -121,10 +127,36 @@ static struct {
 
 struct MenuPopupItem {
 	std::string label;
-	int id;
+	int id{0};
 	std::vector<MenuPopupItem*> sublevel_items;
 	quad q;
+	TextureQuad tq;
 };
+
+struct MenuItem : MenuPopupItem {
+
+
+};
+
+struct ItemSeparator : MenuPopupItem {
+	ItemSeparator(){
+		id = -1;
+	}
+};
+
+inline std::vector<MenuPopupItem*> generate_popup_menu_items(
+	std::vector<std::string> menu_items, 
+	quad menu_quad)
+{
+	std::vector<MenuPopupItem*> popup_items;
+	popup_items.reserve(menu_items.size());
+	for (auto i = 0; i < menu_items.size(); ++i) {
+		auto a = new MenuPopupItem();
+		a->label = menu_items[i];
+		a->id = i;
+		popup_items.push_back(a);
+	}
+}
 
 class MainMenu : public Form
 {
@@ -198,6 +230,7 @@ class Popup : public Form {
 public:
 	Popup(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::hex("#D4D0C8"));
 	~Popup(){
+		printf("delted\n");
 		glDeleteVertexArrays(1, &this->vao);
 		glDeleteBuffers(1, &this->vbo);
 		glDeleteBuffers(1, &(Form::ebo));
@@ -212,6 +245,7 @@ public:
 	}
 private:
 	unsigned int ebo[2];
+	std::vector<MenuPopupItem*> menu_items;
 };
 
 class cButton : public Form

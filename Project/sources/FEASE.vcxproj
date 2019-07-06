@@ -131,7 +131,6 @@
     <ClCompile Include="..\dep\glad\glad.c" />
     <ClCompile Include="config_parser.cpp" />
     <ClCompile Include="container.cpp" />
-    <ClCompile Include="custom_gui_widgets.cpp" />
     <ClCompile Include="form.cpp" />
     <ClCompile Include="grad_bkgrnd.h" />
     <ClCompile Include="highlight_quad.cpp" />
