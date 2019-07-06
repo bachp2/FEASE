@@ -23,7 +23,6 @@ extern "C"
 #include "custom_gui_widgets.h"
 #include "render_scene.h"
 #include "config_parser.h"
-#include "fe_structs.h"
 #include "bm_parser.h"
 
 #define GLFW_INCLUDE_GLU // for gluErrorString
@@ -67,7 +66,6 @@ FormContainer gui_container;
 //TextureQuad tq;
 unsigned int VBO, VAO;
 std::vector<OBJModel*> obj_model_container;
-FEObject fe;
 MouseListener mouse_listener;
 
 void run_data_analysis();
@@ -180,7 +178,7 @@ void inline static render_loop(){
 			auto mx = mouse_listener.cx;
 			auto my = mouse_listener.cy;
 			if (gui_container.isPopup()) gui_container.reset_popup();
-			gui_container.set_popup(new cPopupMenu(mx, my, 80, 100));
+			gui_container.set_popup(new Popup(mx, my, 80, 100));
 		}
 		
 		//gui_widget_container.empty_wastes();
@@ -198,15 +196,13 @@ void inline static render_loop(){
 void console_input_loop();
 static inline void run_data_analysis()
 {
-	fe.fNodes.clear();
-	fe.fElements.clear();
 	printf("Running truss analysis...\n");
 	printf("Geometry definition stage...\n");
 
-	printf("Truss node count %d\n", fe.fNodes.size());
-	printf("Truss element count %d\n", fe.fElements.size());
+	printf("Truss node count %d\n", nodes.size());
+	printf("Truss element count %d\n", elements.size());
 	printf("Writing to lua script...");
-	std::string content = "require(\"truss_structs\")\n";
+	std::string content = "require(\"structs_fea\")\n";
 
 	content.append("--- FEM NODES\n");
 	for (int i = 0; i < nodes.size(); ++i){
@@ -233,7 +229,7 @@ static inline void console_input_loop(){
 	printf("Specify boundary conditions through command prompt...\n");
 	printf("Type away; press '~' to complete:\n");
 	printf("> ");
-	std::string content = "require(\"truss_structs\")\n";
+	std::string content = "require(\"structs_fea\")\n";
 	char c = 0;
 	std::string line;
 	while(c != '~'){
@@ -307,22 +303,18 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 
 	if (action == GLFW_RELEASE) {
 		mouse_listener.state = NIL;
-		//printf("Nil\n");
 	} 
 
 	if (mouse_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
 	{
-		if (gui_container.mouseInteractWithWidget) return;
+		if (gui_container.generic_hit_testing_widgets()) return;
 
 		double mouseX, mouseY;
 		//getting cursor position
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		//std::cout << "Cursor Position at (" << mouseX << " : " << mouseY << ")" << std::endl;
 		glm::vec3 hit;
-		auto lim = 0.3;
-		//auto r = getHitPtFromRaycastToGrid(hit, mouseX, mouseY);
-		//printf("hit? %d\n", r);
-		//assert(mouseListener.agenda == SELECT_NODE);
+		auto lim = 0.2;
 
 		if (mouse_listener.agenda == CONNECT_ELE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
 			//printf("select node success");

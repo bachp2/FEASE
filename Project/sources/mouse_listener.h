@@ -107,14 +107,6 @@ extern MouseListener mouse_listener;
 extern ArcBallCamera camera;
 static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	float xoffset = xpos - mouse_listener.cx;
-	float yoffset = mouse_listener.cy - ypos; // reversed since y-coordinates go from bottom to top
-	
-	mouse_listener.cx = xpos;
-	mouse_listener.cy = ypos;
-	/*mouse_listener._dx = xoffset;
-	mouse_listener._dy = yoffset;*/
-
 	if (mouse_listener.state == CLICK) {
 		mouse_listener.state = DRAG;
 		mouse_listener.ox = mouse_listener.cx;
@@ -122,16 +114,13 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	}
 
 	if (mouse_listener.middle_drag())
+	{
+		float xoffset = xpos - mouse_listener.cx;
+		float yoffset = mouse_listener.cy - ypos; // reversed since y-coordinates go from bottom to top
 		camera.ProcessMouseMovement(xoffset, yoffset);
-
-	// hit detection when outside of any active widgets
-	//gui_widget_container.generic_hit_testing_widgets();
-
-	/*for(auto& w : gui_widget_container){
-	if(w->moveable && mouse_event_listener.draggedBy(GLFW_MOUSE_BUTTON_LEFT)){
-	w->move(xoffset, -yoffset);
 	}
-	}*/
-	//printf("%.2f %.2f\n", xoffset, yoffset);
+
+	mouse_listener.cx = xpos;
+	mouse_listener.cy = ypos;
 	mouse_listener.callback = MOVING_CALLBACK;
 }

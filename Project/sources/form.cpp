@@ -11,7 +11,6 @@ bool Form::hit_test(int mx, int my)
 
 	if (mx > x1 || mx < x0) return false;
 	if (my > y1 || my < y0) return false;
-	//printf("form is hovered\n");
 	return true;
 }
 

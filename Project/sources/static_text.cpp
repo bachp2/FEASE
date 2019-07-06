@@ -1,17 +1,23 @@
 #include "custom_gui_widgets.h"
 
-TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c) : Form(_x,_y,_w,_h,_c)
-{
+StaticTextMessage::StaticTextMessage(std::string message, int _x, int _y, Color bkgrnd){
+	width = text_painter->get_str_length(message);
+	height = text_painter->get_font_height();
+	this->x = _x;
+	this->y = _y;
+	this->color = bkgrnd;
+	this->message = message;
+
 	const float bwidth = 1.0;
 	const float vertices[] = {
-				   0,			  0, 0.0f,//0
-			   width,			  0, 0.0f,//1
-			   width,		 height, 0.0f,//2
-				   0,        height, 0.0f,//3
-			 -bwidth,       -bwidth, 0.0f,//4
+		0,			  0, 0.0f,//0
+		width,			  0, 0.0f,//1
+		width,		 height, 0.0f,//2
+		0,        height, 0.0f,//3
+		-bwidth,       -bwidth, 0.0f,//4
 		width+bwidth,       -bwidth, 0.0f,//5
 		width+bwidth, height+bwidth, 0.0f,//6
-			 -bwidth, height+bwidth, 0.0f //7 
+		-bwidth, height+bwidth, 0.0f //7 
 	};
 
 	const unsigned int plane[] = {
@@ -50,11 +56,9 @@ TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c) : F
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(border), border, GL_DYNAMIC_DRAW);
 }
 
-void TextBox::render(Shader * s)
-{
+void StaticTextMessage::render(Shader* s) {
 	//glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
-
 	s->use();
 	glm::mat4 _model = glm::mat4(1.0f);
 	_model = glm::translate(_model, glm::vec3(x, y, 0));
@@ -72,5 +76,5 @@ void TextBox::render(Shader * s)
 
 	glEnable(GL_DEPTH_TEST);
 
-	text_painter->print_to_screen(text, x, y); //to do: get skip line length
+	text_painter->print_to_screen(message, x, y); //to do: get skip line length
 }

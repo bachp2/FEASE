@@ -8,7 +8,7 @@ class Color;
 Color hexCodeToRGB(std::string input);
 struct Color {
 	float r, g, b;
-	Color color(std::string i){
+	static Color hex(std::string i){
 		return hexCodeToRGB(i);
 	}
 	static Color White(){

@@ -14,6 +14,7 @@ extern ConfigParser configTable;
 extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
+extern TextPainter* text_painter;
 
 struct quad {
 	float x, y, w, h;
@@ -23,7 +24,7 @@ class Form {
 
 public:
 	Form(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#C1C1C1"));
-
+	Form() {};
 	bool hit_test(int mx, int my);
 
 	virtual void render(Shader* s){};
@@ -49,22 +50,21 @@ public:
 	float x, y;
 	unsigned int width, height;
 	Color color;
-	bool draggable = false;
 };
 
 class FormContainer {
 	using FormIter = std::list<Form*>::iterator;
-	std::list<Form*> gui_widget_container;
+	std::list<Form*> gui_form_container;
 	void _list_swap_member(FormIter& n1, FormIter& n2);
 	void _list_bump_member(FormIter& n1);
 	Form* popup_menu = nullptr;
 public:
 	void push_back(Form* g) { 
-		gui_widget_container.push_back(g); 
+		gui_form_container.push_back(g); 
 	};
 	Form* pop_back(){
-		Form* g = gui_widget_container.back();
-		gui_widget_container.pop_back();
+		Form* g = gui_form_container.back();
+		gui_form_container.pop_back();
 		return g;
 	}
 
@@ -79,16 +79,15 @@ public:
 	}
 	bool isPopup() { return popup_menu != nullptr; }
 	
-	const std::list<Form*>& get_container() { return gui_widget_container; };
+	const std::list<Form*>& get_container() { return gui_form_container; };
 	
 	~FormContainer() {
-		for(auto& w : gui_widget_container){
+		for(auto& w : gui_form_container){
 			delete w;
 		}
 	};
 	
-	void generic_hit_testing_widgets();
-	bool mouseInteractWithWidget = false;
+	bool generic_hit_testing_widgets();
 };
 
 class HighlightQuad
@@ -121,7 +120,6 @@ static struct {
 class MainMenu : public Form
 {
 	std::vector<std::string> menu_items;
-	TextPainter* painter;
 	std::vector<TextureQuad> icon_buttons;
 	HighlightQuad* highlighter = nullptr;
 	unsigned int b_ebo;
@@ -137,10 +135,6 @@ public:
 		unsigned int _w = scrWidth, 
 		unsigned int _h = text_menu_height + icon_menu_height + padding.vertical * 2,
 		Color _c = hexCodeToRGB("#C0C0C0"));
-
-	void setPainter(TextPainter* tp){
-		painter = tp;
-	}
 
 	void render(Shader* s);
 
@@ -162,14 +156,10 @@ public:
 class TextBox : public Form {
 public:
 	TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE"));
-
+	TextBox() {};
 	void include_text(std::string t){
 		text = t;
 	};
-
-	void setPainter(TextPainter* tp){
-		painter = tp;
-	}
 
 	void clear_text() {
 		text.clear();
@@ -182,13 +172,21 @@ public:
 	}
 private:
 	std::string text;
-	TextPainter* painter;
 	unsigned int border_ebo;
 };
 
-class cPopupMenu : public Form {
+class StaticTextMessage : public Form{
 public:
-	cPopupMenu(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : Form(_x, _y, _w, _h, _c)
+	StaticTextMessage(std::string message, int _x, int _y, Color bkgrnd = Color::hex("#FFFFCE"));
+	void render(Shader* s);
+private:
+	std::string message;
+	unsigned int border_ebo;
+};
+
+class Popup : public Form {
+public:
+	Popup(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE")) : Form(_x, _y, _w, _h, _c)
 	{};
 
 	void render(Shader* s);

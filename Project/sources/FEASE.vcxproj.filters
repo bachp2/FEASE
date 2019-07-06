@@ -45,9 +45,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fe_structs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stb_implement.cpp">
       <Filter>Source Files\dep</Filter>
     </ClCompile>
@@ -87,6 +84,9 @@
     <ClCompile Include="textbox.cpp">
       <Filter>Source Files\forms</Filter>
     </ClCompile>
+    <ClCompile Include="static_text.cpp">
+      <Filter>Source Files\forms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config_parser.h">
@@ -103,9 +103,6 @@
     </ClInclude>
     <ClInclude Include="mouse_listener.h">
       <Filter>Header Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="fe_structs.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="custom_gui_widgets.h">
       <Filter>Header Files</Filter>

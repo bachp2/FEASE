@@ -1,5 +1,4 @@
-require("truss_structs")
+require("structs_fea")
 --- FEM NODES
-fe_nodes[0] = {x=-0.250,y=-0.200}
 --- FEM ELEMENTS
 

@@ -48,5 +48,6 @@ local function _getEFT(ni,nj,n)
 
     return eft
 end
+
 global_stiffness_matrix = zeros(#fe_nodes*3,#fe_nodes*3);
 

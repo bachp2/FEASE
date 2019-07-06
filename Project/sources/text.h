@@ -49,6 +49,11 @@ public:
 		}
 		return len;
 	}
+
+	int get_font_height(){
+		return font.lspacing;
+	}
+
 	const Color _default, _highlighted;
 };
 

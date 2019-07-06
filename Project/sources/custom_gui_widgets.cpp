@@ -4,7 +4,7 @@
 //---------------------------------------------------------
 
 // POPUP MENU
-void cPopupMenu::render(Shader * s)
+void Popup::render(Shader * s)
 {
 	Form::render(s);
 }

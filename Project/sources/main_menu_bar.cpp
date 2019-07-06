@@ -133,9 +133,9 @@ void MainMenu::render(Shader * s)
 	auto cx = padding.horizontal;
 	auto cy = 0;//to do: get skip line length
 	for(const auto& str : menu_items){
-		if(highlight_info.highlight) painter->print_to_screen(str, cx, cy);
-		else painter->print_to_screen(str, cx, cy);
-		cx += padding.horizontal*2+painter->get_str_length(str);
+		if(highlight_info.highlight) text_painter->print_to_screen(str, cx, cy);
+		else text_painter->print_to_screen(str, cx, cy);
+		cx += padding.horizontal*2+text_painter->get_str_length(str);
 	}
 	auto ss = shaderTable.shader("texture");
 	for(auto &a : icon_buttons){
@@ -172,11 +172,11 @@ int MainMenu::test_item_hit(int mx, int my, quad* q)
 			if(i==0) 
 			{
 				x0 = this->x; 
-				x1 = this->x + padding*2 + painter->get_str_length(menu_items[i]);
+				x1 = this->x + padding*2 + text_painter->get_str_length(menu_items[i]);
 			}
 			else {
 				x0 = x1; 
-				x1 = x0 + padding*2 + painter->get_str_length(menu_items[i]);
+				x1 = x0 + padding*2 + text_painter->get_str_length(menu_items[i]);
 			}
 
 			//printf("ln: %d\n", painter->get_line_length(menu_items[i]));
