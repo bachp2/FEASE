@@ -71,17 +71,26 @@ MainMenu::~MainMenu()
 	if (popup) delete popup;
 }
 
+std::vector<MenuPopupItem> parse_popup(const std::string& str, char c, float py);
 void MainMenu::update()
 {
 	static int last_index = 0;
-
 	if (popup && popup->hit_test(mouse_listener.cx, mouse_listener.cy)) {
 		quad q;
-		if ( popup->test_item_hit(mouse_listener.cy, &q) ) {
+		int item_index{ 0 };
+		if (popup->test_item_hit(mouse_listener.cy, &q, &item_index)) {
+			if (mouse_listener.left_click_once()) {
+				if (!popup->get_item(item_index).sub.empty()) {
+					printf("%s\n", popup->get_item(item_index).sub.c_str());
+				}
+			}
 			popup->highlight_item(q);
 		}
+		else popup->delete_highlighter();
 		return;
 	}
+	else if (popup)
+		popup->delete_highlighter();
 
 	if (!this->hit_test(mouse_listener.cx, mouse_listener.cy)) {
 		if (popup && mouse_listener.left_click_once()) {
@@ -122,6 +131,7 @@ void MainMenu::update()
 		//TODO investigate memory leak
 		//highlighter->shift();
 		updatePopup(index, q);
+
 		mouse_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
 	}
 }
@@ -242,7 +252,7 @@ void MainMenu::updatePopup(int index, quad& q)
 		delete popup;
 		popup = nullptr;
 	}
-	//if(highlighter) highlighter->style = HighlightQuad::Style::POP;
+
 	switch (index) {
 	case 0:
 		popup = new Popup("New{Bonjour\nHello!}\nOpen\nSave\vQuit\n", q.x, q.y + q.h, 80, 100);
@@ -256,4 +266,59 @@ void MainMenu::updatePopup(int index, quad& q)
 	default:
 		break;
 	}
+}
+
+inline std::vector<MenuPopupItem> parse_popup(const std::string& str, char c, float py) {
+	std::vector<MenuPopupItem> arr;
+	auto size = str.size();
+	auto sstart = 0;
+	auto txth = text_painter->get_font_height() + 3;
+	arr.reserve(10);
+	for (auto i = 0; i < size; ++i) {
+		MenuPopupItem mitem;
+		switch (str[i]) {
+		case '\n':
+			mitem.label = str.substr(sstart, i - sstart);
+			mitem.y = py;
+			mitem.h = txth;
+			arr.push_back(mitem);
+			sstart = i + 1;
+			break;
+		case '\v':
+			mitem.label = str.substr(sstart, i - sstart);
+			mitem.y = py;
+			mitem.h = txth;
+			py += mitem.h;
+			arr.push_back(mitem);
+
+			mitem = MenuPopupItem("sep");
+			mitem.y = py;
+			mitem.h = 5;
+			arr.push_back(mitem);
+			sstart = i + 1;
+			break;
+		case '{':
+			mitem.label = str.substr(sstart, i - sstart);
+			sstart = i + 1;
+			for (auto ii = i; ii < size; ++ii) {
+				if (str[ii] == '}') {
+					mitem.sub = str.substr(sstart, ii - sstart);
+					mitem.y = py;
+					mitem.h = txth;
+					sstart = ii + 2;
+					i = sstart;
+					break;
+				}
+			}
+			arr.push_back(mitem);
+			break;
+		}
+		py += mitem.h;
+	}
+
+	for (auto& a : arr) {
+		if (!a.sub.empty()) printf("%s\n", a.sub.c_str());
+	}
+
+	return arr;
 }

@@ -104,6 +104,9 @@ public:
 	HighlightQuad(int _x, int _y, unsigned int _w, unsigned int _h, float border_width = -1.0);
 
 	~HighlightQuad();;
+	
+	int getx() { return int(this->x); }
+	int gety() { return int(this->y); }
 
 	void render(Shader* s);
 	void move(float _x, float _y){};
@@ -216,21 +219,15 @@ public:
 		return _POP_UP_MENU;
 	}
 
-	int max_item_string_size() {
-		auto max = 0;
-		for (const auto& i : items) {
-			auto s = text_painter->get_str_length(i.label);
-			if (s > max) max = s;
-		}
-		return max;
-	};
+	int max_item_string_size();;
 
-	int test_item_hit(int my, quad* q);
+	int test_item_hit(int my, quad* q, int* index);
 	void highlight_item(const quad& q);
+	void delete_highlighter();
+	MenuPopupItem get_item(int id) const;
 private:
 	unsigned int ebo[2];
 	const static int padding{ 15 };
-	//std::vector<std::string> items;
 	HighlightQuad* highlighter{ nullptr };
 	std::vector<MenuPopupItem> items;
 };

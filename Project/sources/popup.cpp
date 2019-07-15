@@ -81,8 +81,7 @@ Popup::~Popup() {
 	if (highlighter) {
 		delete highlighter;
 	}
-}
-;
+};
 
 void Popup::render(Shader* s){
 	//glDisable(GL_CULL_FACE);
@@ -107,12 +106,17 @@ void Popup::render(Shader* s){
 	glDrawElements(GL_TRIANGLES, 8*2, GL_UNSIGNED_INT, 0);
 
 	if (highlighter) highlighter->render(s);
-	for (const auto& i : this->items) {
-		if (i.label == "sep") {
+	for (auto i = 0; i < items.size(); ++i) {
+		if (items[i].label == "sep") {
 			continue;
 		}
-		text_painter->print_to_screen(i.label, x + padding, i.y);
+
+		if(highlighter && highlighter->gety() == items[i].y)
+			text_painter->print_to_screen(items[i].label, x + padding, items[i].y, Color::White());
+		else
+			text_painter->print_to_screen(items[i].label, x + padding, items[i].y, Color::Black());
 	}
+	text_painter->set_text_color(Color::Black());
 	
 	glEnable(GL_DEPTH_TEST);
 }
@@ -165,9 +169,9 @@ inline std::vector<MenuPopupItem> parse_popup(const std::string &str, char c, fl
 		py += mitem.h;
 	}
 
-	for (auto& a : arr) {
+	/*for (auto& a : arr) {
 		if (!a.sub.empty()) printf("%s\n", a.sub.c_str());
-	}
+	}*/
 
 	return arr;
 }
@@ -184,20 +188,29 @@ inline std::vector<MenuPopupItem> parse_popup(const std::string &str, char c, fl
 //	return arr;
 //}
 
-int Popup::test_item_hit(int my, quad* q)
-{
-	for (const auto& i : this->items) {
-		auto y0 = i.y;
-		auto y1 = i.y + i.h;
+inline int Popup::max_item_string_size() {
+	auto max = 0;
+	for (const auto& i : items) {
+		auto s = text_painter->get_str_length(i.label);
+		if (s > max) max = s;
+	}
+	return max;
+}
 
+int Popup::test_item_hit(int my, quad* q, int* index)
+{
+	for (auto i = 0; i < items.size(); ++i) {
+		auto y0 = items[i].y;
+		auto y1 = items[i].y + items[i].h;
 		if (my <= y1 && my >= y0) {
-			if (i.label == "sep") {
+			if (items[i].label == "sep") {
 				return 0;
 			}
 			q->x = this->x;
 			q->w = this->width;
-			q->y = i.y;
-			q->h = i.h;
+			q->y = items[i].y;
+			q->h = items[i].h;
+			*index = i;
 			return 1;
 		}
 	}
@@ -212,4 +225,17 @@ void Popup::highlight_item(const quad& q)
 	}
 	this->highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 	this->highlighter->style = HighlightQuad::Style::SOLID;
+}
+
+void Popup::delete_highlighter()
+{
+	if (this->highlighter) {
+		delete this->highlighter;
+		this->highlighter = nullptr;
+	}
+}
+
+MenuPopupItem Popup::get_item(int id) const
+{
+	return items[id];
 }
