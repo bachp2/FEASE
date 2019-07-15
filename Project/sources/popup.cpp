@@ -1,12 +1,18 @@
 #include "gui.h"
 
-std::vector<std::string> str_split(std::string str, std::string sep);
+std::vector<MenuPopupItem> parse_popup(const std::string& str, char sep, float py);
 Popup::Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned int _h, Color _c) : Form(_x, _y, _w, _h, _c)
 {
 	width = _w; height = _h; x = _x; y = _y;
-	this->items = str_split(structure, "\n");
+	this->items = parse_popup(structure, '\n', this->y);
 	if (_w - padding*2 < max_item_string_size()) {
 		width = max_item_string_size() + padding*2;
+	}
+
+	// can this piece of code lead to exploit ?
+	auto mh = items.back().y + items.back().h;
+	if (!items.empty() && _h < mh) {
+		height = mh;
 	}
 
 	const float bwidth = -1.0;
@@ -101,24 +107,68 @@ void Popup::render(Shader* s){
 	glDrawElements(GL_TRIANGLES, 8*2, GL_UNSIGNED_INT, 0);
 
 	if (highlighter) highlighter->render(s);
-	auto dy = y;
 	for (const auto& i : this->items) {
-		text_painter->print_to_screen(i, x + padding, dy);
-		dy += text_painter->get_font_height();
+		if (i.label == "sep") {
+			continue;
+		}
+		text_painter->print_to_screen(i.label, x + padding, i.y);
 	}
 	
 	glEnable(GL_DEPTH_TEST);
 }
 
-inline std::vector<std::string> str_split(std::string str, std::string sep) {
-	char* cstr = const_cast<char*>(str.c_str());
-	char* current;
-	std::vector<std::string> arr;
-	current = strtok(cstr, sep.c_str());
-	while (current != NULL) {
-		arr.push_back(current);
-		current = strtok(NULL, sep.c_str());
+inline std::vector<MenuPopupItem> parse_popup(const std::string &str, char c, float py) {
+	std::vector<MenuPopupItem> arr;
+	auto size = str.size();
+	auto sstart = 0;
+	auto txth = text_painter->get_font_height()+3;
+	arr.reserve(10);
+	for (auto i = 0; i < size; ++i) {
+		MenuPopupItem mitem;
+		switch (str[i]) {
+		case '\n':
+			mitem.label = str.substr(sstart, i - sstart);
+			mitem.y = py;
+			mitem.h = txth;
+			arr.push_back(mitem);
+			sstart = i+1;
+			break;
+		case '\v':
+			mitem.label = str.substr(sstart, i - sstart);
+			mitem.y = py;
+			mitem.h = txth;
+			py += mitem.h;
+			arr.push_back(mitem);
+
+			mitem = MenuPopupItem("sep");
+			mitem.y = py;
+			mitem.h = 5;
+			arr.push_back(mitem);
+			sstart = i + 1;
+			break;
+		case '{':
+			mitem.label = str.substr(sstart, i - sstart);
+			sstart = i + 1;
+			for (auto ii = i; ii < size; ++ii) {
+				if (str[ii] == '}') {
+					mitem.sub = str.substr(sstart, ii - sstart);
+					mitem.y = py;
+					mitem.h = txth;
+					sstart = ii+2;
+					i = sstart;
+					break;
+				}
+			}
+			arr.push_back(mitem);
+			break;
+		}
+		py += mitem.h;
 	}
+
+	for (auto& a : arr) {
+		if (!a.sub.empty()) printf("%s\n", a.sub.c_str());
+	}
+
 	return arr;
 }
 
@@ -136,20 +186,20 @@ inline std::vector<std::string> str_split(std::string str, std::string sep) {
 
 int Popup::test_item_hit(int my, quad* q)
 {
-	auto y0 = this->y + 1;
-	auto step = text_painter->get_font_height();
-	auto y1 = this->y + step + 1;
-
 	for (const auto& i : this->items) {
+		auto y0 = i.y;
+		auto y1 = i.y + i.h;
+
 		if (my <= y1 && my >= y0) {
+			if (i.label == "sep") {
+				return 0;
+			}
 			q->x = this->x;
 			q->w = this->width;
-			q->y = y0;
-			q->h = step;
+			q->y = i.y;
+			q->h = i.h;
 			return 1;
 		}
-		y0 += step;
-		y1 += step;
 	}
 	return 0;
 }

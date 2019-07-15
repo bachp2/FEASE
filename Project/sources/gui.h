@@ -17,7 +17,7 @@ extern int scrWidth, scrHeight;
 extern TextPainter* text_painter;
 
 struct quad {
-	float x, y, w, h;
+	float x{ 0 }, y{ 0 }, w{ 0 }, h{0};
 };
 
 class Form {
@@ -121,26 +121,6 @@ static struct {
 } padding;
 
 class Popup;
-struct MenuPopupItem {
-	std::string label;
-	int id{0};
-	Popup* popup;
-	quad q;
-	TextureQuad tq;
-};
-
-struct MenuItem : MenuPopupItem {
-
-
-};
-
-struct ItemSeparator : MenuPopupItem {
-	ItemSeparator(){
-		id = -1;
-	}
-};
-
-class Popup;
 class MainMenu : public Form
 {
 	std::vector<std::string> menu_items;
@@ -159,7 +139,7 @@ public:
 		int _x = 0, int _y = 0, 
 		unsigned int _w = scrWidth, 
 		unsigned int _h = text_menu_height + icon_menu_height + padding.vertical * 2,
-		Color _c = hexCodeToRGB("#C0C0C0"));
+		Color _c = Color::hex("#C0C0C0"));
 
 	~MainMenu();
 
@@ -213,6 +193,19 @@ private:
 	unsigned int border_ebo;
 };
 
+
+struct MenuPopupItem {
+	MenuPopupItem() {};
+
+	MenuPopupItem(const std::string& lab) {
+		label = lab;
+	};
+
+	std::string label;
+	std::string sub;
+	int y{ 0 }, h{ 0 };
+	//TextureQuad tq;
+};
 class Popup : public Form {
 public:
 	Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::hex("#D4D0C8"));
@@ -226,7 +219,7 @@ public:
 	int max_item_string_size() {
 		auto max = 0;
 		for (const auto& i : items) {
-			auto s = text_painter->get_str_length(i);
+			auto s = text_painter->get_str_length(i.label);
 			if (s > max) max = s;
 		}
 		return max;
@@ -237,9 +230,9 @@ public:
 private:
 	unsigned int ebo[2];
 	const static int padding{ 15 };
-	std::vector<std::string> items;
+	//std::vector<std::string> items;
 	HighlightQuad* highlighter{ nullptr };
-	std::vector<MenuPopupItem*> menu_items;
+	std::vector<MenuPopupItem> items;
 };
 
 class cButton : public Form

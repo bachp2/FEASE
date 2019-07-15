@@ -245,7 +245,7 @@ void MainMenu::updatePopup(int index, quad& q)
 	//if(highlighter) highlighter->style = HighlightQuad::Style::POP;
 	switch (index) {
 	case 0:
-		popup = new Popup("New\nOpen\nSave\nQuit\n", q.x, q.y + q.h, 80, 100);
+		popup = new Popup("New{Bonjour\nHello!}\nOpen\nSave\vQuit\n", q.x, q.y + q.h, 80, 100);
 		break;
 	case 1:
 		popup = new Popup("", q.x, q.y + q.h, 80, 100);
