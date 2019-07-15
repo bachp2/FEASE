@@ -144,10 +144,8 @@ void inline static render_loop(){
 	while (!glfwWindowShouldClose(window))
 	{
 		// execute once after thread wakes up every 17ms which is theoretically 60 frames per second
+		//auto then = std::chrono::high_resolution_clock::now();
 		std::this_thread::sleep_until(next_time);
-		next_time += wait_time;
-
-		//printf("delta time %.4f\n", deltaTime * 1000);
 
 		// Render Scene
 		// ------
@@ -179,6 +177,11 @@ void inline static render_loop(){
 		glClear(GL_COLOR_BUFFER_BIT);
 		render_scene();
 		glfwSwapBuffers(window);
+
+		/*auto elasped_time =
+			std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now() - then);
+		std::cout << "seconds: " << elasped_time.count() << '\n';*/
+		next_time += wait_time;
 	}
 	
 	glfwMakeContextCurrent(NULL);
