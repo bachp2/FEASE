@@ -28,6 +28,11 @@ public:
 
 	TextPainter(Shader* s, Color c);
 
+	~TextPainter() {
+		glDeleteVertexArrays(1, &this->vao);
+		glDeleteBuffers(1, &this->vbo);
+		glDeleteBuffers(1, &this->ebo);
+	}
 	//void render(std::string str);
 
 	void print_to_screen(const std::string& str, int px, int py, int fid = 0);

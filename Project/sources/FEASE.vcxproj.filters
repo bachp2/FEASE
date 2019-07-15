@@ -163,5 +163,11 @@
     <None Include="..\res\shaders\texture.vs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\res\shaders\billboard.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\res\shaders\billboard.fs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

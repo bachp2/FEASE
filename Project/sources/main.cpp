@@ -164,7 +164,7 @@ void inline static render_loop(){
 			auto mx = mouse_listener.cx;
 			auto my = mouse_listener.cy;
 			if (gui_container.isPopup()) gui_container.reset_popup();
-			gui_container.set_popup(new Popup(mx, my, 80, 100));
+			gui_container.set_popup(new Popup("", mx, my, 80, 100));
 		}
 		
 		//gui_widget_container.empty_wastes();

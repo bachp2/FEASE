@@ -21,14 +21,14 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3FDDC091-02D1-4DCC-ADC8-6025753F015E}</ProjectGuid>
     <RootNamespace>FEASE</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Project</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>PGInstrument</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -40,7 +40,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformToolset>v140</PlatformToolset>
@@ -163,6 +163,8 @@
     <ClInclude Include="text.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\res\shaders\billboard.fs" />
+    <None Include="..\res\shaders\billboard.vs" />
     <None Include="..\res\shaders\object.fs" />
     <None Include="..\res\shaders\object.vs" />
     <None Include="..\res\shaders\screen.vs" />

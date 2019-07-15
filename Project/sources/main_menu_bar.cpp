@@ -61,38 +61,56 @@ MainMenu::MainMenu(
 	}
 }
 
+MainMenu::~MainMenu()
+{
+	glDeleteVertexArrays(1, &this->vao);
+	glDeleteBuffers(1, &this->vbo);
+	glDeleteBuffers(1, &(Form::ebo));
+	glDeleteBuffers(1, &this->b_ebo);
+	if (highlighter) delete highlighter;
+	if (popup) delete popup;
+}
+
 void MainMenu::update()
 {
 	static int last_index = 0;
 
-	if (!hit_test(mouse_listener.cx, mouse_listener.cy)) {
-		delete highlighter;
-		highlighter = nullptr;
+	if (popup && popup->hit_test(mouse_listener.cx, mouse_listener.cy)) {
+		quad q;
+		if ( popup->test_item_hit(mouse_listener.cy, &q) ) {
+			popup->highlight_item(q);
+		}
+		return;
+	}
+
+	if (!this->hit_test(mouse_listener.cx, mouse_listener.cy)) {
+		if (popup && mouse_listener.left_click_once()) {
+			delete popup;
+			popup = nullptr;
+		}
+		if (!popup) {
+			delete highlighter;
+			highlighter = nullptr;
+		}
 		last_index = -1;
 		return;
 	}
 
 	quad q;
 	int index = test_item_hit(mouse_listener.cx, mouse_listener.cy, &q);
-
 	//printf("hit %d item!\n", index);
-	if(last_index != index) {
-		if(popup && index < menu_items.size() && index != -1){
-			delete popup;
-			popup = nullptr;
-			//highlighter->shift();
-			popup = new Popup(q.x, q.y+q.h, 80, 100);
-		}
+	/*if ((index == -1 || index >= menu_items.size()) && popup) {
+		return;
+	}*/
+
+	if(last_index != index && index != -1) {
+		if(popup) updatePopup(index, q);
 
 		if(highlighter){
-			auto r = highlighter->get_reg();
 			delete highlighter;
-			highlighter = nullptr;
-			highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
-			if(index == -1) highlighter->set_reg(r);
+			highlighter = nullptr;	
 		}
-		else
-			highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
+		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 
 		last_index = index;
 	}
@@ -103,23 +121,7 @@ void MainMenu::update()
 	if(mouse_listener.left_click_once()){
 		//TODO investigate memory leak
 		//highlighter->shift();
-		if(popup){
-			delete popup;
-			popup = nullptr;
-		}
-		switch(index){
-		case 0:
-			popup = new Popup(q.x, q.y+q.h, 80, 100);
-			break;
-		case 1:
-			popup = new Popup(q.x, q.y+q.h, 80, 100);
-			break;
-		case 2:
-			popup = new Popup(q.x, q.y+q.h, 80, 100);
-			break;
-		default:
-			break;
-		}
+		updatePopup(index, q);
 		mouse_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
 	}
 }
@@ -155,6 +157,7 @@ void MainMenu::render(Shader * s)
 	}
 	auto cx = padding.horizontal;
 	auto cy = 0;//to do: get skip line length
+	
 	for(const auto& str : menu_items){
 		if(highlight_info.highlight) text_painter->print_to_screen(str, cx, cy);
 		else text_painter->print_to_screen(str, cx, cy);
@@ -164,7 +167,6 @@ void MainMenu::render(Shader * s)
 	for(auto &a : icon_buttons){
 		a.render(ss);
 	}
-
 	if (popup) popup->render(s);
 }
 
@@ -232,4 +234,26 @@ int MainMenu::test_item_hit(int mx, int my, quad* q)
 		}
 	}
 	return -1;
+}
+
+void MainMenu::updatePopup(int index, quad& q)
+{
+	if (popup) {
+		delete popup;
+		popup = nullptr;
+	}
+	//if(highlighter) highlighter->style = HighlightQuad::Style::POP;
+	switch (index) {
+	case 0:
+		popup = new Popup("New\nOpen\nSave\nQuit\n", q.x, q.y + q.h, 80, 100);
+		break;
+	case 1:
+		popup = new Popup("", q.x, q.y + q.h, 80, 100);
+		break;
+	case 2:
+		popup = new Popup("Display Grid\n", q.x, q.y + q.h, 80, 100);
+		break;
+	default:
+		break;
+	}
 }

@@ -44,6 +44,7 @@ inline static void setup_scene() {
 	shaderTable.emplaceShader("texture", SHAD(texture.vs), SHAD(texture.fs));
 	shaderTable.emplaceShader("sline", SHAD(solid.vs), SHAD(solid.fs));
 	shaderTable.emplaceShader("object", SHAD(object.vs), SHAD(object.fs));
+	shaderTable.emplaceShader("billboard", SHAD(object.vs), SHAD(object.fs));
 	shaderTable.emplaceShader("screen", SHAD(screen.vs), SHAD(object.fs));
 	
 	glGenVertexArrays(1, &VAO);
@@ -94,6 +95,7 @@ inline static void setup_scene() {
 	for (auto& o : asset_container){
 		o->render_setup();
 	}
+	asset_container[0]->translate(0.25, 0, 0.25);
 	asset_container[0]->scale(0.1);
 
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
@@ -146,7 +148,7 @@ static inline void render_scene() {
 	render_points(&shaderTable);
 
 	//// render obj mesh
-	auto s = shaderTable.shader("object");
+	auto s = shaderTable.shader("billboard");
 	for(auto& o : asset_container){
 		o->render(s);
 	}

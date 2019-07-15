@@ -30,6 +30,11 @@ HighlightQuad::HighlightQuad(int _x, int _y, unsigned int _w, unsigned int _h, f
 		2, 3, 7, //bottom quad
 	}; 
 
+	const unsigned int sol[] = {
+		4, 6, 5,
+		4, 7, 6
+	};
+
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	glGenBuffers(1, &vbo);
@@ -48,7 +53,18 @@ HighlightQuad::HighlightQuad(int _x, int _y, unsigned int _w, unsigned int _h, f
 
 	glGenBuffers(1, &ebo[1]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rb), rb, GL_DYNAMIC_DRAW); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rb), rb, GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &ebo[2]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sol), sol, GL_DYNAMIC_DRAW);
+}
+
+HighlightQuad::~HighlightQuad() {
+	glDeleteVertexArrays(1, &this->vao);
+	glDeleteBuffers(1, &this->vbo);
+	glDeleteBuffers(1, &this->ebo[0]);
+	glDeleteBuffers(1, &this->ebo[1]);
 }
 
 void HighlightQuad::render(Shader * s)
@@ -64,15 +80,33 @@ void HighlightQuad::render(Shader * s)
 
 	glBindVertexArray(vao);
 
-	if(!state) s->setColor("color", Color::White());
-	else s->setColor("color", Color::Black());
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
-	glDrawElements(GL_TRIANGLES, 8*2, GL_UNSIGNED_INT, 0);
-
-	if(!state) s->setColor("color", Color::Black());
-	else s->setColor("color", Color::White());
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
-	glDrawElements(GL_TRIANGLES, 8*2, GL_UNSIGNED_INT, 0);
+	switch (style) {
+	case Style::POP:
+		s->setColor("color", Color::White());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+		glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+		s->setColor("color", Color::Black());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+		glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+		glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+		break;
+	case Style::PRESSED:
+		s->setColor("color", Color::Black());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+		glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+		s->setColor("color", Color::White());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+		glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+		glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+		break;
+	case Style::SOLID:
+		s->setColor("color", Color::hex("#1C76E3"));
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[2]);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		break;
+	}
 
 	glEnable(GL_DEPTH_TEST);
 }

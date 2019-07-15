@@ -43,6 +43,15 @@ public:
 	void scale(float s){
 		Model = glm::scale(Model, glm::vec3(s, s, s));
 	}
+
+	void translate(glm::vec3 t) {
+		Model = glm::translate(Model, t);
+	}
+
+	void translate(float x, float y, float z) {
+		Model = glm::translate(Model, glm::vec3(x,y,z));
+	}
+
 private:
 	void CreateOBJFace(const std::string& line);
 	void CreateOBJLine(const std::string& line);

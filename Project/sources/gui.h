@@ -95,27 +95,22 @@ public:
 class HighlightQuad
 {
 public:
+	enum Style {
+		SOLID,
+		POP,
+		PRESSED
+	};
+	Style style = Style::POP;
 	HighlightQuad(int _x, int _y, unsigned int _w, unsigned int _h, float border_width = -1.0);
 
-	~HighlightQuad(){
-		glDeleteVertexArrays(1, &this->vao);
-		glDeleteBuffers(1, &this->vbo);
-		glDeleteBuffers(1, &this->ebo[0]);
-		glDeleteBuffers(1, &this->ebo[1]);
-	};
+	~HighlightQuad();;
 
 	void render(Shader* s);
 	void move(float _x, float _y){};
-	void shift() { state = true; }
-	void pop() { state = false; }
-	void set_reg(unsigned int s) { state = s; }
-	unsigned int get_reg() { return state; }
-
 private:
-	unsigned int vbo, vao, ebo[2];
+	unsigned int vbo, vao, ebo[3];
 	float x, y;
 	unsigned int width, height;
-	bool state{false};
 };
 
 // TODO refactor this struct inside main menu class
@@ -125,10 +120,11 @@ static struct {
 	const int icon = 5;
 } padding;
 
+class Popup;
 struct MenuPopupItem {
 	std::string label;
 	int id{0};
-	std::vector<MenuPopupItem*> sublevel_items;
+	Popup* popup;
 	quad q;
 	TextureQuad tq;
 };
@@ -144,26 +140,13 @@ struct ItemSeparator : MenuPopupItem {
 	}
 };
 
-inline std::vector<MenuPopupItem*> generate_popup_menu_items(
-	std::vector<std::string> menu_items, 
-	quad menu_quad)
-{
-	std::vector<MenuPopupItem*> popup_items;
-	popup_items.reserve(menu_items.size());
-	for (auto i = 0; i < menu_items.size(); ++i) {
-		auto a = new MenuPopupItem();
-		a->label = menu_items[i];
-		a->id = i;
-		popup_items.push_back(a);
-	}
-}
-
+class Popup;
 class MainMenu : public Form
 {
 	std::vector<std::string> menu_items;
 	std::vector<TextureQuad> icon_buttons;
 	HighlightQuad* highlighter = nullptr;
-	Form* popup{nullptr};
+	Popup* popup{nullptr};
 	unsigned int b_ebo;
 	struct { int index = 0; bool highlight = false; } highlight_info;
 	static const int text_menu_height = 18;
@@ -177,6 +160,8 @@ public:
 		unsigned int _w = scrWidth, 
 		unsigned int _h = text_menu_height + icon_menu_height + padding.vertical * 2,
 		Color _c = hexCodeToRGB("#C0C0C0"));
+
+	~MainMenu();
 
 	void render(Shader* s);
 
@@ -193,6 +178,8 @@ public:
 	WidgetType type(){
 		return _MAIN_MENU;
 	}
+private:
+	void updatePopup(int index, quad& q);
 };
 
 class TextBox : public Form {
@@ -228,23 +215,30 @@ private:
 
 class Popup : public Form {
 public:
-	Popup(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::hex("#D4D0C8"));
-	~Popup(){
-		printf("delted\n");
-		glDeleteVertexArrays(1, &this->vao);
-		glDeleteBuffers(1, &this->vbo);
-		glDeleteBuffers(1, &(Form::ebo));
-		glDeleteBuffers(1, &this->ebo[0]);
-		glDeleteBuffers(1, &this->ebo[1]);
-	}
-
+	Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::hex("#D4D0C8"));
+	~Popup();
 	void render(Shader* s);
 
 	WidgetType type(){
 		return _POP_UP_MENU;
 	}
+
+	int max_item_string_size() {
+		auto max = 0;
+		for (const auto& i : items) {
+			auto s = text_painter->get_str_length(i);
+			if (s > max) max = s;
+		}
+		return max;
+	};
+
+	int test_item_hit(int my, quad* q);
+	void highlight_item(const quad& q);
 private:
 	unsigned int ebo[2];
+	const static int padding{ 15 };
+	std::vector<std::string> items;
+	HighlightQuad* highlighter{ nullptr };
 	std::vector<MenuPopupItem*> menu_items;
 };
 

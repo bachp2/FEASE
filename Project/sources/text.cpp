@@ -105,7 +105,9 @@ void TextPainter::print_to_screen(const std::string &str, int px, int py, int fi
 
 	glBindVertexArray(vao);
 	glBindTexture(GL_TEXTURE_2D, font.texture.tex_id);
+	glDisable(GL_DEPTH_TEST);
 	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void TextPainter::print_to_world(const std::string & str, float px, float py, float pz, Color color, int fid)
