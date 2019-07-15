@@ -316,9 +316,9 @@ inline std::vector<MenuPopupItem> parse_popup(const std::string& str, char c, fl
 		py += mitem.h;
 	}
 
-	for (auto& a : arr) {
+	/*for (auto& a : arr) {
 		if (!a.sub.empty()) printf("%s\n", a.sub.c_str());
-	}
+	}*/
 
 	return arr;
 }

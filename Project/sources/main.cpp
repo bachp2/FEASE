@@ -33,6 +33,9 @@ extern "C"
 #define GLFW_EXPOSE_NATIVE_WIN32
 #endif
 
+#include <chrono>
+#include <thread>
+
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
 // Your own project should not be affected, as you are likely to link with a newer binary of GLFW that is adequate for your version of Visual Studio.
@@ -48,7 +51,7 @@ extern "C"
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 int scrWidth = SCR_WIDTH, scrHeight = SCR_HEIGHT;
-float deltaTime, lastFrame;
+float deltaTime{0}, lastFrame;
 //ImGuiIO* imguiIO;
 
 glm::mat4 perspective_projection, view, model, orthogonal_projection;
@@ -99,10 +102,6 @@ int main(int, char**)
 	while(!glfwWindowShouldClose(window)){
 		// Per-frame time logic
 		// --------------------
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-		
 		if (mouse_listener.agenda == Mouse_Agenda::RUN_ANALYSIS && mouse_listener.state == Mouse_State::NIL) {
 			// if condition allows one click only
 			run_data_analysis();
@@ -128,10 +127,9 @@ int main(int, char**)
 
 void inline static render_loop(){
 	// Render Loop
-	// -----------
-	
+	// ------------------------
 	glfwMakeContextCurrent(window);
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 	// https://stackoverflow.com/questions/54893063/glew-causes-screen-to-flicker-between-red-and-black-glad-works
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -139,12 +137,20 @@ void inline static render_loop(){
 	}
 	
 	glfwSwapInterval(1);
-	
+	auto const start_time = std::chrono::steady_clock::now();
+	auto const wait_time = std::chrono::milliseconds{ 17 };
+	auto next_time = start_time + wait_time;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		// execute once after thread wakes up every 17ms which is theoretically 60 frames per second
+		std::this_thread::sleep_until(next_time);
+		next_time += wait_time;
+
+		//printf("delta time %.4f\n", deltaTime * 1000);
+
 		// Render Scene
 		// ------
-		
 		if(window_resized){
 			for(const auto& w : gui_container.get_container()){
 				if(w->type() == Form::WidgetType::_MAIN_MENU){
@@ -260,7 +266,7 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	// height will be significantly larger than specified on retina displays.
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
+	orthogonal_projection = glm::ortho<float>(0, float(scrWidth), float(scrHeight), 0, -100, 100);
 	/*for(const auto& w : gui_widget_container.get_container()){
 		if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
 			w->width = scrWidth;
@@ -301,11 +307,12 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 	auto t = -camPos.y / ray_wor.y;
 	if (t >= -0.00001f) {
 		hit = camPos + t*ray_wor;
-		hit.y = 0.0f;
+		hit.y = hit.z;
+		hit.z = 0;
 		//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
-		auto grid_halft_size_after_scaling = 1.0f / camera.Zoom / 2;
-		if (hit.x > grid_halft_size_after_scaling + lim || hit.x < -grid_halft_size_after_scaling - lim) return false;
-		if (hit.z > grid_halft_size_after_scaling + lim || hit.z < -grid_halft_size_after_scaling - lim) return false;
+		auto grid_half_size_after_scaling = 1.0f / camera.Zoom / 2;
+		if (hit.x > grid_half_size_after_scaling + lim || hit.x < -grid_half_size_after_scaling - lim) return false;
+		if (hit.y > grid_half_size_after_scaling + lim || hit.y < -grid_half_size_after_scaling - lim) return false;
 		return true;
 	}
 	return false;
@@ -314,8 +321,8 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 bool numCloseWithin(float num, float lim);
 inline static bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim)
 {
-	auto grid_halft_size_after_scaling = 1.0f / camera.Zoom / 2;
-	auto grid_step = grid_halft_size_after_scaling * 2 / grid.gnum;
+	auto grid_half_size_after_scaling = 1.0f / camera.Zoom / 2;
+	auto grid_step = grid_half_size_after_scaling * 2 / grid.gnum;
 	auto a = hit.x / grid_step;
 	auto b = hit.z / grid_step;
 	//PRINT2F(a, b);

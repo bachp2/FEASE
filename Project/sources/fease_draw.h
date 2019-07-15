@@ -318,12 +318,12 @@ struct Grid {
 		for (float i = -0.5; i < 0.51; i += step)
 		{
 			//vertical lines
-			grid_vertices.push_back(Vec3(i, 0.0f, -0.5f));
-			grid_vertices.push_back(Vec3(i, 0.0f, 0.5f)); 
+			grid_vertices.push_back(Vec3(i, -0.5f, 0.0f ));
+			grid_vertices.push_back(Vec3(i, 0.5f, 0.0f));
 			
 			// horizontal lines
-			grid_vertices.push_back(Vec3(-0.5f, 0.0f, i));
-			grid_vertices.push_back(Vec3(0.5f, 0.0f, i));
+			grid_vertices.push_back(Vec3(-0.5f, i, 0));
+			grid_vertices.push_back(Vec3(0.5f, i, 0));
 		}
 
 		glBufferData(

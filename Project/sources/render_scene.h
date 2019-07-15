@@ -66,7 +66,7 @@ inline static void setup_scene() {
 	gui_widget_container.push_back(tw);*/
 	
 	auto menu_bar = new MainMenu(icon_names);
-	menu_bar->set_menu_items({"File", "Edit", "Tools"});
+	menu_bar->set_menu_items({"File", "View", "Tools"});
 	gui_container.push_back((Form *)menu_bar);
 
 	/*auto text_box = new StaticTextMessage("1234567890", 30, 52);

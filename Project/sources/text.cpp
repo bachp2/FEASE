@@ -31,6 +31,7 @@ void TextPainter::_initSecondaryFont()
 }
 
 void TextPainter::set_text_color(Color c){
+	shader->use();
 	shader->setColor("textColor", c);
 }
 
