@@ -6,16 +6,16 @@
 #include "camera.h"
 
 #define MOUSE_LFT GLFW_MOUSE_BUTTON_LEFT
-#define MOUSE_RHT GLFW_MOUSE_BUTTON_RIGHT
+#define MOUSE_RGT GLFW_MOUSE_BUTTON_RIGHT
 #define MOUSE_MID GLFW_MOUSE_BUTTON_MIDDLE
 
-
 struct MouseListener {
+
 	//note to myself, validate state first
 	enum State {
-		NIL,
-		CLICK,
-		DRAG,
+		NIL = 0x01,
+		CLICK = 0x02,
+		DRAG = 0x03,
 	};
 
 	enum CallBack {
@@ -31,12 +31,25 @@ struct MouseListener {
 		RUN_ANALYSIS = 10,
 	};
 
-	struct {
-		State state = NIL;
-		Agenda agenda = ADD_NODE;
-		CallBack callback = CNIL;
-		int button = -1;
-	} event;
+	struct Event {
+		enum Flag {
+			LFT_CLK = MOUSE_LFT | State::CLICK,
+			RGT_CLK = MOUSE_RGT | State::CLICK,
+			MID_CLK = MOUSE_MID | State::CLICK,
+		} flag;
+
+		bool left_click() {
+			return flag == LFT_CLK;
+		}
+
+		bool right_click() {
+			return flag == RGT_CLK;
+		}
+
+		bool mid_click() {
+			return flag == MID_CLK;
+		}
+	};
 
 	State state = NIL;
 	Agenda agenda = ADD_NODE;
@@ -56,6 +69,7 @@ struct MouseListener {
 		}
 		return false;
 	}
+
 	inline bool left_drag(double* dx, double* dy){
 		auto r = draggedBy(GLFW_MOUSE_BUTTON_LEFT);
 		if(r){
@@ -87,25 +101,12 @@ struct MouseListener {
 		return r;
 	}
 
-	inline bool left_click(){
-		return clickedBy(GLFW_MOUSE_BUTTON_LEFT);
-	}
-
-	inline bool middle_click() { return clickedBy(GLFW_MOUSE_BUTTON_MIDDLE); }
-	inline bool right_click() { return clickedBy(GLFW_MOUSE_BUTTON_RIGHT); }
-	inline bool right_click_once() { 
-		auto r = (button == GLFW_MOUSE_BUTTON_RIGHT && state == NIL);
-		if(r) button = -1;
-		return r; 
-	}
-	inline bool left_click_once() { 
-		auto r = (button == GLFW_MOUSE_BUTTON_LEFT && state == NIL);
-		/*if(r) button = -1;*/
-		return r;
-	}
-
-	inline bool nilState() {
-		return state == NIL;
+	inline Event pack_event() {
+		Event ev;
+		ev.flag = static_cast<Event::Flag>(button | state);
+		button = -1;
+		state = State::NIL;
+		return ev;
 	}
 };
 

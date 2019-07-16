@@ -13,8 +13,9 @@ void FormContainer::update_widgets()
 	const auto mx = mouse_listener.cx;
 	const auto my = mouse_listener.cy;
 	double dx, dy;
+	auto ev = mouse_listener.pack_event();
 
-	if (mouse_listener.left_click()){
+	if (ev.left_click()){
 		for (FormIter it = gui_form_container.end(); it != gui_form_container.begin(); )
 		{
 			--it;
@@ -31,7 +32,7 @@ void FormContainer::update_widgets()
 		if(!popup_has_been_touched) remove_any_popups();
 	}
 
-	if (mouse_listener.right_click_once() && !popup_has_been_touched) {
+	if (ev.right_click() && !popup_has_been_touched) {
 		remove_any_popups();
 		this->push_back(new Popup("", mx, my, 80, 100));
 	}
@@ -44,7 +45,7 @@ void FormContainer::update_widgets()
 
 	for(const auto& w : gui_form_container)
 	{
-		w->update();
+		w->update(ev);
 	}
 }
 

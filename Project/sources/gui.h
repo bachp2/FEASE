@@ -29,7 +29,7 @@ public:
 
 	bool hit_test(int mx, int my);
 	virtual void render(Shader* s){};
-	virtual void update(){};
+	virtual void update(MouseListener::Event ev){};
 	virtual void move(float _x, float _y);
 	
 	void resize();
@@ -150,7 +150,7 @@ public:
 		menu_items = items;
 	}
 
-	void update();
+	void update(MouseListener::Event ev);
 
 	int test_item_hit(int mx, int my, quad* q);
 
@@ -212,7 +212,7 @@ public:
 	Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::hex("#D4D0C8"));
 	~Popup();
 	void render(Shader* s);
-	void update();
+	void update(MouseListener::Event ev);
 	Type type(){
 		return _POP_UP_MENU;
 	}

@@ -159,9 +159,9 @@ void inline static render_loop(){
 			window_resized = false;
 
 		}
-		if(mouse_listener.left_click()){
+		/*if(mouse_listener.left_click()){
 			mouse_listener.agenda == MouseListener::ADD_NODE;
-		}
+		}*/
 
 		/*if (mouse_listener.right_click_once()){
 			auto mx = mouse_listener.cx;
@@ -365,7 +365,6 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		mouse_listener.state = MouseListener::CLICK;
 		//printf("Click\n");
 	}
-
 
 	if (action == GLFW_RELEASE) {
 		mouse_listener.state = MouseListener::NIL;

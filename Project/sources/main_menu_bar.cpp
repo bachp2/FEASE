@@ -70,13 +70,13 @@ MainMenu::~MainMenu()
 	if (highlighter) delete highlighter;
 }
 
-void MainMenu::update()
+void MainMenu::update(MouseListener::Event ev)
 {
 	static bool popup_activated;
 	static int last_index = 0;
 
 	if (!this->hit_test(mouse_listener.cx, mouse_listener.cy)) {
-		if (mouse_listener.left_click_once()) {
+		if (ev.left_click()) {
 			popup_activated = false;
 		}
 		delete highlighter;
@@ -104,7 +104,7 @@ void MainMenu::update()
 		last_index = index;
 	}
 
-	if (mouse_listener.left_click_once()) {
+	if (ev.left_click()) {
 		//TODO investigate memory leak
 		//highlighter->shift();
 		updatePopup(index, q);
