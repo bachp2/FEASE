@@ -8,12 +8,14 @@ inline Form* FormContainer::pop_back() {
 
 void FormContainer::update_widgets()
 {
+	static MouseListener::Event::Flag prev_flag;
 	static bool gui_have_been_touched = false;
 	static bool popup_has_been_touched = false;
 	const auto mx = mouse_listener.cx;
 	const auto my = mouse_listener.cy;
 	double dx, dy;
-	auto ev = mouse_listener.pack_event();
+	auto ev = mouse_listener.pack_event(prev_flag);
+	prev_flag = ev.flag;
 
 	if (ev.left_click()){
 		for (FormIter it = gui_form_container.end(); it != gui_form_container.begin(); )
@@ -21,9 +23,9 @@ void FormContainer::update_widgets()
 			--it;
 			if((*it)->hit_test(mx, my))
 			{
-				_list_bump_member(it);
 				gui_have_been_touched = true;
 				if ((*it)->type() == Form::Type::_POP_UP_MENU) popup_has_been_touched = true;
+				else _list_bump_member(it);
 				break;
 			}
 			popup_has_been_touched = false;
@@ -43,9 +45,12 @@ void FormContainer::update_widgets()
 		current_widget->move(dx, dy);
 	}
 
-	for(const auto& w : gui_form_container)
+	for(auto i = gui_form_container.rbegin(); i != gui_form_container.rend(); ++i)
 	{
-		w->update(ev);
+		if ((*i)->hit_test(mx, my)) {
+			(*i)->update(ev);
+			break;
+		}
 	}
 }
 

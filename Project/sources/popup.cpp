@@ -15,10 +15,6 @@ Popup::Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned in
 		height = mh;
 	}
 
-	for (auto& a : subs) {
-		a = nullptr;
-	}
-
 	const float bwidth = -1.0;
 	const float vertices[] = {
 		0,			  0, 0.0f,//0
@@ -122,30 +118,24 @@ void Popup::render(Shader* s){
 	}
 	text_painter->set_text_color(Color::Black());
 
-	for (const auto& i : subs) {
-		if (i) i->render(s);
-	}
-
 	glEnable(GL_DEPTH_TEST);
 }
 
 void Popup::update(MouseListener::Event ev)
 {
-	if (hit_test(mouse_listener.cx, mouse_listener.cy)) {
-		quad q;
-		int item_index{ 0 };
-		if (test_item_hit(mouse_listener.cy, &q, &item_index)) {
-			if (ev.left_click()) {
-				printf("asdasd");
-				if (popup_item_has_sublevel(item_index)) {
-					printf("%s\n", get_item(item_index).sub.c_str());
-					create_sub_popup(item_index, 0);
-				}
+	quad q;
+	int item_index{ 0 };
+	if (test_item_hit(mouse_listener.cy, &q, &item_index)) {
+		if (ev.left_click()) {
+			if (popup_item_has_sublevel(item_index)) {
+				//printf("%s\n", get_item(item_index).sub.c_str());
+				create_sub_popup(item_index);
 			}
-			highlight_item(q);
-			return;
 		}
+		highlight_item(q);
+		return;
 	}
+
 	delete_highlighter();
 }
 
@@ -181,8 +171,12 @@ inline std::vector<MenuPopupItem> parse_popup(const std::string &str, char c, fl
 		case '{':
 			mitem.label = str.substr(sstart, i - sstart);
 			sstart = i + 1;
+			int cc = 0;
 			for (auto ii = i; ii < size; ++ii) {
-				if (str[ii] == '}') {
+				if (str[ii] == '{') cc++;
+				if (str[ii] == '}') cc--;
+
+				if (str[ii] == '}' && cc == 0) {
 					mitem.sub = str.substr(sstart, ii - sstart);
 					mitem.y = py;
 					mitem.h = txth;
@@ -204,17 +198,6 @@ inline std::vector<MenuPopupItem> parse_popup(const std::string &str, char c, fl
 	return arr;
 }
 
-//inline std::vector<std::string> str_split(std::string str, std::string sep) {
-//	char* cstr = const_cast<char*>(str.c_str());
-//	char* current;
-//	std::vector<std::string> arr;
-//	current = strtok(cstr, sep.c_str());
-//	while (current != NULL) {
-//		arr.push_back(current);
-//		current = strtok(NULL, sep.c_str());
-//	}
-//	return arr;
-//}
 
 inline int Popup::max_item_string_size() {
 	auto max = 0;
@@ -263,7 +246,3 @@ void Popup::delete_highlighter()
 	}
 }
 
-MenuPopupItem Popup::get_item(int id) const
-{
-	return items[id];
-}

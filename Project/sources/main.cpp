@@ -52,7 +52,6 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 int scrWidth = SCR_WIDTH, scrHeight = SCR_HEIGHT;
 float deltaTime{0}, lastFrame;
-//ImGuiIO* imguiIO;
 
 glm::mat4 perspective_projection, view, model, orthogonal_projection;
 
@@ -82,7 +81,6 @@ GLFWwindow* window;
 std::thread* console_thread = nullptr;
 std::vector< glm::vec3 > obj_vertices;
 std::mutex mu;
-bool window_resized = false;
 int main(int, char**)
 {
 	window = prog_init();
@@ -149,16 +147,7 @@ void inline static render_loop(){
 
 		// Render Scene
 		// ------
-		if(window_resized){
-			for(const auto& w : gui_container.get_container()){
-				if(w->type() == Form::Type::_MAIN_MENU){
-					w->width = scrWidth;
-					w->resize();
-				}
-			}
-			window_resized = false;
 
-		}
 		/*if(mouse_listener.left_click()){
 			mouse_listener.agenda == MouseListener::ADD_NODE;
 		}*/
@@ -269,14 +258,7 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
 	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, float(scrWidth), float(scrHeight), 0, -100, 100);
-	/*for(const auto& w : gui_widget_container.get_container()){
-		if(w->type() == GUIForm::WidgetType::_MAIN_MENU){
-			w->width = scrWidth;
-			w->resize();
-		}
-	}*/
-	window_resized = true;
-	
+	gui_container.resize_widgets();
 	glViewport(0, 0, width, height);
 }
 

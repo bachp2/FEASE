@@ -16,6 +16,9 @@ extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
 extern TextPainter* text_painter;
 
+class FormContainer;
+extern FormContainer gui_container;
+
 struct quad {
 	float x{ 0 }, y{ 0 }, w{ 0 }, h{0};
 };
@@ -67,7 +70,14 @@ public:
 	void update_widgets();
 	void render_widgets();
 	
-	const std::list<Form*>& get_container() { return gui_form_container; };
+	void resize_widgets() {
+		for (auto& w : gui_form_container) {
+			if (w->type() == Form::Type::_MAIN_MENU) {
+				w->width = scrWidth;
+				w->resize();
+			}
+		}
+	}
 	
 	void remove_any_popups() {
 		std::list<Form*> tmp;
@@ -83,7 +93,7 @@ public:
 	}
 
 	~FormContainer() {
-		for(auto& w : gui_form_container){
+		for (auto& w : gui_form_container) {
 			delete w;
 		}
 	};
@@ -158,7 +168,7 @@ public:
 		return _MAIN_MENU;
 	}
 private:
-	void updatePopup(int index, quad& q);
+	void create_popup(int index, quad& q);
 };
 
 class TextBox : public Form {
@@ -222,23 +232,14 @@ public:
 	int test_item_hit(int my, quad* q, int* index);
 	void highlight_item(const quad& q);
 	void delete_highlighter();
-	MenuPopupItem get_item(int id) const;
 
 	bool popup_item_has_sublevel(int index) {
 		return !items[index].sub.empty();
 	}
 
-	void create_sub_popup(int index, int level) {
-		if (level >= MAXIMUM_SUBLEVEL) {
-			printf("level exceeds maximum sublevels allowed\n");
-			return;
-		}
-		if (subs[level]) {
-			delete subs[level];
-			subs[level] = nullptr;
-		}
+	void create_sub_popup(int index) {
 		const auto item = items.at(index);
-		subs[level] = new Popup(item.sub, x+width-1, item.y, 80, 50);
+		gui_container.push_back(new Popup(item.sub, x+width-2, item.y+1, 80, 50));
 		printf("sublevel created\n");
 	}
 
@@ -247,7 +248,6 @@ private:
 	const static int padding{ 15 };
 	HighlightQuad* highlighter{ nullptr };
 	std::vector<MenuPopupItem> items;
-	Popup* subs[MAXIMUM_SUBLEVEL];
 };
 
 class cButton : public Form

@@ -36,18 +36,21 @@ struct MouseListener {
 			LFT_CLK = MOUSE_LFT | State::CLICK,
 			RGT_CLK = MOUSE_RGT | State::CLICK,
 			MID_CLK = MOUSE_MID | State::CLICK,
-		} flag;
+		};
+
+		Flag flag;
+		Flag prev_flag;
 
 		bool left_click() {
-			return flag == LFT_CLK;
+			return flag == LFT_CLK && flag != prev_flag;
 		}
 
 		bool right_click() {
-			return flag == RGT_CLK;
+			return flag == RGT_CLK && flag != prev_flag;
 		}
 
 		bool mid_click() {
-			return flag == MID_CLK;
+			return flag == MID_CLK && flag != prev_flag;
 		}
 	};
 
@@ -101,11 +104,10 @@ struct MouseListener {
 		return r;
 	}
 
-	inline Event pack_event() {
+	inline Event pack_event(Event::Flag prev) {
 		Event ev;
 		ev.flag = static_cast<Event::Flag>(button | state);
-		button = -1;
-		state = State::NIL;
+		ev.prev_flag = prev;
 		return ev;
 	}
 };

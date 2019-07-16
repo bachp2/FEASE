@@ -72,44 +72,25 @@ MainMenu::~MainMenu()
 
 void MainMenu::update(MouseListener::Event ev)
 {
-	static bool popup_activated;
 	static int last_index = 0;
-
-	if (!this->hit_test(mouse_listener.cx, mouse_listener.cy)) {
-		if (ev.left_click()) {
-			popup_activated = false;
-		}
-		delete highlighter;
-		highlighter = nullptr;
-		last_index = -1;
-		return;
-	}
-
 	quad q;
+
 	int index = test_item_hit(mouse_listener.cx, mouse_listener.cy, &q);
-	//printf("hit %d item!\n", index);
-	/*if ((index == -1 || index >= menu_items.size()) && popup) {
-		return;
-	}*/
-
-	if (last_index != index && index != -1) {
-		if(popup_activated) updatePopup(index, q);
-
+	if (last_index != index) {
+		create_popup(index, q);
 		if (highlighter) {
 			delete highlighter;
 			highlighter = nullptr;
 		}
 		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
-
 		last_index = index;
 	}
 
 	if (ev.left_click()) {
 		//TODO investigate memory leak
 		//highlighter->shift();
-		updatePopup(index, q);
+		create_popup(index, q);
 		mouse_listener.agenda = static_cast<MouseListener::Agenda>(index - menu_items.size());
-		popup_activated = true;
 	}
 }
 
@@ -221,8 +202,7 @@ int MainMenu::test_item_hit(int mx, int my, quad* q)
 	return -1;
 }
 
-extern FormContainer gui_container;
-void MainMenu::updatePopup(int index, quad& q)
+void MainMenu::create_popup(int index, quad& q)
 {
 	switch (index) {
 	case 0:
@@ -231,7 +211,7 @@ void MainMenu::updatePopup(int index, quad& q)
 		break;
 	case 1:
 		gui_container.remove_any_popups();
-		gui_container.push_back( new Popup("", q.x, q.y + q.h, 80, 100) );
+		gui_container.push_back( new Popup("New{Bonjour{adas\nASsdsad\nWsd\n}\nHello\n}\nasdas\n", q.x, q.y + q.h, 80, 100) );
 		break;
 	case 2:
 		gui_container.remove_any_popups();
