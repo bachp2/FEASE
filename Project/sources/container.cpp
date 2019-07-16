@@ -33,7 +33,9 @@ void FormContainer::update_widgets()
 		}
 		if(!popup_has_been_touched) remove_any_popups();
 	}
-
+	if (ev.flag == ( MOUSE_LFT | MouseListener::State::DRAG)) {
+		printf("bingo");
+	}
 	if (ev.right_click() && !gui_has_been_touched) {
 		remove_any_popups();
 		this->push_back(new Popup("", mx, my, 80, 100));

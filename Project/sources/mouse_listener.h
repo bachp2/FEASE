@@ -13,9 +13,9 @@ struct MouseListener {
 
 	//note to myself, validate state first
 	enum State {
-		NIL = 0x01,
-		CLICK = 0x02,
-		DRAG = 0x03,
+		NIL,  
+		CLICK, 
+		DRAG , 
 	};
 
 	enum CallBack {
@@ -32,14 +32,18 @@ struct MouseListener {
 	};
 
 	struct Event {
-		enum Flag {
-			LFT_CLK = MOUSE_LFT | State::CLICK,
-			RGT_CLK = MOUSE_RGT | State::CLICK,
-			MID_CLK = MOUSE_MID | State::CLICK,
+		enum Flag : char {
+			LFT_CLK = 1 << 0,
+			RGT_CLK = 1 << 1,
+			MID_CLK = 1 << 2,
+			LFT_DRG = 1 << 3,
+			RGT_DRG = 1 << 4,
+			MID_DRG = 1 << 5,
 		};
 
 		Flag flag;
 		Flag prev_flag;
+		double dx{ 0 }, dy{ 0 };
 
 		bool left_click() {
 			return flag == LFT_CLK && flag != prev_flag;
@@ -106,7 +110,38 @@ struct MouseListener {
 
 	inline Event pack_event(Event::Flag prev) {
 		Event ev;
-		ev.flag = static_cast<Event::Flag>(button | state);
+		switch (button) {
+		case MOUSE_LFT:
+			if (state == State::CLICK) ev.flag = Event::Flag::LFT_CLK;
+			if (state == State::DRAG) {
+				ev.flag = Event::Flag::LFT_DRG;
+				ev.dx = cx - ox;
+				ev.dy = cy - oy;
+				ox = cx;
+				oy = cy;
+			}
+			break;
+		case MOUSE_RGT:
+			if (state == State::CLICK) ev.flag = Event::Flag::RGT_CLK;
+			if (state == State::DRAG) {
+				ev.flag = Event::Flag::RGT_DRG;
+				ev.dx = cx - ox;
+				ev.dy = cy - oy;
+				ox = cx;
+				oy = cy;
+			}
+			break;
+		case MOUSE_MID:
+			if (state == State::CLICK) ev.flag = Event::Flag::MID_CLK;
+			if (state == State::DRAG) {
+				ev.flag = Event::Flag::MID_DRG;
+				ev.dx = cx - ox;
+				ev.dy = cy - oy;
+				ox = cx;
+				oy = cy;
+			}
+			break;
+		}
 		ev.prev_flag = prev;
 		return ev;
 	}
