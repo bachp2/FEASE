@@ -72,34 +72,15 @@ MainMenu::~MainMenu()
 
 void MainMenu::update()
 {
+	static bool popup_activated;
 	static int last_index = 0;
-	//if (popup && popup->hit_test(mouse_listener.cx, mouse_listener.cy)) {
-	//	quad q;
-	//	int item_index{ 0 };
-	//	if (popup->test_item_hit(mouse_listener.cy, &q, &item_index)) {
-	//		if (mouse_listener.left_click_once()) {
-	//			if (popup->popup_item_has_sublevel(item_index)) {
-	//				//printf("%s\n", popup->get_item(item_index).sub.c_str());
-	//				popup->create_sub_popup(item_index, 0);
-	//			}
-	//		}
-	//		popup->highlight_item(q);
-	//	}
-	//	else popup->delete_highlighter();
-	//	return;
-	//}
-	//else if (popup)
-	//	popup->delete_highlighter();
 
 	if (!this->hit_test(mouse_listener.cx, mouse_listener.cy)) {
-		/*if (popup && mouse_listener.left_click_once()) {
-			delete popup;
-			popup = nullptr;
-		}*/
-		/*if (!popup) {
-			delete highlighter;
-			highlighter = nullptr;
-		}*/
+		if (mouse_listener.left_click_once()) {
+			popup_activated = false;
+		}
+		delete highlighter;
+		highlighter = nullptr;
 		last_index = -1;
 		return;
 	}
@@ -112,7 +93,7 @@ void MainMenu::update()
 	}*/
 
 	if (last_index != index && index != -1) {
-		//updatePopup(index, q);
+		if(popup_activated) updatePopup(index, q);
 
 		if (highlighter) {
 			delete highlighter;
@@ -127,11 +108,9 @@ void MainMenu::update()
 		//TODO investigate memory leak
 		//highlighter->shift();
 		updatePopup(index, q);
-		mouse_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
+		mouse_listener.agenda = static_cast<MouseListener::Agenda>(index - menu_items.size());
+		popup_activated = true;
 	}
-
-	/*highlight_info.index = index;
-	highlight_info.highlight = true;*/
 }
 
 // MAIN MENU BAR

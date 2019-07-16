@@ -212,7 +212,7 @@ public:
 	Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::hex("#D4D0C8"));
 	~Popup();
 	void render(Shader* s);
-
+	void update();
 	Type type(){
 		return _POP_UP_MENU;
 	}

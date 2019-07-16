@@ -102,10 +102,10 @@ int main(int, char**)
 	while(!glfwWindowShouldClose(window)){
 		// Per-frame time logic
 		// --------------------
-		if (mouse_listener.agenda == Mouse_Agenda::RUN_ANALYSIS && mouse_listener.state == Mouse_State::NIL) {
+		if (mouse_listener.agenda == MouseListener::Agenda::RUN_ANALYSIS && mouse_listener.state == MouseListener::State::NIL) {
 			// if condition allows one click only
 			run_data_analysis();
-			mouse_listener.agenda = Mouse_Agenda::ADD_NODE;
+			mouse_listener.agenda = MouseListener::Agenda::ADD_NODE;
 		}
 
 		// Input
@@ -160,7 +160,7 @@ void inline static render_loop(){
 
 		}
 		if(mouse_listener.left_click()){
-			mouse_listener.agenda == ADD_NODE;
+			mouse_listener.agenda == MouseListener::ADD_NODE;
 		}
 
 		/*if (mouse_listener.right_click_once()){
@@ -362,13 +362,13 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 
 	if (action == GLFW_PRESS) {
 		mouse_listener.button = button;
-		mouse_listener.state = CLICK;
+		mouse_listener.state = MouseListener::CLICK;
 		//printf("Click\n");
 	}
 
 
 	if (action == GLFW_RELEASE) {
-		mouse_listener.state = NIL;
+		mouse_listener.state = MouseListener::NIL;
 	} 
 
 	if (mouse_listener.clickedBy(GLFW_MOUSE_BUTTON_LEFT))
@@ -382,7 +382,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 		glm::vec3 hit;
 		auto lim = 0.2;
 
-		if (mouse_listener.agenda == CONNECT_ELE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
+		if (mouse_listener.agenda == MouseListener::CONNECT_ELE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim)) {
 			//printf("select node success");
 			glm::ivec2 coord(0);
 			if (selectGrid(coord, hit, lim))
@@ -398,7 +398,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			}
 		}
 
-		if (mouse_listener.agenda == ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
+		if (mouse_listener.agenda == MouseListener::ADD_NODE && getHitPtFromRaycastToGrid(hit, mouseX, mouseY, lim))
 		{
 			//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
 			//printf("add node success");
@@ -410,7 +410,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			}
 		}
 	}
-	mouse_listener.callback = BUTTON_CALLBACK;
+	mouse_listener.callback = MouseListener::BUTTON_CALLBACK;
 }
 
 //---------------------------------------------------------------------------------------------

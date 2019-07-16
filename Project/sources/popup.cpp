@@ -129,6 +129,26 @@ void Popup::render(Shader* s){
 	glEnable(GL_DEPTH_TEST);
 }
 
+void Popup::update()
+{
+	if (hit_test(mouse_listener.cx, mouse_listener.cy)) {
+		quad q;
+		int item_index{ 0 };
+		if (test_item_hit(mouse_listener.cy, &q, &item_index)) {
+			if (mouse_listener.left_click_once()) {
+				printf("asdasd");
+				if (popup_item_has_sublevel(item_index)) {
+					printf("%s\n", get_item(item_index).sub.c_str());
+					create_sub_popup(item_index, 0);
+				}
+			}
+			highlight_item(q);
+			return;
+		}
+	}
+	delete_highlighter();
+}
+
 inline std::vector<MenuPopupItem> parse_popup(const std::string &str, char c, float py) {
 	std::vector<MenuPopupItem> arr;
 	auto size = str.size();

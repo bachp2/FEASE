@@ -5,31 +5,42 @@
 
 #include "camera.h"
 
-enum Mouse_State {
-	NIL,
-	CLICK,
-	DRAG,
-	LIMBO
-};
+#define MOUSE_LFT GLFW_MOUSE_BUTTON_LEFT
+#define MOUSE_RHT GLFW_MOUSE_BUTTON_RIGHT
+#define MOUSE_MID GLFW_MOUSE_BUTTON_MIDDLE
 
-enum Mouse_CallBack {
-	BUTTON_CALLBACK,
-	MOVING_CALLBACK,
-	CNIL
-};
-
-enum Mouse_Agenda {
-	ADD_NODE = 9,
-	CONNECT_ELE = 8,
-	SELECT_NODE = 7,
-	RUN_ANALYSIS = 10,
-};
 
 struct MouseListener {
 	//note to myself, validate state first
-	Mouse_State state = NIL;
-	Mouse_Agenda agenda = ADD_NODE;
-	Mouse_CallBack callback = CNIL;
+	enum State {
+		NIL,
+		CLICK,
+		DRAG,
+	};
+
+	enum CallBack {
+		BUTTON_CALLBACK,
+		MOVING_CALLBACK,
+		CNIL
+	};
+
+	enum Agenda {
+		ADD_NODE = 9,
+		CONNECT_ELE = 8,
+		SELECT_NODE = 7,
+		RUN_ANALYSIS = 10,
+	};
+
+	struct {
+		State state = NIL;
+		Agenda agenda = ADD_NODE;
+		CallBack callback = CNIL;
+		int button = -1;
+	} event;
+
+	State state = NIL;
+	Agenda agenda = ADD_NODE;
+	CallBack callback = CNIL;
 	int button=-1;
 	double cx{0}, cy{0}; //capture mouse's position from mouse button callback function
 	double ox{0}, oy{0}; //capture mouse's vector from mouse callback function
@@ -89,7 +100,7 @@ struct MouseListener {
 	}
 	inline bool left_click_once() { 
 		auto r = (button == GLFW_MOUSE_BUTTON_LEFT && state == NIL);
-		if(r) button = -1;
+		/*if(r) button = -1;*/
 		return r;
 	}
 
@@ -107,8 +118,8 @@ extern MouseListener mouse_listener;
 extern ArcBallCamera camera;
 static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (mouse_listener.state == CLICK) {
-		mouse_listener.state = DRAG;
+	if (mouse_listener.state == MouseListener::CLICK) {
+		mouse_listener.state = MouseListener::DRAG;
 		mouse_listener.ox = mouse_listener.cx;
 		mouse_listener.oy = mouse_listener.cy;
 	}
@@ -122,5 +133,5 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	mouse_listener.cx = xpos;
 	mouse_listener.cy = ypos;
-	mouse_listener.callback = MOVING_CALLBACK;
+	mouse_listener.callback = MouseListener::MOVING_CALLBACK;
 }
