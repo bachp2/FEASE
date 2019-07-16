@@ -9,7 +9,7 @@ inline Form* FormContainer::pop_back() {
 void FormContainer::update_widgets()
 {
 	static MouseListener::Event::Flag prev_flag;
-	static bool gui_have_been_touched = false;
+	static bool gui_has_been_touched = false;
 	static bool popup_has_been_touched = false;
 	const auto mx = mouse_listener.cx;
 	const auto my = mouse_listener.cy;
@@ -23,24 +23,25 @@ void FormContainer::update_widgets()
 			--it;
 			if((*it)->hit_test(mx, my))
 			{
-				gui_have_been_touched = true;
+				gui_has_been_touched = true;
 				if ((*it)->type() == Form::Type::_POP_UP_MENU) popup_has_been_touched = true;
 				else _list_bump_member(it);
 				break;
 			}
 			popup_has_been_touched = false;
-			gui_have_been_touched = false;
+			gui_has_been_touched = false;
 		}
 		if(!popup_has_been_touched) remove_any_popups();
 	}
 
-	if (ev.right_click() && !popup_has_been_touched) {
+	if (ev.right_click() && !gui_has_been_touched) {
 		remove_any_popups();
 		this->push_back(new Popup("", mx, my, 80, 100));
 	}
 
-	if(mouse_listener.left_drag(&dx, &dy) && gui_have_been_touched)
+	if(mouse_listener.left_drag(&dx, &dy) && gui_has_been_touched)
 	{
+		if (!popup_has_been_touched) remove_any_popups();
 		auto current_widget = gui_form_container.back();
 		current_widget->move(dx, dy);
 	}

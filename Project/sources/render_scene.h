@@ -69,8 +69,8 @@ inline static void setup_scene() {
 	menu_bar->set_menu_items({"File", "View", "Tools"});
 	gui_container.push_back((Form *)menu_bar);
 
-	/*auto text_box = new StaticTextMessage("1234567890", 30, 52);
-	gui_container.push_back((Form *) text_box);*/
+	auto text_box = new StaticTextMessage("1234567890", 30, 52);
+	gui_container.push_back((Form *) text_box);
 	
 	// cartesian axis lines
 	axisLines.setup(&camera);
