@@ -1,9 +1,17 @@
 #include "gui.h"
+
+inline Form* FormContainer::pop_back() {
+	Form* g = gui_form_container.back();
+	gui_form_container.pop_back();
+	return g;
+}
+
 void FormContainer::update_widgets()
 {
 	static bool gui_have_been_touched = false;
-	auto mx = mouse_listener.cx;
-	auto my = mouse_listener.cy;
+	static bool popup_has_been_touched = false;
+	const auto mx = mouse_listener.cx;
+	const auto my = mouse_listener.cy;
 	double dx, dy;
 
 	if (mouse_listener.left_click()){
@@ -14,10 +22,18 @@ void FormContainer::update_widgets()
 			{
 				_list_bump_member(it);
 				gui_have_been_touched = true;
+				if ((*it)->type() == Form::Type::_POP_UP_MENU) popup_has_been_touched = true;
 				break;
 			}
+			popup_has_been_touched = false;
 			gui_have_been_touched = false;
 		}
+		if(!popup_has_been_touched) remove_any_popups();
+	}
+
+	if (mouse_listener.right_click_once() && !popup_has_been_touched) {
+		remove_any_popups();
+		this->push_back(new Popup("", mx, my, 80, 100));
 	}
 
 	if(mouse_listener.left_drag(&dx, &dy) && gui_have_been_touched)
@@ -52,7 +68,6 @@ void FormContainer::render_widgets()
 	for(auto& w : gui_form_container){
 		w->render(s);
 	}
-	if (popup_menu) popup_menu->render(s);
 }
 
 void FormContainer::_list_swap_member(FormIter& n1, FormIter& n2)

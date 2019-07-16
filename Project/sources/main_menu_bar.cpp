@@ -68,39 +68,38 @@ MainMenu::~MainMenu()
 	glDeleteBuffers(1, &(Form::ebo));
 	glDeleteBuffers(1, &this->b_ebo);
 	if (highlighter) delete highlighter;
-	if (popup) delete popup;
 }
 
-std::vector<MenuPopupItem> parse_popup(const std::string& str, char c, float py);
 void MainMenu::update()
 {
 	static int last_index = 0;
-	if (popup && popup->hit_test(mouse_listener.cx, mouse_listener.cy)) {
-		quad q;
-		int item_index{ 0 };
-		if (popup->test_item_hit(mouse_listener.cy, &q, &item_index)) {
-			if (mouse_listener.left_click_once()) {
-				if (!popup->get_item(item_index).sub.empty()) {
-					printf("%s\n", popup->get_item(item_index).sub.c_str());
-				}
-			}
-			popup->highlight_item(q);
-		}
-		else popup->delete_highlighter();
-		return;
-	}
-	else if (popup)
-		popup->delete_highlighter();
+	//if (popup && popup->hit_test(mouse_listener.cx, mouse_listener.cy)) {
+	//	quad q;
+	//	int item_index{ 0 };
+	//	if (popup->test_item_hit(mouse_listener.cy, &q, &item_index)) {
+	//		if (mouse_listener.left_click_once()) {
+	//			if (popup->popup_item_has_sublevel(item_index)) {
+	//				//printf("%s\n", popup->get_item(item_index).sub.c_str());
+	//				popup->create_sub_popup(item_index, 0);
+	//			}
+	//		}
+	//		popup->highlight_item(q);
+	//	}
+	//	else popup->delete_highlighter();
+	//	return;
+	//}
+	//else if (popup)
+	//	popup->delete_highlighter();
 
 	if (!this->hit_test(mouse_listener.cx, mouse_listener.cy)) {
-		if (popup && mouse_listener.left_click_once()) {
+		/*if (popup && mouse_listener.left_click_once()) {
 			delete popup;
 			popup = nullptr;
-		}
-		if (!popup) {
+		}*/
+		/*if (!popup) {
 			delete highlighter;
 			highlighter = nullptr;
-		}
+		}*/
 		last_index = -1;
 		return;
 	}
@@ -112,28 +111,27 @@ void MainMenu::update()
 		return;
 	}*/
 
-	if(last_index != index && index != -1) {
-		if(popup) updatePopup(index, q);
+	if (last_index != index && index != -1) {
+		//updatePopup(index, q);
 
-		if(highlighter){
+		if (highlighter) {
 			delete highlighter;
-			highlighter = nullptr;	
+			highlighter = nullptr;
 		}
 		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 
 		last_index = index;
 	}
 
-	highlight_info.index = index;
-	highlight_info.highlight = true;
-
-	if(mouse_listener.left_click_once()){
+	if (mouse_listener.left_click_once()) {
 		//TODO investigate memory leak
 		//highlighter->shift();
 		updatePopup(index, q);
-
 		mouse_listener.agenda = static_cast<Mouse_Agenda>(index - menu_items.size());
 	}
+
+	/*highlight_info.index = index;
+	highlight_info.highlight = true;*/
 }
 
 // MAIN MENU BAR
@@ -169,15 +167,13 @@ void MainMenu::render(Shader * s)
 	auto cy = 0;//to do: get skip line length
 	
 	for(const auto& str : menu_items){
-		if(highlight_info.highlight) text_painter->print_to_screen(str, cx, cy);
-		else text_painter->print_to_screen(str, cx, cy);
+		text_painter->print_to_screen(str, cx, cy);
 		cx += padding.horizontal*2+text_painter->get_str_length(str);
 	}
 	auto ss = shaderTable.shader("texture");
 	for(auto &a : icon_buttons){
 		a.render(ss);
 	}
-	if (popup) popup->render(s);
 }
 
 void MainMenu::move(float _x, float _y)
@@ -246,79 +242,23 @@ int MainMenu::test_item_hit(int mx, int my, quad* q)
 	return -1;
 }
 
+extern FormContainer gui_container;
 void MainMenu::updatePopup(int index, quad& q)
 {
-	if (popup) {
-		delete popup;
-		popup = nullptr;
-	}
-
 	switch (index) {
 	case 0:
-		popup = new Popup("New{Bonjour\nHello!}\nOpen\nSave\vQuit\n", q.x, q.y + q.h, 80, 100);
+		gui_container.remove_any_popups();
+		gui_container.push_back( new Popup("New{Bonjour\nHello!\n}\nOpen\nSave\vQuit\n", q.x, q.y + q.h, 80, 100) );
 		break;
 	case 1:
-		popup = new Popup("", q.x, q.y + q.h, 80, 100);
+		gui_container.remove_any_popups();
+		gui_container.push_back( new Popup("", q.x, q.y + q.h, 80, 100) );
 		break;
 	case 2:
-		popup = new Popup("Display Grid\n", q.x, q.y + q.h, 80, 100);
+		gui_container.remove_any_popups();
+		gui_container.push_back( new Popup("Display Grid\n", q.x, q.y + q.h, 80, 100) );
 		break;
 	default:
 		break;
 	}
-}
-
-inline std::vector<MenuPopupItem> parse_popup(const std::string& str, char c, float py) {
-	std::vector<MenuPopupItem> arr;
-	auto size = str.size();
-	auto sstart = 0;
-	auto txth = text_painter->get_font_height() + 3;
-	arr.reserve(10);
-	for (auto i = 0; i < size; ++i) {
-		MenuPopupItem mitem;
-		switch (str[i]) {
-		case '\n':
-			mitem.label = str.substr(sstart, i - sstart);
-			mitem.y = py;
-			mitem.h = txth;
-			arr.push_back(mitem);
-			sstart = i + 1;
-			break;
-		case '\v':
-			mitem.label = str.substr(sstart, i - sstart);
-			mitem.y = py;
-			mitem.h = txth;
-			py += mitem.h;
-			arr.push_back(mitem);
-
-			mitem = MenuPopupItem("sep");
-			mitem.y = py;
-			mitem.h = 5;
-			arr.push_back(mitem);
-			sstart = i + 1;
-			break;
-		case '{':
-			mitem.label = str.substr(sstart, i - sstart);
-			sstart = i + 1;
-			for (auto ii = i; ii < size; ++ii) {
-				if (str[ii] == '}') {
-					mitem.sub = str.substr(sstart, ii - sstart);
-					mitem.y = py;
-					mitem.h = txth;
-					sstart = ii + 2;
-					i = sstart;
-					break;
-				}
-			}
-			arr.push_back(mitem);
-			break;
-		}
-		py += mitem.h;
-	}
-
-	/*for (auto& a : arr) {
-		if (!a.sub.empty()) printf("%s\n", a.sub.c_str());
-	}*/
-
-	return arr;
 }

@@ -151,7 +151,7 @@ void inline static render_loop(){
 		// ------
 		if(window_resized){
 			for(const auto& w : gui_container.get_container()){
-				if(w->type() == Form::WidgetType::_MAIN_MENU){
+				if(w->type() == Form::Type::_MAIN_MENU){
 					w->width = scrWidth;
 					w->resize();
 				}
@@ -161,15 +161,14 @@ void inline static render_loop(){
 		}
 		if(mouse_listener.left_click()){
 			mouse_listener.agenda == ADD_NODE;
-			gui_container.reset_popup();
 		}
 
-		if (mouse_listener.right_click_once()){
+		/*if (mouse_listener.right_click_once()){
 			auto mx = mouse_listener.cx;
 			auto my = mouse_listener.cy;
 			if (gui_container.isPopup()) gui_container.reset_popup();
-			gui_container.set_popup(new Popup("", mx, my, 80, 100));
-		}
+			gui_container.push_back(new Popup("", mx, my, 80, 100));
+		}*/
 		
 		//gui_widget_container.empty_wastes();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

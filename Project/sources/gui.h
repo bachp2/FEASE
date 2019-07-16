@@ -34,12 +34,12 @@ public:
 	
 	void resize();
 
-	enum WidgetType;
-	virtual WidgetType type() 
+	enum Type;
+	virtual Type type() 
 	{
 		return _FORM;
 	};
-	enum WidgetType{
+	enum Type{
 		_FORM, _HELPER,
 		_MAIN_MENU,
 		_DROP_DOWN,
@@ -58,35 +58,34 @@ class FormContainer {
 	std::list<Form*> gui_form_container;
 	void _list_swap_member(FormIter& n1, FormIter& n2);
 	void _list_bump_member(FormIter& n1);
-	Form* popup_menu = nullptr;
 public:
 	void push_back(Form* g) { 
 		gui_form_container.push_back(g); 
 	};
-	Form* pop_back(){
-		Form* g = gui_form_container.back();
-		gui_form_container.pop_back();
-		return g;
-	}
+	Form* pop_back();
 
 	void update_widgets();
 	void render_widgets();
 	
-	void set_popup(Form* g) { popup_menu = g; }
-	Form* get_popup() { return popup_menu; }
-	void reset_popup() { 
-		if(popup_menu) delete popup_menu; 
-		popup_menu = nullptr; 
-	}
-	bool isPopup() { return popup_menu != nullptr; }
-	
 	const std::list<Form*>& get_container() { return gui_form_container; };
 	
+	void remove_any_popups() {
+		std::list<Form*> tmp;
+		for (auto i = gui_form_container.begin(); i != gui_form_container.end(); ++i) {
+			if ((*i)->type() == Form::Type::_POP_UP_MENU) {
+				delete (*i);
+			}
+			else {
+				tmp.push_back(*i);
+			}
+		}
+		gui_form_container = tmp;
+	}
+
 	~FormContainer() {
 		for(auto& w : gui_form_container){
 			delete w;
 		}
-		if (popup_menu) delete popup_menu;
 	};
 	
 	bool generic_hit_testing_widgets();
@@ -123,15 +122,12 @@ static struct {
 	const int icon = 5;
 } padding;
 
-class Popup;
 class MainMenu : public Form
 {
 	std::vector<std::string> menu_items;
 	std::vector<TextureQuad> icon_buttons;
 	HighlightQuad* highlighter = nullptr;
-	Popup* popup{nullptr};
 	unsigned int b_ebo;
-	struct { int index = 0; bool highlight = false; } highlight_info;
 	static const int text_menu_height = 18;
 	static const int icon_menu_height = 26;
 	static const int separator_width = 2;
@@ -158,7 +154,7 @@ public:
 
 	int test_item_hit(int mx, int my, quad* q);
 
-	WidgetType type(){
+	Type type(){
 		return _MAIN_MENU;
 	}
 private:
@@ -179,7 +175,7 @@ public:
 
 	void render(Shader* s);
 
-	WidgetType type(){
+	Type type(){
 		return _HELPER;
 	}
 private:
@@ -209,13 +205,15 @@ struct MenuPopupItem {
 	int y{ 0 }, h{ 0 };
 	//TextureQuad tq;
 };
+
 class Popup : public Form {
 public:
+	const static int MAXIMUM_SUBLEVEL = 3;
 	Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned int _h, Color _c = Color::hex("#D4D0C8"));
 	~Popup();
 	void render(Shader* s);
 
-	WidgetType type(){
+	Type type(){
 		return _POP_UP_MENU;
 	}
 
@@ -225,11 +223,31 @@ public:
 	void highlight_item(const quad& q);
 	void delete_highlighter();
 	MenuPopupItem get_item(int id) const;
+
+	bool popup_item_has_sublevel(int index) {
+		return !items[index].sub.empty();
+	}
+
+	void create_sub_popup(int index, int level) {
+		if (level >= MAXIMUM_SUBLEVEL) {
+			printf("level exceeds maximum sublevels allowed\n");
+			return;
+		}
+		if (subs[level]) {
+			delete subs[level];
+			subs[level] = nullptr;
+		}
+		const auto item = items.at(index);
+		subs[level] = new Popup(item.sub, x+width-1, item.y, 80, 50);
+		printf("sublevel created\n");
+	}
+
 private:
 	unsigned int ebo[2];
 	const static int padding{ 15 };
 	HighlightQuad* highlighter{ nullptr };
 	std::vector<MenuPopupItem> items;
+	Popup* subs[MAXIMUM_SUBLEVEL];
 };
 
 class cButton : public Form

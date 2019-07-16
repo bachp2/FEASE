@@ -15,6 +15,10 @@ Popup::Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned in
 		height = mh;
 	}
 
+	for (auto& a : subs) {
+		a = nullptr;
+	}
+
 	const float bwidth = -1.0;
 	const float vertices[] = {
 		0,			  0, 0.0f,//0
@@ -117,7 +121,11 @@ void Popup::render(Shader* s){
 			text_painter->print_to_screen(items[i].label, x + padding, items[i].y, Color::Black());
 	}
 	text_painter->set_text_color(Color::Black());
-	
+
+	for (const auto& i : subs) {
+		if (i) i->render(s);
+	}
+
 	glEnable(GL_DEPTH_TEST);
 }
 
