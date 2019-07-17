@@ -1,22 +1,22 @@
 #pragma once
 #include "shader.h"
-#include "color.h"
 #include "text.h"
 #include "config_parser.h"
 #include "mouse_listener.h"
 #include "shader_manager.h"
-#include <memory>
 #include <list>
-#include <mutex>
-extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
-extern std::mutex mu;
+
+struct Color;
+class TextPainter;
+class FormContainer;
+class TextureQuad;
+
+extern glm::mat4 per_proj, view, model, ort_proj;
 extern ConfigParser configTable;
 extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
 extern TextPainter* text_painter;
-
-class FormContainer;
 extern FormContainer gui_container;
 
 struct quad {
@@ -79,6 +79,15 @@ public:
 		}
 	}
 	
+	bool has_popup() {
+		for (auto i = gui_form_container.begin(); i != gui_form_container.end(); ++i) {
+			if ((*i)->type() == Form::Type::_POP_UP_MENU) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void remove_any_popups() {
 		std::list<Form*> tmp;
 		for (auto i = gui_form_container.begin(); i != gui_form_container.end(); ++i) {
@@ -228,6 +237,9 @@ public:
 	}
 
 	int max_item_string_size();;
+	int max_popup_height() {
+		return text_painter->get_font_height() * (items.size() + 1);
+	}
 
 	int test_item_hit(int my, quad* q, int* index);
 	void highlight_item(const quad& q);

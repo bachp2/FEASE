@@ -113,33 +113,36 @@ struct MouseListener {
 		switch (button) {
 		case MOUSE_LFT:
 			if (state == State::CLICK) ev.flag = Event::Flag::LFT_CLK;
-			if (state == State::DRAG) {
+			/*if (state == State::DRAG) 
+			{
 				ev.flag = Event::Flag::LFT_DRG;
 				ev.dx = cx - ox;
 				ev.dy = cy - oy;
 				ox = cx;
 				oy = cy;
-			}
+			}*/
 			break;
 		case MOUSE_RGT:
 			if (state == State::CLICK) ev.flag = Event::Flag::RGT_CLK;
-			if (state == State::DRAG) {
+			/*if (state == State::DRAG) 
+			{
 				ev.flag = Event::Flag::RGT_DRG;
 				ev.dx = cx - ox;
 				ev.dy = cy - oy;
 				ox = cx;
 				oy = cy;
-			}
+			}*/
 			break;
 		case MOUSE_MID:
 			if (state == State::CLICK) ev.flag = Event::Flag::MID_CLK;
-			if (state == State::DRAG) {
+			/*if (state == State::DRAG) 
+			{
 				ev.flag = Event::Flag::MID_DRG;
 				ev.dx = cx - ox;
 				ev.dy = cy - oy;
 				ox = cx;
 				oy = cy;
-			}
+			}*/
 			break;
 		}
 		ev.prev_flag = prev;

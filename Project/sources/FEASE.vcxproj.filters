@@ -87,6 +87,12 @@
     <ClCompile Include="popup.cpp">
       <Filter>Source Files\graphics\forms</Filter>
     </ClCompile>
+    <ClCompile Include="cube.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="uvsphere.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config_parser.h">
@@ -136,6 +142,15 @@
     </ClInclude>
     <ClInclude Include="shader.h">
       <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="shape.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="cube.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="sphere.h">
+      <Filter>Header Files\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

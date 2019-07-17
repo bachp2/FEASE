@@ -2,7 +2,7 @@
 
 StaticTextMessage::StaticTextMessage(std::string message, int _x, int _y, Color bkgrnd){
 	width = text_painter->get_str_length(message);
-	height = text_painter->get_font_height();
+	height = text_painter->get_font_height() + 2;
 	this->x = _x;
 	this->y = _y;
 	this->color = bkgrnd;
@@ -63,7 +63,7 @@ void StaticTextMessage::render(Shader* s) {
 	glm::mat4 _model = glm::mat4(1.0f);
 	_model = glm::translate(_model, glm::vec3(x, y, 0));
 	s->setMat4("model", _model);
-	s->setMat4("projection", orthogonal_projection);
+	s->setMat4("projection", ort_proj);
 
 	glBindVertexArray(vao);
 	s->setColor("color", color);

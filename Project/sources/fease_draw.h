@@ -10,7 +10,7 @@
 #define PI 3.14159265358979323846
 #define TAU 2*PI
 #endif // !PI
-extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
+extern glm::mat4 per_proj, view, model, ort_proj;
 
 //#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
 //#define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z);
@@ -339,7 +339,7 @@ struct Grid {
 
 	inline void render() {
 		shader->use();
-		shader->setMat4("projection", perspective_projection);
+		shader->setMat4("projection", per_proj);
 		shader->setMat4("view", view);
 		shader->setMat4("model", glm::mat4(1.0f));
 		shader->setColor("color", configTable.color("grid"));

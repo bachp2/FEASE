@@ -33,12 +33,12 @@ void FormContainer::update_widgets()
 		}
 		if(!popup_has_been_touched) remove_any_popups();
 	}
-	if (ev.flag == ( MOUSE_LFT | MouseListener::State::DRAG)) {
+	/*if (ev.flag == ( MOUSE_LFT | MouseListener::State::DRAG)) {
 		printf("bingo");
-	}
-	if (ev.right_click() && !gui_has_been_touched) {
+	}*/
+	if (ev.right_click() && !popup_has_been_touched) {
 		remove_any_popups();
-		this->push_back(new Popup("", mx, my, 80, 100));
+		this->push_back(new Popup("New{Bonjour{adas\nASsdsad\nWsd\n}\nHello\n}\nasdas\n", mx, my, 80, 100));
 	}
 
 	if(mouse_listener.left_drag(&dx, &dy) && gui_has_been_touched)

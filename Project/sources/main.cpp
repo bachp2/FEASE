@@ -1,5 +1,4 @@
-﻿
-extern "C"
+﻿extern "C"
 {
 #include <lua535\include\lua.h>
 #include <lua535\include\lauxlib.h>
@@ -10,13 +9,8 @@ extern "C"
 #pragma comment(lib, "lua535/liblua53.a")
 #endif
 
-#pragma warning(disable: 4244) // possible loss of data
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad/glad.h>
-
-#include <thread>
-//#include <mutex>
 
 #include "obj_loader.h"
 #include "fease_draw.h"
@@ -36,16 +30,11 @@ extern "C"
 #include <chrono>
 #include <thread>
 
-// [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
-// To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
-// Your own project should not be affected, as you are likely to link with a newer binary of GLFW that is adequate for your version of Visual Studio.
-#if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
-#pragma comment(lib, "legacy_stdio_definitions")
-#endif
-
 #include <camera.h>
 #include <shader.h>
 #include "mouse_listener.h"
+
+#pragma warning (disable: 4838)
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -53,13 +42,14 @@ const unsigned int SCR_HEIGHT = 600;
 int scrWidth = SCR_WIDTH, scrHeight = SCR_HEIGHT;
 float deltaTime{0}, lastFrame;
 
-glm::mat4 perspective_projection, view, model, orthogonal_projection;
-
+glm::mat4 per_proj, view, model, ort_proj;
+GLFWwindow* window;
+std::thread* console_thread = nullptr;
+std::vector< glm::vec3 > obj_vertices;
+bool window_resized = false;
 // camera
 
 ArcBallCamera camera(glm::radians(-30.0f), glm::radians(20.0f));
-
-//Shader textShader, solidShader, objectShader;
 ShaderManager shaderTable;
 ConfigParser configTable;
 TextPainter* text_painter;
@@ -77,10 +67,7 @@ void render_scene();
 void setup_scene();
 void prog_cleanup();
 GLFWwindow* prog_init();
-GLFWwindow* window;
-std::thread* console_thread = nullptr;
-std::vector< glm::vec3 > obj_vertices;
-std::mutex mu;
+
 int main(int, char**)
 {
 	window = prog_init();
@@ -144,6 +131,14 @@ void inline static render_loop(){
 		// execute once after thread wakes up every 17ms which is theoretically 60 frames per second
 		//auto then = std::chrono::high_resolution_clock::now();
 		std::this_thread::sleep_until(next_time);
+
+		if (window_resized) {
+			per_proj = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
+			ort_proj = glm::ortho<float>(0, float(scrWidth), float(scrHeight), 0, -100, 100);
+			gui_container.resize_widgets();
+			glViewport(0, 0, scrWidth, scrHeight);
+			window_resized = false;
+		}
 
 		// Render Scene
 		// ------
@@ -256,10 +251,11 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
-	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
+	window_resized = true;
+	/*perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 	orthogonal_projection = glm::ortho<float>(0, float(scrWidth), float(scrHeight), 0, -100, 100);
-	gui_container.resize_widgets();
 	glViewport(0, 0, width, height);
+	gui_container.resize_widgets();*/
 }
 
 //---------------------------------------------------------------------------------------------
@@ -278,7 +274,7 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 	float z = 1.0f;
 	glm::vec3 ray_nds(x, y, z);
 	glm::vec4 ray_clip(ray_nds.x, ray_nds.y, -1.0, 1.0);
-	glm::vec4 ray_eye = glm::inverse(perspective_projection) * ray_clip;
+	glm::vec4 ray_eye = glm::inverse(per_proj) * ray_clip;
 	ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
 	glm::vec3 ray_wor = (glm::inverse(view) * ray_eye);
 	ray_wor = glm::normalize(ray_wor);
@@ -397,7 +393,6 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 //---------------------------------------------------------------------------------------------
 // PROGRAM INIT FUNCTION
 //---------------------------------------------------------------------------------------------
-
 inline static GLFWwindow* prog_init() {
 	// glfw window creation
 	// --------------------

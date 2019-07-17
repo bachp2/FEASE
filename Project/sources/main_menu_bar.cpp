@@ -72,23 +72,32 @@ MainMenu::~MainMenu()
 
 void MainMenu::update(MouseListener::Event ev)
 {
+	static bool popup_activated = false;
 	static int last_index = 0;
 	quad q;
 
 	int index = test_item_hit(mouse_listener.cx, mouse_listener.cy, &q);
+	
+	/*if (index >= 0 && index < menu_items.size()) return;*/
+
 	if (last_index != index) {
-		create_popup(index, q);
-		if (highlighter) {
-			delete highlighter;
-			highlighter = nullptr;
+		if(popup_activated) create_popup(index, q);
+		else {
+			if (highlighter) {
+				delete highlighter;
+				highlighter = nullptr;
+			}
+			highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 		}
-		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 		last_index = index;
+			
 	}
 
 	if (ev.left_click()) {
-		//TODO investigate memory leak
-		//highlighter->shift();
+		if (index == -1 && index >= menu_items.size()) 
+			popup_activated = false;
+		else 
+			popup_activated = true;
 		create_popup(index, q);
 		mouse_listener.agenda = static_cast<MouseListener::Agenda>(index - menu_items.size());
 	}
@@ -105,7 +114,7 @@ void MainMenu::render(Shader * s)
 	glm::mat4 _model = glm::mat4(1.0f);
 	_model = glm::translate(_model, glm::vec3(x, y, 0));
 	s->setMat4("model", _model);
-	s->setMat4("projection", orthogonal_projection);
+	s->setMat4("projection", ort_proj);
 	
 
 	glBindVertexArray(vao);
@@ -187,7 +196,7 @@ int MainMenu::test_item_hit(int mx, int my, quad* q)
 	case SECOND_ROW:
 		//auto i = mx / 24;
 		for (auto i = 0; i < icon_buttons.size(); ++i){
-			float _x, _y; unsigned int _w, _h;
+			float _x, _y, _w, _h;
 			icon_buttons[i].get_dims(&_x, &_y, &_w, &_h);
 			if(_x <= mx && mx <= _x+_w && _w != 2){
 				// return -1 for separator
@@ -208,14 +217,29 @@ void MainMenu::create_popup(int index, quad& q)
 	case 0:
 		gui_container.remove_any_popups();
 		gui_container.push_back( new Popup("New{Bonjour\nHello!\n}\nOpen\nSave\vQuit\n", q.x, q.y + q.h, 80, 100) );
+		if (highlighter) {
+			delete highlighter;
+			highlighter = nullptr;
+		}
+		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 		break;
 	case 1:
 		gui_container.remove_any_popups();
 		gui_container.push_back( new Popup("New{Bonjour{adas\nASsdsad\nWsd\n}\nHello\n}\nasdas\n", q.x, q.y + q.h, 80, 100) );
+		if (highlighter) {
+			delete highlighter;
+			highlighter = nullptr;
+		}
+		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 		break;
 	case 2:
 		gui_container.remove_any_popups();
 		gui_container.push_back( new Popup("Display Grid\n", q.x, q.y + q.h, 80, 100) );
+		if (highlighter) {
+			delete highlighter;
+			highlighter = nullptr;
+		}
+		highlighter = new HighlightQuad(q.x, q.y, q.w, q.h);
 		break;
 	default:
 		break;

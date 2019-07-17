@@ -2,11 +2,12 @@
 #include "text.h"
 #include "grad_bkgrnd.h"
 #include "error.h"
+#include "sphere.h"
 
 class ArcBallCamera;
 class Shader;
 extern ArcBallCamera camera;
-extern glm::mat4 perspective_projection, view, model, orthogonal_projection;
+extern glm::mat4 per_proj, view, model, ort_proj;
 
 extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
@@ -20,7 +21,6 @@ extern ConfigParser configTable;
 //extern std::vector<GUIForm*> gui_widget_container;
 extern FormContainer gui_container;
 Texture texture;
-
 static const std::vector<std::string> icon_names = {
 	"document_new",
 	"document-save",
@@ -62,8 +62,6 @@ inline static void setup_scene() {
 	glEnableVertexAttribArray(1);
 	
 	text_painter = new TextPainter(shaderTable.shader("bitmapped_text"), configTable.color("text"));
-	/*auto tw = new GUIForm(15, 50, 100, 100);
-	gui_widget_container.push_back(tw);*/
 	
 	auto menu_bar = new MainMenu(icon_names);
 	menu_bar->set_menu_items({"File", "View", "Tools"});
@@ -98,8 +96,8 @@ inline static void setup_scene() {
 	asset_container[0]->translate(0.25, 0, 0.25);
 	asset_container[0]->scale(0.1);
 
-	perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-	orthogonal_projection = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
+	per_proj = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
+	ort_proj = glm::ortho<float>(0, scrWidth, scrHeight, 0, -100, 100);
 }
 
 static inline void render_scene() {
@@ -129,7 +127,7 @@ static inline void render_scene() {
 	auto textShader = shaderTable.shader("texture");
 	textShader->use();
 	
-	textShader->setMat4("projection", perspective_projection);
+	textShader->setMat4("projection", per_proj);
 	textShader->setMat4("view", view);
 	
 	/*model = glm::mat4(1.0f);
@@ -152,6 +150,9 @@ static inline void render_scene() {
 	for(auto& o : asset_container){
 		o->render(s);
 	}
+
+	UVSphere sphere(0.5f, 20, 40);
+	sphere.render(shaderTable.shader("object"));
 
 	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);

@@ -5,13 +5,13 @@
 
 #include "file_system.h"
 
-extern glm::mat4 view, model, orthogonal_projection;
-class Texture;
+extern glm::mat4 view, model, ort_proj;
+struct Texture;
 void create_texture(Texture* texture, const char* filepath, bool mipmap);
 struct Texture{
 	unsigned int ref = 0;
-	unsigned int tex_id;
-	int width, height;
+	unsigned int tex_id{0};
+	int width{0}, height{ 0 };
 	Texture(){}
 
 	Texture(std::string filepath, bool mipmap){
@@ -27,7 +27,7 @@ class TextureQuad {
 	Texture* tex = nullptr;
 	unsigned int vbo, vao, ebo;
 	float x, y;
-	unsigned int width, height;
+	float width, height;
 public:
 
 	TextureQuad() {};
@@ -37,7 +37,7 @@ public:
 		//printf("copied!\n");
 	};
 
-	TextureQuad(int _x, int _y, unsigned int _w, unsigned int _h) : x(_x), y(_y), width(_w), height(_h) {
+	TextureQuad(float _x, float _y, float _w, float _h) : x(_x), y(_y), width(_w), height(_h) {
 
 		const float vertices[] = {
 			0, 0, 0.0f, 0, 0,
@@ -74,7 +74,7 @@ public:
 	void set_texture_ptr(Texture* t) { tex = t; tex->ref++; }
 	bool isEmptyTexture() { return this->tex; };
 
-	void get_dims(float* _x, float* _y, unsigned int *w, unsigned int *h){
+	void get_dims(float* _x, float* _y, float *w, float *h){
 		if(_x) *_x = this->x;
 		if(_y) *_y = this->y;
 		if(w) *w = width;
@@ -100,13 +100,16 @@ public:
 	}
 
 	void render(Shader* s){
-		if (!tex) printf("TextureQuad error: uninitialized texture\n");
+		if (!tex) {
+			printf("TextureQuad error: uninitialized texture\n");
+			return;
+		}
 		s->use();
 		static auto v = glm::mat4(1.0f);
 		glm::mat4 _model = glm::mat4(1.0f);
 		_model = glm::translate(_model, glm::vec3(x, y, 0));
 		s->setMat4("model", _model);
-		s->setMat4("projection", orthogonal_projection);
+		s->setMat4("projection", ort_proj);
 		s->setMat4("view", v);
 		glBindVertexArray(vao);
 		glBindTexture(GL_TEXTURE_2D, tex->tex_id);

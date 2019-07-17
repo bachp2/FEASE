@@ -9,11 +9,8 @@ Popup::Popup(std::string structure, int _x, int _y, unsigned int _w, unsigned in
 		width = max_item_string_size() + padding*2;
 	}
 
-	// can this piece of code lead to exploit ?
-	auto mh = items.back().y + items.back().h;
-	if (!items.empty() && _h < mh) {
-		height = mh;
-	}
+	auto mh = max_popup_height();
+	if (mh > height) height = mh;
 
 	const float bwidth = -1.0;
 	const float vertices[] = {
@@ -90,7 +87,7 @@ void Popup::render(Shader* s){
 	glm::mat4 _model = glm::mat4(1.0f);
 	_model = glm::translate(_model, glm::vec3(x, y, 0));
 	s->setMat4("model", _model);
-	s->setMat4("projection", orthogonal_projection);
+	s->setMat4("projection", ort_proj);
 
 	glBindVertexArray(vao);
 	s->setColor("color", color);

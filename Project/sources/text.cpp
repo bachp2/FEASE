@@ -14,20 +14,26 @@ TextPainter::TextPainter(Shader * s, Color default_c) : _default(default_c), _hi
 	_initSecondaryFont();
 }
 
-TextPainter::TextPainter() : _default(Color::Black()), _highlighted(Color::White())
-{
-}
-
 void TextPainter::_initfont()
 {
-	parse_bm_font_descriptor(FPATH(res/ms_font.fnt), &font);
-	create_texture(&font.texture, FPATH(res/ms_font_0.png), false);
+	parse_bm_font_descriptor(FPATH(res/ms_font.fnt), &system);
+	create_texture(&system.texture, FPATH(res/ms_font_0.png), false);
 }
 
 void TextPainter::_initSecondaryFont()
 {
-	parse_bm_font_descriptor(FPATH(res/IBM8X8.fnt), &font2);
-	create_texture(&font2.texture, FPATH(res/IBM8X8_0.png), false);
+	parse_bm_font_descriptor(FPATH(res/px437.fnt), &alts[slot]);
+	create_texture(&alts[slot].texture, FPATH(res/px437_0.png), false);
+	slot++;
+}
+
+int TextPainter::load_extra_font(const char* pdesc, const char* ptex) {
+	if (slot == MAX_SLOTS) {
+		return -1;
+	}
+	parse_bm_font_descriptor(pdesc, &alts[slot]);
+	create_texture(&alts[slot].texture, ptex, false);
+	return slot++;
 }
 
 void TextPainter::set_text_color(Color c){
@@ -56,12 +62,12 @@ void TextPainter::print_to_screen(const std::string &str, int px, int py, int fi
 	auto xad = px;
 	while (*text) {
 		if(*text == '\n'){
-			py += font.lspacing;
+			py += system.lspacing;
 			xad = px;
 		}
 
 		if (*text >= ' ' && *text < 128) {
-			Character chr = font.characters[*text];
+			Character chr = system.characters[*text];
 			//printf("id:%d, x:%d, y:%d, w:%d, h:%d, xoffset\n", chr.id);
 			CharacterQuad q;
 			get_char_quad(&q, chr, xad, py);
@@ -102,10 +108,10 @@ void TextPainter::print_to_screen(const std::string &str, int px, int py, int fi
 
 	shader->setMat4("model", iden);
 	shader->setMat4("view", iden);
-	shader->setMat4("projection", orthogonal_projection);
+	shader->setMat4("projection", ort_proj);
 
 	glBindVertexArray(vao);
-	glBindTexture(GL_TEXTURE_2D, font.texture.tex_id);
+	glBindTexture(GL_TEXTURE_2D, system.texture.tex_id);
 	glDisable(GL_DEPTH_TEST);
 	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
 	glEnable(GL_DEPTH_TEST);
@@ -139,7 +145,7 @@ void TextPainter::print_to_world(const std::string& str, float px, float py, flo
 	float x0, y0;
 	while (*text) {
 		if (*text >= ' ' && *text < 128) {
-			Character chr = font.characters[*text];
+			Character chr = system.characters[*text];
 			//printf("id:%d, x:%d, y:%d, w:%d, h:%d, xoffset\n", chr.id);
 			CharacterQuad q;
 			get_char_quad(&q, chr, px, py);
@@ -195,10 +201,10 @@ void TextPainter::print_to_world(const std::string& str, float px, float py, flo
 	shader->setMat4("view", view);
 	//std::cout << "m " << glm::to_string(nmodel) << std::endl;
 	//std::cout << "mv " << glm::to_string(view*nmodel) << std::endl;
-	shader->setMat4("projection", perspective_projection);
+	shader->setMat4("projection", per_proj);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vao);
-	glBindTexture(GL_TEXTURE_2D, font.texture.tex_id);
+	glBindTexture(GL_TEXTURE_2D, system.texture.tex_id);
 	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
 	glEnable(GL_DEPTH_TEST);
 }
