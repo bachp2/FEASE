@@ -52,7 +52,7 @@ bool window_resized = false;
 ArcBallCamera camera(glm::radians(-30.0f), glm::radians(20.0f));
 ShaderManager shaderTable;
 ConfigParser configTable;
-TextPainter* text_painter;
+ScreenPainter* text_painter;
 
 FormContainer gui_container;
 //TextureQuad tq;
@@ -147,14 +147,6 @@ void inline static render_loop(){
 			mouse_listener.agenda == MouseListener::ADD_NODE;
 		}*/
 
-		/*if (mouse_listener.right_click_once()){
-			auto mx = mouse_listener.cx;
-			auto my = mouse_listener.cy;
-			if (gui_container.isPopup()) gui_container.reset_popup();
-			gui_container.push_back(new Popup("", mx, my, 80, 100));
-		}*/
-		
-		//gui_widget_container.empty_wastes();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glClear(GL_COLOR_BUFFER_BIT);

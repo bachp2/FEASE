@@ -12,7 +12,7 @@ extern glm::mat4 per_proj, view, model, ort_proj;
 extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
-extern TextPainter* text_painter;
+extern ScreenPainter* text_painter;
 //terry cube
 extern unsigned int VBO, VAO;
 //IndexedModel sphere;
@@ -21,6 +21,7 @@ extern ConfigParser configTable;
 //extern std::vector<GUIForm*> gui_widget_container;
 extern FormContainer gui_container;
 Texture texture;
+
 static const std::vector<std::string> icon_names = {
 	"document_new",
 	"document-save",
@@ -42,6 +43,7 @@ inline static void setup_scene() {
 
 	shaderTable.emplaceShader("bitmapped_text", SHAD(texture.vs), SHAD(text.fs));
 	shaderTable.emplaceShader("texture", SHAD(texture.vs), SHAD(texture.fs));
+	shaderTable.emplaceShader("phong_lighting", SHAD(phong.vs), SHAD(phong.fs));
 	shaderTable.emplaceShader("sline", SHAD(solid.vs), SHAD(solid.fs));
 	shaderTable.emplaceShader("object", SHAD(object.vs), SHAD(object.fs));
 	shaderTable.emplaceShader("billboard", SHAD(object.vs), SHAD(object.fs));
@@ -61,7 +63,7 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	
-	text_painter = new TextPainter(shaderTable.shader("bitmapped_text"), configTable.color("text"));
+	text_painter = new ScreenPainter(shaderTable.shader("bitmapped_text"), configTable.color("text"));
 	
 	auto menu_bar = new MainMenu(icon_names);
 	menu_bar->set_menu_items({"File", "View", "Tools"});
@@ -152,7 +154,7 @@ static inline void render_scene() {
 	}
 
 	UVSphere sphere(0.5f, 20, 40);
-	sphere.render(shaderTable.shader("object"));
+	sphere.render(shaderTable.shader("phong_lighting"));
 
 	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);

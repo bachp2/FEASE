@@ -152,6 +152,9 @@
     <ClInclude Include="sphere.h">
       <Filter>Header Files\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="triangle.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\shaders\object.fs">
@@ -182,6 +185,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\res\shaders\billboard.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\res\shaders\disfuse.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\res\shaders\disfuse.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

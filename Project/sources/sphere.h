@@ -3,9 +3,11 @@
 #include "cube.h"
 #define PI 3.14159265358979323846
 
-class UVSphere : public Shape
+class UVSphere : public Mesh
 {
 public:
+	~UVSphere();
+
 	UVSphere(float radius, int longc, int latc);
 
 	void render(Shader* s);
@@ -24,7 +26,7 @@ public:
 
 };
 
-class IcoSphere : public Shape
+class IcoSphere : public Mesh
 {
 public:
 

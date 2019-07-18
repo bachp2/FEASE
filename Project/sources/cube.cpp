@@ -59,6 +59,12 @@ Cube::Cube() {
 	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
 }
 
+Cube::~Cube() {
+	glDeleteVertexArrays(1, &this->vao);
+	glDeleteBuffers(1, &this->vbo);
+	glDeleteBuffers(1, &this->genesis.g_ebos[0]);
+}
+
 inline void Cube::render(Shader* s) {
 	s->use();
 	s->setMat4("projection", per_proj);

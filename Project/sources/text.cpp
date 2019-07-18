@@ -1,7 +1,7 @@
 #include "text.h"
 #include <memory>
 #include <glm/gtx/string_cast.hpp>
-TextPainter::TextPainter(Shader * s, Color default_c) : _default(default_c), _highlighted(Color::White()) {
+ScreenPainter::ScreenPainter(Shader * s, Color default_c) : _default(default_c), _highlighted(Color::White()) {
 	shader = s;
 	shader->use();
 	shader->setColor("textColor", default_c);
@@ -14,20 +14,20 @@ TextPainter::TextPainter(Shader * s, Color default_c) : _default(default_c), _hi
 	_initSecondaryFont();
 }
 
-void TextPainter::_initfont()
+void ScreenPainter::_initfont()
 {
 	parse_bm_font_descriptor(FPATH(res/ms_font.fnt), &system);
 	create_texture(&system.texture, FPATH(res/ms_font_0.png), false);
 }
 
-void TextPainter::_initSecondaryFont()
+void ScreenPainter::_initSecondaryFont()
 {
 	parse_bm_font_descriptor(FPATH(res/px437.fnt), &alts[slot]);
 	create_texture(&alts[slot].texture, FPATH(res/px437_0.png), false);
 	slot++;
 }
 
-int TextPainter::load_extra_font(const char* pdesc, const char* ptex) {
+int ScreenPainter::load_extra_font(const char* pdesc, const char* ptex) {
 	if (slot == MAX_SLOTS) {
 		return -1;
 	}
@@ -36,19 +36,19 @@ int TextPainter::load_extra_font(const char* pdesc, const char* ptex) {
 	return slot++;
 }
 
-void TextPainter::set_text_color(Color c){
+void ScreenPainter::set_text_color(Color c){
 	shader->use();
 	shader->setColor("textColor", c);
 }
 
-void TextPainter::print_to_screen(const std::string &str, int px, int py, Color color, int fid)
+void ScreenPainter::print_to_screen(const std::string &str, int px, int py, Color color, int fid)
 {
 	shader->use();
 	shader->setColor("textColor", color);
 	print_to_screen(str, px, py);
 }
 
-void TextPainter::print_to_screen(const std::string &str, int px, int py, int fid)
+void ScreenPainter::print_to_screen(const std::string &str, int px, int py, int fid)
 {
 	// assume orthographic projection with units = screen pixels, origin at top left
 	std::vector<std::array<float, 5>> text_vertices;
@@ -117,14 +117,14 @@ void TextPainter::print_to_screen(const std::string &str, int px, int py, int fi
 	glEnable(GL_DEPTH_TEST);
 }
 
-void TextPainter::print_to_world(const std::string & str, float px, float py, float pz, Color color, int fid)
+void ScreenPainter::print_to_world(const std::string & str, float px, float py, float pz, Color color, int fid)
 {
 	this->shader->use();
 	shader->setColor("textColor", color);
 	this->print_to_world(str, px, py, pz);
 }
 
-void TextPainter::print_to_world(const std::string& str, float px, float py, float pz, int fid)
+void ScreenPainter::print_to_world(const std::string& str, float px, float py, float pz, int fid)
 {
 	float xad = 0;
 	// assume orthographic projection with units = screen pixels, origin at top left

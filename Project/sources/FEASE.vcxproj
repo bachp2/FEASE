@@ -158,6 +158,7 @@
     <ClInclude Include="file_system.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="error.h" />
+    <ClInclude Include="triangle.h" />
     <ClInclude Include="mouse_listener.h" />
     <ClInclude Include="obj_loader.h" />
     <ClInclude Include="render_scene.h" />
@@ -170,6 +171,8 @@
   <ItemGroup>
     <None Include="..\res\shaders\billboard.fs" />
     <None Include="..\res\shaders\billboard.vs" />
+    <None Include="..\res\shaders\disfuse.fs" />
+    <None Include="..\res\shaders\disfuse.vs" />
     <None Include="..\res\shaders\object.fs" />
     <None Include="..\res\shaders\object.vs" />
     <None Include="..\res\shaders\screen.vs" />

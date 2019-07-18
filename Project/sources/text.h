@@ -16,7 +16,7 @@
 extern glm::mat4 per_proj, view, model, ort_proj;
 extern int scrWidth, scrHeight;
 
-class TextPainter {
+class ScreenPainter {
 	const static int MAX_SLOTS = 4;
 	unsigned int vbo, vao, ebo;
 	Shader* shader;
@@ -30,9 +30,9 @@ private:
 	void _initSecondaryFont();
 public:
 	int load_extra_font(const char* pdesc, const char* ptex);
-	TextPainter(Shader* s, Color c);
+	ScreenPainter(Shader* s, Color c);
 
-	~TextPainter() {
+	~ScreenPainter() {
 		glDeleteVertexArrays(1, &this->vao);
 		glDeleteBuffers(1, &this->vbo);
 		glDeleteBuffers(1, &this->ebo);
@@ -44,8 +44,8 @@ public:
 	void print_to_world(const std::string& str, float px, float py, float pz, Color color, int fid = 0);
 	void print_to_world(const std::string& str, float px, float py, float pz, int fid = 0);
 
-	TextPainter(const TextPainter&) = default;
-	TextPainter& operator=(const TextPainter&) = default;
+	ScreenPainter(const ScreenPainter&) = default;
+	ScreenPainter& operator=(const ScreenPainter&) = default;
 	void set_text_color(Color c);
 
 	int get_str_length(const std::string& str){

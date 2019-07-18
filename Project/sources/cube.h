@@ -1,9 +1,10 @@
 #pragma once
 #include "shape.h"
 
-class Cube : public Shape {
+class Cube : public Mesh {
 public:
 	Cube();
+	~Cube();
 	Cube(int sectors_on_face) 
 	{
 		static const float vertices[] = {

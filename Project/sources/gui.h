@@ -7,7 +7,7 @@
 #include <list>
 
 struct Color;
-class TextPainter;
+class ScreenPainter;
 class FormContainer;
 class TextureQuad;
 
@@ -16,7 +16,7 @@ extern ConfigParser configTable;
 extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
-extern TextPainter* text_painter;
+extern ScreenPainter* text_painter;
 extern FormContainer gui_container;
 
 struct quad {

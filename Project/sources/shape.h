@@ -1,9 +1,14 @@
 #pragma once
 #include "shader.h"
+#include "camera.h"
+
 #include <vector>
 #include <glm/glm.hpp>
+
 extern glm::mat4 per_proj, view, model, ort_proj;
-class Shape {
+extern ArcBallCamera camera;
+
+class Mesh {
 public:
 	struct GDef {
 		const static int MAX_ALLOWED = 5;
