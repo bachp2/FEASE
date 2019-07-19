@@ -42,6 +42,8 @@ public:
 			c += 'a' - 'A';
 			return c;
 		}
+
+		if (c == GLFW_KEY_ENTER) return '\n';
 		return -1;
 	}
 

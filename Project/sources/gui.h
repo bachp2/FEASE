@@ -1,6 +1,7 @@
 #pragma once
 #include "shader.h"
 #include "text.h"
+#include "tbuffer.h"
 #include "config_parser.h"
 #include "mouse_listener.h"
 #include "key_listener.h"
@@ -200,7 +201,7 @@ public:
 	void render(Shader* s);
 	void update(MouseListener::Event ev);
 private:
-	std::string text;
+	TBuffer buf;
 	unsigned int border_ebo;
 };
 

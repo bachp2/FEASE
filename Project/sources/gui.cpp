@@ -1,13 +1,11 @@
 #include "gui.h"
 
-inline TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color bkgrnd) {
-	text = " ";
+TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color bkgrnd) {
 	width = _w;
 	height = _h;
 	this->x = _x;
 	this->y = _y;
 	this->color = bkgrnd;
-	this->text = text;
 
 	const float bwidth = 1.0;
 	const float vertices[] = {
@@ -57,7 +55,7 @@ inline TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(border), border, GL_DYNAMIC_DRAW);
 }
 
-inline void TextBox::render(Shader* s) {
+void TextBox::render(Shader* s) {
 	//glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	s->use();
@@ -77,20 +75,31 @@ inline void TextBox::render(Shader* s) {
 
 	glEnable(GL_DEPTH_TEST);
 
-	text_painter->print_to_screen(text, x, y); //to do: get skip line length
+	//auto wt = 0;
+	//std::string trimmed;
+	//for (const auto& c : buf.container()) {
+	//	/*wt += text_painter->get_char_advance(c);
+	//	if (wt >= this->width) break;
+	//	trimmed += c;*/
+	//}
+
+	for (const auto& s : buf.container()) {
+		text_painter->print_to_screen(s, x, y); //to do: get skip line length
+	}
+	
 }
 
-inline void TextBox::update(MouseListener::Event ev) {
+void TextBox::update(MouseListener::Event ev) {
 	if (!KeyListener::Instance->m_char) return;
 
 	if (KeyListener::onPressed() || KeyListener::readyForHoldEvent()) {
 		if (KeyListener::Instance->m_char == GLFW_KEY_ENTER)
 		{
-			this->text += '\n';
+			this->buf.push_back('\n');
 			KeyListener::Instance->action = GLFW_REPEAT;
 			return;
 		}
-		text += KeyListener::Instance->m_char;
+		this->buf.push_back(KeyListener::Instance->m_char);
 		KeyListener::Instance->action = GLFW_REPEAT;
 	}
 }

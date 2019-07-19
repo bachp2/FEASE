@@ -57,6 +57,10 @@ public:
 		return len;
 	}
 
+	int get_char_advance(const char& c) {
+		return system.characters[c].xadvance;
+	}
+
 	int get_font_height(){
 		return system.lspacing;
 	}

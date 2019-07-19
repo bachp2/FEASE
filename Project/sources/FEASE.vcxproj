@@ -134,7 +134,6 @@
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="form.cpp" />
     <ClCompile Include="grad_bkgrnd.h" />
-    <ClCompile Include="gui.cpp" />
     <ClCompile Include="highlight_quad.cpp" />
     <ClCompile Include="key_listener.cpp" />
     <ClCompile Include="main.cpp" />
@@ -150,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bm_parser.h" />
+    <ClInclude Include="tbuffer.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="config_parser.h" />

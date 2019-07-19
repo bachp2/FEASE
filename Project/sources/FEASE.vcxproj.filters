@@ -78,9 +78,6 @@
     <ClCompile Include="highlight_quad.cpp">
       <Filter>Source Files\graphics\forms</Filter>
     </ClCompile>
-    <ClCompile Include="textbox.cpp">
-      <Filter>Source Files\graphics\forms</Filter>
-    </ClCompile>
     <ClCompile Include="static_text.cpp">
       <Filter>Source Files\graphics\forms</Filter>
     </ClCompile>
@@ -96,8 +93,8 @@
     <ClCompile Include="key_listener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="textbox.cpp">
+      <Filter>Source Files\graphics\forms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +159,9 @@
       <Filter>Header Files\graphics</Filter>
     </ClInclude>
     <ClInclude Include="key_listener.h">
+      <Filter>Header Files\text</Filter>
+    </ClInclude>
+    <ClInclude Include="tbuffer.h">
       <Filter>Header Files\text</Filter>
     </ClInclude>
   </ItemGroup>
