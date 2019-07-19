@@ -134,7 +134,9 @@
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="form.cpp" />
     <ClCompile Include="grad_bkgrnd.h" />
+    <ClCompile Include="gui.cpp" />
     <ClCompile Include="highlight_quad.cpp" />
+    <ClCompile Include="key_listener.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu_bar.cpp" />
     <ClCompile Include="obj_loader.cpp" />
@@ -158,6 +160,7 @@
     <ClInclude Include="file_system.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="error.h" />
+    <ClInclude Include="key_listener.h" />
     <ClInclude Include="triangle.h" />
     <ClInclude Include="mouse_listener.h" />
     <ClInclude Include="obj_loader.h" />

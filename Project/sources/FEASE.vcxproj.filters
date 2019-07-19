@@ -93,6 +93,12 @@
     <ClCompile Include="uvsphere.cpp">
       <Filter>Source Files\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="key_listener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config_parser.h">
@@ -154,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="triangle.h">
       <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="key_listener.h">
+      <Filter>Header Files\text</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -381,7 +381,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 	}
 	mouse_listener.callback = MouseListener::BUTTON_CALLBACK;
 }
-
+void character_callback(GLFWwindow* window, unsigned int codepoint);
 //---------------------------------------------------------------------------------------------
 // PROGRAM INIT FUNCTION
 //---------------------------------------------------------------------------------------------
@@ -423,6 +423,8 @@ inline static GLFWwindow* prog_init() {
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetCharCallback(window, character_callback);
 
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -463,4 +465,9 @@ inline void static prog_cleanup(){
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
+}
+
+void character_callback(GLFWwindow* window, unsigned int codepoint)
+{
+	std::cout << codepoint << std::endl;
 }

@@ -92,7 +92,7 @@ void ScreenPainter::print_to_screen(const std::string &str, int px, int py, int 
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-	for (unsigned int i = 0; i < str.length() * 4; i += 4) {
+		for (unsigned int i = 0; i < str.length() * 4; i += 4) {
 		std::array<unsigned int, 3> a;
 		a = { i, i + 1, i + 2 };
 		text_indices.push_back(a);

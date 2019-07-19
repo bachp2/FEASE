@@ -3,6 +3,7 @@
 #include "text.h"
 #include "config_parser.h"
 #include "mouse_listener.h"
+#include "key_listener.h"
 #include "shader_manager.h"
 #include <list>
 
@@ -27,21 +28,18 @@ class Form {
 
 public:
 	Form(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#C1C1C1"));
-	Form() {};
+	Form();;
 	virtual ~Form() {};
 
 	bool hit_test(int mx, int my);
 	virtual void render(Shader* s){};
 	virtual void update(MouseListener::Event ev){};
 	virtual void move(float _x, float _y);
-	
+
 	void resize();
 
 	enum Type;
-	virtual Type type() 
-	{
-		return _FORM;
-	};
+	virtual Type type();;
 	enum Type{
 		_FORM, _HELPER,
 		_MAIN_MENU,
@@ -49,6 +47,7 @@ public:
 		_TEXTURE_QUAD,
 		_POP_UP_MENU
 	};
+protected:
 public:
 	unsigned int vbo, vao, ebo;
 	float x, y;
@@ -66,6 +65,10 @@ public:
 		gui_form_container.push_back(g); 
 	};
 	Form* pop_back();
+	
+	Form*& back() {
+		return gui_form_container.back();
+	}
 
 	void update_widgets();
 	void render_widgets();
@@ -180,29 +183,8 @@ private:
 	void create_popup(int index, quad& q);
 };
 
-class TextBox : public Form {
-public:
-	TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color _c = hexCodeToRGB("#FFFFCE"));
-	TextBox() {};
-	void include_text(std::string t){
-		text = t;
-	};
-
-	void clear_text() {
-		text.clear();
-	};
-
-	void render(Shader* s);
-
-	Type type(){
-		return _HELPER;
-	}
-private:
-	std::string text;
-	unsigned int border_ebo;
-};
-
-class StaticTextMessage : public Form{
+class StaticTextMessage : public Form
+{
 public:
 	StaticTextMessage(std::string message, int _x, int _y, Color bkgrnd = Color::hex("#FFFFCE"));
 	void render(Shader* s);
@@ -211,6 +193,16 @@ private:
 	unsigned int border_ebo;
 };
 
+class TextBox : public Form
+{
+public:
+	TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color bkgrnd = Color::hex("#FFFFCE"));
+	void render(Shader* s);
+	void update(MouseListener::Event ev);
+private:
+	std::string text;
+	unsigned int border_ebo;
+};
 
 struct MenuPopupItem {
 	MenuPopupItem() {};
