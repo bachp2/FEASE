@@ -9,6 +9,8 @@ MainMenu::MainMenu(
 		width, height, 0.0f,
 		0, height, 0.0f,
 		width, 0, 0.0f,
+		width, height-0.5f, 0.0f,
+		0, height-0.5f, 0.0f
 	};
 
 	const unsigned int indices[] = {
@@ -16,7 +18,7 @@ MainMenu::MainMenu(
 		0, 3, 1 
 	}; 
 
-	const unsigned int border[] = {1, 2};
+	const unsigned int border[] = {4, 5};
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -123,6 +125,7 @@ void MainMenu::render(Shader * s)
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	s->setColor("color", Color::Black());
+	glLineWidth(1.0f);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, b_ebo);
 	glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
 

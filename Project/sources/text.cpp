@@ -126,7 +126,6 @@ void ScreenPainter::print_to_world(const std::string & str, float px, float py, 
 
 void ScreenPainter::print_to_world(const std::string& str, float px, float py, float pz, int fid)
 {
-	float xad = 0;
 	// assume orthographic projection with units = screen pixels, origin at top left
 	std::vector<std::array<float, 5>> text_vertices;
 	std::vector<std::array<unsigned int, 3>> text_indices;
@@ -142,7 +141,24 @@ void ScreenPainter::print_to_world(const std::string& str, float px, float py, f
 	//printf("%d %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\n", chr.id, q.x0, q.x1, q.y0, q.y1, q.s0, q.s1, q.t0, q.t1);
 
 	//xad += chr.xadvance;
-	float x0, y0;
+	float xad = 0;
+	float cx, cy;
+	glm::vec3 a, b, c, d;
+	static const float _fac = 2.0f;
+	auto billboard_orientation = -camera.orientation();
+	auto right = billboard_orientation * glm::vec3(1, 0, 0);
+	auto up = billboard_orientation * glm::vec3(0, 1, 0);
+	//auto camera_position = camera.getPosition();
+	//auto camobjdir = glm::vec3(px, py, 0) - camera_position;
+	//auto right = glm::normalize(glm::cross(camobjdir, glm::vec3(0, 1, 0)));
+	///*printf("%.2f,%.2f,%.2f\n", right.x, right.y, right.z);*/
+	//glm::vec3 up(0,1,0);
+	//if (camera.Pitch < 89.0f) {
+	//	up = glm::normalize(glm::cross(camobjdir, -right));
+	//}
+	//else 
+	//	up = glm::normalize(glm::cross(camobjdir, right));
+
 	while (*text) {
 		if (*text >= ' ' && *text < 128) {
 			Character chr = system.characters[*text];
@@ -150,19 +166,25 @@ void ScreenPainter::print_to_world(const std::string& str, float px, float py, f
 			CharacterQuad q;
 			get_char_quad(&q, chr, px, py);
 			//printf("%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\n", q.x0, q.x1, q.y0, q.y1, q.s0, q.s1, q.t0, q.t1);
-			static const float _fac = 6.0f;
-			q.x0 /= 128*_fac; q.x1 /= 128*_fac;
-			q.y0 /= 128*_fac; q.y1 /= 128*_fac;
-			x0 = (q.x1 - q.x0)/2;
-			y0 = (q.y1 - q.y0)/2;
-			text_vertices.push_back({xad-x0,-y0,pz,q.s0,q.t1});
+			q.x0 /= 128*_fac; 
+			q.x1 /= 128*_fac;
+			q.y0 /= 128*_fac; 
+			q.y1 /= 128*_fac;
+			cx = (q.x1 - q.x0)/2;
+			cy = (q.y1 - q.y0)/2;
+			a = glm::vec3(xad,0,0) + -right*cx - up*cy;
+			b = glm::vec3(xad, 0, 0) + right*cx - up*cy;
+			c = glm::vec3(xad, 0, 0) + right*cx + up*cy;
+			d = glm::vec3(xad, 0, 0) + -right*cx + up*cy;
+			text_vertices.push_back({a.x,a.y,a.z,q.s0,q.t1});
+			text_vertices.push_back({b.x,b.y,b.z,q.s1,q.t1});
+			text_vertices.push_back({c.x,c.y,c.z,q.s1,q.t0});
+			text_vertices.push_back({d.x,d.y,d.z,q.s0,q.t0});
+
+			/*text_vertices.push_back({xad-x0,-y0,pz,q.s0,q.t1});
 			text_vertices.push_back({xad+x0,-y0,pz,q.s1,q.t1});
 			text_vertices.push_back({xad+x0,y0,pz,q.s1,q.t0});
-			text_vertices.push_back({xad-x0,y0,pz,q.s0,q.t0});
-			/*text_vertices.push_back({q.x0,q.y0,pz,q.s0,q.t1});
-			text_vertices.push_back({q.x1,q.y0,pz,q.s1,q.t1});
-			text_vertices.push_back({q.x1,q.y1,pz,q.s1,q.t0});
-			text_vertices.push_back({q.x0,q.y1,pz,q.s0,q.t0});*/
+			text_vertices.push_back({xad-x0,y0,pz,q.s0,q.t0});*/
 			xad += chr.xadvance/(128*_fac);
 		}
 		++text;
@@ -194,13 +216,11 @@ void ScreenPainter::print_to_world(const std::string& str, float px, float py, f
 	glm::mat4 nmodel = glm::mat4(1.0f);
 	//nmodel = glm::scale(nmodel, glm::vec3(0.5, 0.5, 1));
 	//nmodel = glm::scale(nmodel, glm::vec3(scale_factor, scale_factor, scale_factor));
-	const float npadding = 0.000;
-	px += npadding; py += npadding;
+	/*const float npadding = 0.000;
+	px += npadding; py += npadding;*/
 	nmodel = glm::translate(nmodel, glm::vec3(px, py, 0));
 	shader->setMat4("model", nmodel);
 	shader->setMat4("view", view);
-	//std::cout << "m " << glm::to_string(nmodel) << std::endl;
-	//std::cout << "mv " << glm::to_string(view*nmodel) << std::endl;
 	shader->setMat4("projection", per_proj);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vao);

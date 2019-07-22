@@ -123,6 +123,10 @@ public:
 		//printf("Zoom:%.2f\n", Zoom);
 	}
 
+	glm::quat orientation() {
+		return glm::quat(glm::vec3(Pitch, Yaw, 0));
+	}
+
 private:
 	//glm::mat4 LookAtMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
 	const glm::mat4 LookAtMat = glm::lookAt(Vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));

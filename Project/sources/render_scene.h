@@ -156,8 +156,10 @@ static inline void render_scene() {
 		o->render(s);
 	}
 
-	UVSphere sphere(0.5f, 20, 40);
-	sphere.render(shaderTable.shader("phong_lighting"));
+	text_painter->print_to_world("Aasasd", 0.2, 0.2, 0);
+
+	/*UVSphere sphere(0.5f, 20, 40);
+	sphere.render(shaderTable.shader("phong_lighting"));*/
 
 	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);

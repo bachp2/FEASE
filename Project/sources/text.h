@@ -9,12 +9,14 @@
 #include <stb_image.h>
 #include <stb_image_write.h>
 #include "bm_parser.h"
+#include <camera.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
 extern glm::mat4 per_proj, view, model, ort_proj;
 extern int scrWidth, scrHeight;
+extern ArcBallCamera camera;
 
 class ScreenPainter {
 	const static int MAX_SLOTS = 4;
