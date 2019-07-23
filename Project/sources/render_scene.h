@@ -72,7 +72,7 @@ inline static void setup_scene() {
 	auto static_text = new StaticTextMessage("1234567890", 30, 52);
 	gui_container.push_back((Form *) static_text);
 
-	auto text_box = new TextBox(30, 52, 200, 500);
+	auto text_box = new TextBox(30, 52, 500, 500);
 	gui_container.push_back((Form*)text_box);
 	
 	// cartesian axis lines
@@ -156,7 +156,7 @@ static inline void render_scene() {
 		o->render(s);
 	}
 
-	text_painter->print_to_world("Aasasd", 0.2, 0.2, 0);
+	//text_painter->print_to_world("Aasasd", 0.2, 0.2, 0);
 
 	/*UVSphere sphere(0.5f, 20, 40);
 	sphere.render(shaderTable.shader("phong_lighting"));*/

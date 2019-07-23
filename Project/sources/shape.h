@@ -1,7 +1,6 @@
 #pragma once
 #include "shader.h"
 #include "camera.h"
-
 #include <vector>
 #include <glm/glm.hpp>
 
@@ -17,10 +16,22 @@ public:
 		Color g_colors[MAX_ALLOWED];
 	};
 
+	// function params should be in radians
+	virtual void set_orientation(float pitch, float yaw, float roll)
+	{
+		this->orientation = glm::quat(glm::vec3(pitch, yaw, roll));
+	}
+
+	virtual void rotate_to(glm::quat& to)
+	{
+		
+	}
 	virtual void render(Shader* s) {};
+
 protected:
 	unsigned int vao{0}, vbo{0};
 	std::vector<glm::vec3> vertices;
+	glm::quat orientation;
 	glm::mat4 model{1.0f};
 	GDef genesis;
 };

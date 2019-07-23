@@ -37,7 +37,7 @@ public:
 	virtual void update(MouseListener::Event ev){};
 	virtual void move(float _x, float _y);
 
-	void resize();
+	virtual void resize();
 
 	enum Type;
 	virtual Type type();;
@@ -179,6 +179,44 @@ public:
 
 	Type type(){
 		return _MAIN_MENU;
+	}
+
+	void resize() {
+		const float vertices[] = {
+		0, 0, 0.0f,
+		width, height, 0.0f,
+		0, height, 0.0f,
+		width, 0, 0.0f,
+		width, height - 0.5f, 0.0f,
+		0, height - 0.5f, 0.0f
+		};
+
+		const unsigned int indices[] = {
+			0, 1, 2,
+			0, 3, 1
+		};
+
+		const unsigned int border[] = { 4, 5 };
+
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+		glGenBuffers(1, &vbo);
+
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		glGenBuffers(1, &ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+		glGenBuffers(1, &b_ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, b_ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(border), border, GL_STATIC_DRAW);
 	}
 private:
 	void create_popup(int index, quad& q);

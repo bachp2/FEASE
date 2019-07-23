@@ -244,10 +244,6 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 	// height will be significantly larger than specified on retina displays.
 	glfwGetWindowSize(window, &scrWidth, &scrHeight);
 	window_resized = true;
-	/*perspective_projection = glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
-	orthogonal_projection = glm::ortho<float>(0, float(scrWidth), float(scrHeight), 0, -100, 100);
-	glViewport(0, 0, width, height);
-	gui_container.resize_widgets();*/
 }
 
 //---------------------------------------------------------------------------------------------
@@ -465,9 +461,4 @@ inline void static prog_cleanup(){
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
-}
-
-void character_callback(GLFWwindow* window, unsigned int codepoint)
-{
-	std::cout << codepoint << std::endl;
 }

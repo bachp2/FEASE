@@ -9,6 +9,7 @@
 #include <stb_image.h>
 #include <stb_image_write.h>
 #include "bm_parser.h"
+#include "tbuffer.h"
 #include <camera.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,6 +18,10 @@
 extern glm::mat4 per_proj, view, model, ort_proj;
 extern int scrWidth, scrHeight;
 extern ArcBallCamera camera;
+
+struct ViewPort {
+	float x{ 0 }, y{ 0 }, w{ 0 }, h{ 0 };
+};
 
 class ScreenPainter {
 	const static int MAX_SLOTS = 4;
@@ -30,6 +35,7 @@ class ScreenPainter {
 private:
 	void _initfont();
 	void _initSecondaryFont();
+	Font* getFont(int fid);
 public:
 	int load_extra_font(const char* pdesc, const char* ptex);
 	ScreenPainter(Shader* s, Color c);
@@ -41,32 +47,38 @@ public:
 	}
 	//void render(std::string str);
 
-	void print_to_screen(const std::string& str, int px, int py, int fid = 0);
-	void print_to_screen(const std::string& str, int px, int py, Color color, int fid = 0);
-	void print_to_world(const std::string& str, float px, float py, float pz, Color color, int fid = 0);
-	void print_to_world(const std::string& str, float px, float py, float pz, int fid = 0);
+	void print_to_viewport(const std::string& str, ViewPort vp, int px, int py, int fid = -1);
+	void print_to_viewport(const std::string& str, ViewPort vp, int px, int py, Color color, int fid = -1);
+
+	void print_to_screen(const std::string& str, int px, int py, int fid = -1);
+	void print_to_screen(const std::string& str, int px, int py, Color color, int fid = -1);
+
+	void print_to_world(const std::string& str, float px, float py, float pz, Color color, int fid = -1);
+	void print_to_world(const std::string& str, float px, float py, float pz, int fid = -1);
 
 	ScreenPainter(const ScreenPainter&) = default;
 	ScreenPainter& operator=(const ScreenPainter&) = default;
 	void set_text_color(Color c);
 
-	int get_str_length(const std::string& str){
+	int get_str_length(const std::string& str, int fid = -1){
 		int len = 0;
+		auto font = getFont(fid);
 		for(const auto &c : str)
 		{
-			len += system.characters[c].xadvance;
+			len += font->characters[c].xadvance;
 		}
 		return len;
 	}
 
-	int get_char_advance(const char& c) {
-		return system.characters[c].xadvance;
+	int get_char_advance(const char& c, int fid = -1) {
+		auto font = getFont(fid);
+		return font->characters[c].xadvance;
 	}
 
-	int get_font_height(){
-		return system.lspacing;
+	int get_font_height(int fid = -1){
+		auto font = getFont(fid);
+		return font->lspacing;
 	}
-
 	const Color _default, _highlighted;
 };
 

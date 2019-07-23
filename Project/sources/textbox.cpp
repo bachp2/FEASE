@@ -1,7 +1,6 @@
 #include "gui.h"
 
 TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color bkgrnd) {
-	buf = TBuffer("");
 	width = _w;
 	height = _h;
 	this->x = _x;
@@ -83,12 +82,8 @@ void TextBox::render(Shader* s) {
 		if (wt >= this->width) break;
 		trimmed += c;
 	}*/
-
-	for (auto& s : buf.container())
-	{
-		text_painter->print_to_screen(s.str(), x, y); //to do: get skip line length
-	}
-	
+	//text_painter->print_to_screen(buf.str(),x, y, 0); //to do: get skip line length
+	text_painter->print_to_viewport(buf.str(), {x,y,float(width),float(height)}, 2, 5, 0);
 }
 
 void TextBox::update(MouseListener::Event ev) {
@@ -100,8 +95,10 @@ void TextBox::update(MouseListener::Event ev) {
 			KeyListener::Instance->action = GLFW_REPEAT;
 			return;
 		}
-		this->buf.append(KeyListener::Instance->m_char);
-		printf("%s", buf.rows[0].str().c_str());
+		if (KeyListener::Instance->m_char == GLFW_KEY_BACKSPACE) {
+			buf.pop_char();
+		}
+		else this->buf.append(KeyListener::Instance->m_char);
 		KeyListener::Instance->action = GLFW_REPEAT;
 	}
 }
