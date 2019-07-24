@@ -37,7 +37,7 @@
     <Filter Include="Header Files\graphics">
       <UniqueIdentifier>{086dfef4-00aa-43cf-94cd-58e798eca5fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\graphics\forms">
+    <Filter Include="Source Files\forms">
       <UniqueIdentifier>{37b0a20a-ee2c-491e-a8c0-3608ade67ec0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -49,13 +49,13 @@
       <Filter>Source Files\dep</Filter>
     </ClCompile>
     <ClCompile Include="main_menu_bar.cpp">
-      <Filter>Source Files\graphics\forms</Filter>
+      <Filter>Source Files\forms</Filter>
     </ClCompile>
     <ClCompile Include="container.cpp">
-      <Filter>Source Files\graphics\forms</Filter>
+      <Filter>Source Files\forms</Filter>
     </ClCompile>
     <ClCompile Include="form.cpp">
-      <Filter>Source Files\graphics\forms</Filter>
+      <Filter>Source Files\forms</Filter>
     </ClCompile>
     <ClCompile Include="text.cpp">
       <Filter>Source Files\text</Filter>
@@ -76,13 +76,13 @@
       <Filter>Source Files\dep</Filter>
     </ClCompile>
     <ClCompile Include="highlight_quad.cpp">
-      <Filter>Source Files\graphics\forms</Filter>
+      <Filter>Source Files\forms</Filter>
     </ClCompile>
     <ClCompile Include="static_text.cpp">
-      <Filter>Source Files\graphics\forms</Filter>
+      <Filter>Source Files\forms</Filter>
     </ClCompile>
     <ClCompile Include="popup.cpp">
-      <Filter>Source Files\graphics\forms</Filter>
+      <Filter>Source Files\forms</Filter>
     </ClCompile>
     <ClCompile Include="cube.cpp">
       <Filter>Source Files\graphics</Filter>
@@ -94,7 +94,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="textbox.cpp">
-      <Filter>Source Files\graphics\forms</Filter>
+      <Filter>Source Files\forms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

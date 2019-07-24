@@ -112,8 +112,8 @@ static inline void render_scene() {
 	//mygl_GradientBackground(bot.r, bot.g, bot.b, 1.0f, top.r, top.g, top.b, 1.0f);
 	glClearColor(1.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	auto top = hexCodeToRGB("#42b0ce");
-	auto bot = hexCodeToRGB("#002530");
+	auto top = Color::White();
+	auto bot = Color::hex("#a8caff");
 	GradientBackground(top.r, top.g, top.b, 1.0, bot.r, bot.g, bot.b, 1.0 );
 	
 	// View Projection Model matrices
@@ -158,7 +158,7 @@ static inline void render_scene() {
 
 	//text_painter->print_to_world("Aasasd", 0.2, 0.2, 0);
 
-	Circle circle(0.5f, 40);
+	Circle circle(0.5f, 40, Circle::Style::LINE);
 	circle.render(shaderTable.shader("object"));
 
 	// need identity matrix for model matrix

@@ -3,7 +3,13 @@
 
 class Circle : public Mesh {
 public:
-	Circle(float radius, int segments) {
+	enum Style {
+		SOLID,
+		LINE,
+	} style;
+
+	Circle(float radius, int segments, Style s = Style::SOLID) {
+		style = s;
 		float x, y;
 		vertices.reserve(segments + 1);
 		vertices.push_back({ 0,0,0 });
@@ -42,6 +48,9 @@ public:
 		s->setMat4("model", this->model);
 		s->setColor("color", genesis.g_colors[0]);
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, this->vertices.size());
+		if(style == SOLID)
+			glDrawArrays(GL_TRIANGLE_FAN, 0, this->vertices.size());
+		if(style == LINE)
+			glDrawArrays(GL_LINE_LOOP, 0, this->vertices.size());
 	}
 };

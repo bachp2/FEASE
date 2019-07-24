@@ -28,9 +28,17 @@ background = {
 }
 
 grid = {
-	color = "#C0C0C0"
+	color = "#000000"
 }
 
 text = {
 	color = "#1c1c1c"
+}
+
+top = {
+	color = "#42b0ce"
+}
+
+bot = {
+	color = "#002530"
 }
