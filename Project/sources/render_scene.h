@@ -6,13 +6,13 @@
 
 class ArcBallCamera;
 class Shader;
-extern ArcBallCamera camera;
+extern ArcBallCamera mCamera;
 extern glm::mat4 per_proj, view, model, ort_proj;
 
 extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
-extern ScreenPainter* text_painter;
+extern Printer* mPrinter;
 //terry cube
 extern unsigned int VBO, VAO;
 //IndexedModel sphere;
@@ -63,7 +63,7 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	
-	text_painter = new ScreenPainter(shaderTable.shader("bitmapped_text"), configTable.color("text"));
+	mPrinter = new Printer(shaderTable.shader("bitmapped_text"), configTable.color("text"));
 	
 	auto menu_bar = new MainMenu(icon_names);
 	menu_bar->set_menu_items({"File", "View", "Tools"});
@@ -76,7 +76,7 @@ inline static void setup_scene() {
 	gui_container.push_back((Form*)text_box);
 	
 	// cartesian axis lines
-	axisLines.setup(&camera);
+	axisLines.setup(&mCamera);
 
 	// points 
 	setup_points();
@@ -121,7 +121,7 @@ static inline void render_scene() {
 	//float a = float(scrWidth)/scrHeight;
 	//projection = glm::ortho(-a, a, -1.0f, 1.0f, -50.0f, 50.0f);
 
-	view = camera.GetViewMatrix();
+	view = mCamera.GetViewMatrix();
 	
 	// Draw grid
 	

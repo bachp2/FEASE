@@ -9,7 +9,7 @@
 #include <list>
 
 struct Color;
-class ScreenPainter;
+class Printer;
 class FormContainer;
 class TextureQuad;
 
@@ -18,7 +18,7 @@ extern ConfigParser configTable;
 extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
-extern ScreenPainter* text_painter;
+extern Printer* mPrinter;
 extern FormContainer gui_container;
 
 struct quad {
@@ -123,19 +123,78 @@ public:
 		PRESSED
 	};
 	Style style = Style::POP;
+
 	HighlightQuad(int _x, int _y, unsigned int _w, unsigned int _h, float border_width = -1.0);
 
-	~HighlightQuad();;
+	~HighlightQuad();
 	
 	int getx() { return int(this->x); }
 	int gety() { return int(this->y); }
 
-	void render(Shader* s);
-	void move(float _x, float _y){};
-private:
-	unsigned int vbo, vao, ebo[3];
+	virtual void render(Shader* s);
+	virtual void move(float _x, float _y){};
+
 	float x, y;
+protected:
+	unsigned int vbo, vao, ebo[3];
 	unsigned int width, height;
+};
+
+class Cursor : public HighlightQuad {
+public:
+	Cursor(int _x, int _y, unsigned int _w, unsigned int _h) : HighlightQuad(_x, _y,_w,_h) {
+		this->style = Style::SOLID;
+		this->x = _x;
+		this->y = _y;
+	}
+	
+	void move(float _x, float _y) {
+		this->x = _x;
+		this->y = _y;
+	}
+
+	void render(Shader* s) {
+		//HighlightQuad::render(s);
+		glDisable(GL_DEPTH_TEST);
+
+		s->use();
+		glm::mat4 _model = glm::mat4(1.0f);
+		_model = glm::translate(_model, glm::vec3(100, 20, 0));
+		s->setMat4("model", _model);
+		s->setMat4("projection", ort_proj);
+
+		glBindVertexArray(vao);
+
+		switch (style) {
+		case Style::POP:
+			s->setColor("color", Color::White());
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+			glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+			s->setColor("color", Color::Black());
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+			glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+			glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+			break;
+		case Style::PRESSED:
+			s->setColor("color", Color::Black());
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+			glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+			s->setColor("color", Color::White());
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+			glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+			glDrawElements(GL_TRIANGLES, 8 * 2, GL_UNSIGNED_INT, 0);
+			break;
+		case Style::SOLID:
+			s->setColor("color", Color::hex("#1C76E3"));
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[2]);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			break;
+		}
+
+		glEnable(GL_DEPTH_TEST);
+	}
 };
 
 // TODO refactor this struct inside main menu class
@@ -241,6 +300,11 @@ public:
 private:
 	TBuffer buf;
 	unsigned int border_ebo;
+	Cursor cursor = Cursor(
+		this->x, this->y, 
+		unsigned int(mPrinter->get_char_advance('A', 0)), 
+		unsigned int(mPrinter->get_font_height(0))
+	);
 };
 
 struct MenuPopupItem {
@@ -269,7 +333,7 @@ public:
 
 	int max_item_string_size();;
 	int max_popup_height() {
-		return text_painter->get_font_height() * (items.size() + 1);
+		return mPrinter->get_font_height() * (items.size() + 1);
 	}
 
 	int test_item_hit(int my, quad* q, int* index);

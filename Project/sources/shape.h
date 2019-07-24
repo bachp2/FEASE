@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 extern glm::mat4 per_proj, view, model, ort_proj;
-extern ArcBallCamera camera;
+extern ArcBallCamera mCamera;
 
 class Mesh {
 public:

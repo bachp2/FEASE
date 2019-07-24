@@ -83,7 +83,8 @@ void TextBox::render(Shader* s) {
 		trimmed += c;
 	}*/
 	//text_painter->print_to_screen(buf.str(),x, y, 0); //to do: get skip line length
-	text_painter->print_to_viewport(buf.str(), {x,y,float(width),float(height)}, 2, 5, 0);
+	mPrinter->print_to_viewport(buf.str(), {x,y,float(width),float(height)}, 2, 5, 0);
+	cursor.render(s);
 }
 
 void TextBox::update(MouseListener::Event ev) {

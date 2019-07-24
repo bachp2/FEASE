@@ -49,13 +49,12 @@ std::vector< glm::vec3 > obj_vertices;
 bool window_resized = false;
 // camera
 
-ArcBallCamera camera(glm::radians(-30.0f), glm::radians(20.0f));
+ArcBallCamera mCamera(glm::radians(-30.0f), glm::radians(20.0f));
 ShaderManager shaderTable;
 ConfigParser configTable;
-ScreenPainter* text_painter;
+Printer* mPrinter;
 
 FormContainer gui_container;
-//TextureQuad tq;
 unsigned int VBO, VAO;
 std::vector<OBJModel*> asset_container;
 MouseListener mouse_listener;
@@ -227,13 +226,13 @@ static inline void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, true);
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+		mCamera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
+		mCamera.ProcessKeyboard(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
+		mCamera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+		mCamera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -253,7 +252,7 @@ static inline void framebuffer_size_callback(GLFWwindow* window, int width, int 
 // ----------------------------------------------------------------------
 static inline void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera.ProcessMouseScroll(yoffset);
+	mCamera.ProcessMouseScroll(yoffset);
 }
 
 inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my, float lim) {
@@ -268,7 +267,7 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 	ray_wor = glm::normalize(ray_wor);
 
 	//printf("x: %.2f, y: %.2f, z: %.2f\n", ray_wor.x, ray_wor.y, ray_wor.z);
-	auto camPos = camera.getPosition();
+	auto camPos = mCamera.getPosition();
 	//printf("radius: %.2f ", camera.Radius);
 	//printf("x: %.2f, y: %.2f, z: %.2f\n", camPos.x, camPos.y, camPos.z);
 	// find t
@@ -278,7 +277,7 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 		hit.y = hit.z;
 		hit.z = 0;
 		//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
-		auto grid_half_size_after_scaling = 1.0f / camera.Zoom / 2;
+		auto grid_half_size_after_scaling = 1.0f / mCamera.Zoom / 2;
 		if (hit.x > grid_half_size_after_scaling + lim || hit.x < -grid_half_size_after_scaling - lim) return false;
 		if (hit.y > grid_half_size_after_scaling + lim || hit.y < -grid_half_size_after_scaling - lim) return false;
 		return true;
@@ -289,7 +288,7 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 bool numCloseWithin(float num, float lim);
 inline static bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim)
 {
-	auto grid_half_size_after_scaling = 1.0f / camera.Zoom / 2;
+	auto grid_half_size_after_scaling = 1.0f / mCamera.Zoom / 2;
 	auto grid_step = grid_half_size_after_scaling * 2 / grid.gnum;
 	auto a = hit.x / grid_step;
 	auto b = hit.z / grid_step;

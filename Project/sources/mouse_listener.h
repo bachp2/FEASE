@@ -156,7 +156,7 @@ struct MouseListener {
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 extern MouseListener mouse_listener;
-extern ArcBallCamera camera;
+extern ArcBallCamera mCamera;
 static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (mouse_listener.state == MouseListener::CLICK) {
@@ -169,7 +169,7 @@ static inline void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		float xoffset = xpos - mouse_listener.cx;
 		float yoffset = mouse_listener.cy - ypos; // reversed since y-coordinates go from bottom to top
-		camera.ProcessMouseMovement(xoffset, yoffset);
+		mCamera.ProcessMouseMovement(xoffset, yoffset);
 	}
 
 	mouse_listener.cx = xpos;

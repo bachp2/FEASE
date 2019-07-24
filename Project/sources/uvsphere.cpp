@@ -93,7 +93,7 @@ void UVSphere::render(Shader* s) {
 	s->setMat4("projection", per_proj);
 	s->setMat4("view", view);
 	s->setMat4("model", this->model);
-	s->setVec3("lightPos", camera.getPosition());
+	s->setVec3("lightPos", mCamera.getPosition());
 	s->setColor("objectColor", genesis.g_colors[0]);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBindVertexArray(vao);

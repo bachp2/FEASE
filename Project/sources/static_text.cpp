@@ -1,8 +1,8 @@
 #include "gui.h"
 
 StaticTextMessage::StaticTextMessage(std::string message, int _x, int _y, Color bkgrnd){
-	width = text_painter->get_str_length(message);
-	height = text_painter->get_font_height() + 2;
+	width = mPrinter->get_str_length(message);
+	height = mPrinter->get_font_height() + 2;
 	this->x = _x;
 	this->y = _y;
 	this->color = bkgrnd;
@@ -76,5 +76,5 @@ void StaticTextMessage::render(Shader* s) {
 
 	glEnable(GL_DEPTH_TEST);
 
-	text_painter->print_to_screen(message, x, y); //to do: get skip line length
+	mPrinter->print_to_screen(message, x, y); //to do: get skip line length
 }

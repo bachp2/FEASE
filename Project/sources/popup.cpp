@@ -109,11 +109,11 @@ void Popup::render(Shader* s){
 		}
 
 		if(highlighter && highlighter->gety() == items[i].y)
-			text_painter->print_to_screen(items[i].label, x + padding, items[i].y, Color::White());
+			mPrinter->print_to_screen(items[i].label, x + padding, items[i].y, Color::White());
 		else
-			text_painter->print_to_screen(items[i].label, x + padding, items[i].y, Color::Black());
+			mPrinter->print_to_screen(items[i].label, x + padding, items[i].y, Color::Black());
 	}
-	text_painter->set_text_color(Color::Black());
+	mPrinter->set_text_color(Color::Black());
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -140,7 +140,7 @@ inline std::vector<MenuPopupItem> parse_popup(const std::string &str, char c, fl
 	std::vector<MenuPopupItem> arr;
 	auto size = str.size();
 	auto sstart = 0;
-	auto txth = text_painter->get_font_height()+3;
+	auto txth = mPrinter->get_font_height()+3;
 	arr.reserve(10);
 	for (auto i = 0; i < size; ++i) {
 		MenuPopupItem mitem;
@@ -199,7 +199,7 @@ inline std::vector<MenuPopupItem> parse_popup(const std::string &str, char c, fl
 inline int Popup::max_item_string_size() {
 	auto max = 0;
 	for (const auto& i : items) {
-		auto s = text_painter->get_str_length(i.label);
+		auto s = mPrinter->get_str_length(i.label);
 		if (s > max) max = s;
 	}
 	return max;

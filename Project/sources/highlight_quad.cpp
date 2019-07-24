@@ -2,7 +2,7 @@
 // HIGHTLIGHT SELECTOR
 HighlightQuad::HighlightQuad(int _x, int _y, unsigned int _w, unsigned int _h, float border_width)
 {
-	width = _w; height = _h; x = _x; y = _y;
+	this->width = _w; this->height = _h; this->x = _x; this->y = _y;
 
 	const float bwidth = border_width;
 	const float vertices[] = {

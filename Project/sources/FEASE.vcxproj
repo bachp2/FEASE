@@ -149,7 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bm_parser.h" />
-    <ClInclude Include="Circle.h" />
+    <ClInclude Include="circle.h" />
     <ClInclude Include="tbuffer.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="common.h" />

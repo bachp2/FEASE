@@ -1,7 +1,7 @@
 #include "text.h"
 #include <memory>
 #include <glm/gtx/string_cast.hpp>
-ScreenPainter::ScreenPainter(Shader * s, Color default_c) : _default(default_c), _highlighted(Color::White()) {
+Printer::Printer(Shader * s, Color default_c) : _default(default_c), _highlighted(Color::White()) {
 	shader = s;
 	shader->use();
 	shader->setColor("textColor", default_c);
@@ -14,20 +14,20 @@ ScreenPainter::ScreenPainter(Shader * s, Color default_c) : _default(default_c),
 	_initSecondaryFont();
 }
 
-void ScreenPainter::_initfont()
+void Printer::_initfont()
 {
 	parse_bm_font_descriptor(FPATH(res/ms_font.fnt), &system);
 	create_texture(&system.texture, FPATH(res/ms_font_0.png), false);
 }
 
-void ScreenPainter::_initSecondaryFont()
+void Printer::_initSecondaryFont()
 {
 	parse_bm_font_descriptor(FPATH(res/px437.fnt), &alts[slot]);
 	create_texture(&alts[slot].texture, FPATH(res/px437_0.png), false);
 	slot++;
 }
 
-inline Font* ScreenPainter::getFont(int fid) {
+inline Font* Printer::getFont(int fid) {
 	Font* font{ nullptr };
 	switch (fid) {
 	case -1:
@@ -43,7 +43,7 @@ inline Font* ScreenPainter::getFont(int fid) {
 	return font;
 }
 
-int ScreenPainter::load_extra_font(const char* pdesc, const char* ptex) {
+int Printer::load_extra_font(const char* pdesc, const char* ptex) {
 	if (slot == MAX_SLOTS) {
 		return -1;
 	}
@@ -52,19 +52,19 @@ int ScreenPainter::load_extra_font(const char* pdesc, const char* ptex) {
 	return slot++;
 }
 
-void ScreenPainter::set_text_color(Color c){
+void Printer::set_text_color(Color c){
 	shader->use();
 	shader->setColor("textColor", c);
 }
 
-void ScreenPainter::print_to_screen(const std::string &str, int px, int py, Color color, int fid)
+void Printer::print_to_screen(const std::string &str, int px, int py, Color color, int fid)
 {
 	shader->use();
 	shader->setColor("textColor", color);
 	print_to_screen(str, px, py);
 }
 
-void ScreenPainter::print_to_viewport(const std::string& str, ViewPort vp, int px, int py, int fid)
+void Printer::print_to_viewport(const std::string& str, ViewPort vp, int px, int py, int fid)
 {
 	// assume orthographic projection with units = screen pixels, origin at top left
 	std::vector<std::array<float, 5>> text_vertices;
@@ -130,13 +130,13 @@ void ScreenPainter::print_to_viewport(const std::string& str, ViewPort vp, int p
 	glBindVertexArray(vao);
 	glBindTexture(GL_TEXTURE_2D, font->texture.tex_id);
 	glDisable(GL_DEPTH_TEST);
-	glViewport(vp.x,vp.y,vp.w,vp.h);
+	glViewport(vp.x,0,vp.w,vp.h);
 	glDrawElements(GL_TRIANGLES, 3 * text_indices.size(), GL_UNSIGNED_INT, 0);
 	glViewport(0,0,scrWidth,scrHeight);
 	glEnable(GL_DEPTH_TEST);
 }
 
-void ScreenPainter::print_to_viewport(const std::string& str, ViewPort vp, int px, int py, Color color, int fid)
+void Printer::print_to_viewport(const std::string& str, ViewPort vp, int px, int py, Color color, int fid)
 {
 	this->shader->use();
 	shader->setColor("textColor", color);
@@ -144,7 +144,7 @@ void ScreenPainter::print_to_viewport(const std::string& str, ViewPort vp, int p
 }
 
 
-void ScreenPainter::print_to_screen(const std::string &str, int px, int py, int fid)
+void Printer::print_to_screen(const std::string &str, int px, int py, int fid)
 {
 	// assume orthographic projection with units = screen pixels, origin at top left
 	std::vector<std::array<float, 5>> text_vertices;
@@ -214,14 +214,14 @@ void ScreenPainter::print_to_screen(const std::string &str, int px, int py, int 
 	glEnable(GL_DEPTH_TEST);
 }
 
-void ScreenPainter::print_to_world(const std::string & str, float px, float py, float pz, Color color, int fid)
+void Printer::print_to_world(const std::string & str, float px, float py, float pz, Color color, int fid)
 {
 	this->shader->use();
 	shader->setColor("textColor", color);
 	this->print_to_world(str, px, py, pz);
 }
 
-void ScreenPainter::print_to_world(const std::string& str, float px, float py, float pz, int fid)
+void Printer::print_to_world(const std::string& str, float px, float py, float pz, int fid)
 {
 	// assume orthographic projection with units = screen pixels, origin at top left
 	std::vector<std::array<float, 5>> text_vertices;
@@ -242,7 +242,7 @@ void ScreenPainter::print_to_world(const std::string& str, float px, float py, f
 	float cx, cy;
 	glm::vec3 a, b, c, d;
 	static const float _fac = 2.0f;
-	auto billboard_orientation = -camera.orientation();
+	auto billboard_orientation = -mCamera.orientation();
 	auto right = billboard_orientation * glm::vec3(1, 0, 0);
 	auto up = billboard_orientation * glm::vec3(0, 1, 0);
 

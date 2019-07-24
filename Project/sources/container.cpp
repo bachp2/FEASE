@@ -74,8 +74,7 @@ bool FormContainer::generic_hit_testing_widgets(){
 void FormContainer::render_widgets()
 {
 	Shader* s = shaderTable.shader("screen");
-	for(auto& w : gui_form_container){
-		w->render(s);
+	for(auto& w : gui_form_container){		w->render(s);
 	}
 }
 

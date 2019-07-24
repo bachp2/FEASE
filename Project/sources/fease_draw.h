@@ -86,7 +86,7 @@ inline void vector_insert(std::vector<Node>& nv, Node n) {
 	nv.push_back(n);
 }
 
-extern ScreenPainter* text_painter;
+extern Printer* mPrinter;
 inline void static setup_points() {
 	// set point size
 	glPointSize(5.0f);

@@ -45,7 +45,9 @@ public:
 	}
 
 	void pop_char() {
-		if(!rows.empty() && rows.back() != "") rows.back().pop_back();
+		if (rows.empty()) return;
+		if (rows.back().empty()) rows.pop_back();
+		rows.back().pop_back();
 	}
 
 	bool empty() {
@@ -97,8 +99,13 @@ public:
 		if (rows.empty()) {
 			rows.push_back("");
 		}
+		if (c == '\n') {
+			rows.push_back("");
+			return;
+		}
 		rows.back() += c;
 	}
+
 
 	line& at(const int r) {
 		return rows[r];
