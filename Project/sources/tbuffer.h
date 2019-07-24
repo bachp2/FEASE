@@ -46,8 +46,16 @@ public:
 
 	void pop_char() {
 		if (rows.empty()) return;
-		if (rows.back().empty()) rows.pop_back();
+		
+		if (rows.back().empty()) {
+			rows.pop_back();
+			return;
+		}
+
 		rows.back().pop_back();
+		if (!rows.empty() && rows.back().empty()) {
+			rows.pop_back();
+		}
 	}
 
 	bool empty() {
@@ -126,5 +134,13 @@ public:
 			mstr += "\n";
 		}
 		return mstr;
+	}
+
+	const char* c_str() {
+		return this->str().c_str();
+	}
+
+	int total_lines() {
+		return this->rows.size();
 	}
 };

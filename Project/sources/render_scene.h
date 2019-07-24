@@ -69,10 +69,10 @@ inline static void setup_scene() {
 	menu_bar->set_menu_items({"File", "View", "Tools"});
 	gui_container.push_back((Form *)menu_bar);
 
-	auto static_text = new StaticTextMessage("1234567890", 30, 52);
-	gui_container.push_back((Form *) static_text);
+	/*auto static_text = new StaticTextMessage("1234567890", 30, 52);
+	gui_container.push_back((Form *) static_text);*/
 
-	auto text_box = new TextBox(30, 52, 500, 500);
+	auto text_box = new TextBox(2, 50, 500, 500);
 	gui_container.push_back((Form*)text_box);
 	
 	// cartesian axis lines

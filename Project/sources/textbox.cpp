@@ -6,7 +6,12 @@ TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color bkgrnd)
 	this->x = _x;
 	this->y = _y;
 	this->color = bkgrnd;
-
+	CharacterQuad q; 
+	mPrinter->get_glyph('D', &q);
+	this->cursor = new Cursor(
+		x, y, 
+		q.x1-q.x0, q.y1-q.y0
+	);
 	const float bwidth = 1.0;
 	const float vertices[] = {
 		0,			  0, 0.0f,//0
@@ -83,8 +88,12 @@ void TextBox::render(Shader* s) {
 		trimmed += c;
 	}*/
 	//text_painter->print_to_screen(buf.str(),x, y, 0); //to do: get skip line length
-	mPrinter->print_to_viewport(buf.str(), {x,y,float(width),float(height)}, 2, 5, 0);
-	cursor.render(s);
+	quad vp = {x, y, float(width), float(height)};
+	printf("%d\n", buf.total_lines());
+	mPrinter->print_to_viewport(buf.str(), vp, this->hpad, this->vpad, 0);
+
+	/*glViewport(0, 0, scrWidth, scrHeight);*/
+	cursor->render(s);
 }
 
 void TextBox::update(MouseListener::Event ev) {
@@ -102,4 +111,5 @@ void TextBox::update(MouseListener::Event ev) {
 		else this->buf.append(KeyListener::Instance->m_char);
 		KeyListener::Instance->action = GLFW_REPEAT;
 	}
+
 }

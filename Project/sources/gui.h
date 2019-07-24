@@ -21,7 +21,7 @@ extern int scrWidth, scrHeight;
 extern Printer* mPrinter;
 extern FormContainer gui_container;
 
-struct quad {
+struct ViewPort {
 	float x{ 0 }, y{ 0 }, w{ 0 }, h{0};
 };
 
@@ -146,6 +146,8 @@ public:
 		this->style = Style::SOLID;
 		this->x = _x;
 		this->y = _y;
+		this->width = _w;
+		this->height = _h;
 	}
 	
 	void move(float _x, float _y) {
@@ -159,7 +161,7 @@ public:
 
 		s->use();
 		glm::mat4 _model = glm::mat4(1.0f);
-		_model = glm::translate(_model, glm::vec3(100, 20, 0));
+		_model = glm::translate(_model, glm::vec3(x, y, 0));
 		s->setMat4("model", _model);
 		s->setMat4("projection", ort_proj);
 
@@ -195,6 +197,7 @@ public:
 
 		glEnable(GL_DEPTH_TEST);
 	}
+	int ln{ 0 }, col{0};
 };
 
 // TODO refactor this struct inside main menu class
@@ -297,14 +300,20 @@ public:
 	TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color bkgrnd = Color::hex("#FFFFCE"));
 	void render(Shader* s);
 	void update(MouseListener::Event ev);
+	void move(float _x, float _y) {};
+
+	~TextBox() {
+		delete cursor;
+		glDeleteVertexArrays(1, &this->vao);
+		glDeleteBuffers(1, &this->vbo);
+		glDeleteBuffers(1, &this->ebo);
+		glDeleteBuffers(1, &this->border_ebo);
+	}
 private:
 	TBuffer buf;
 	unsigned int border_ebo;
-	Cursor cursor = Cursor(
-		this->x, this->y, 
-		unsigned int(mPrinter->get_char_advance('A', 0)), 
-		unsigned int(mPrinter->get_font_height(0))
-	);
+	Cursor* cursor{nullptr};
+	int hpad{2}, vpad{5};
 };
 
 struct MenuPopupItem {

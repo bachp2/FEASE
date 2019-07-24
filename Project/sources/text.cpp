@@ -64,7 +64,7 @@ void Printer::print_to_screen(const std::string &str, int px, int py, Color colo
 	print_to_screen(str, px, py);
 }
 
-void Printer::print_to_viewport(const std::string& str, ViewPort vp, int px, int py, int fid)
+void Printer::print_to_viewport(const std::string& str, quad vp, int px, int py, int fid)
 {
 	// assume orthographic projection with units = screen pixels, origin at top left
 	std::vector<std::array<float, 5>> text_vertices;
@@ -130,13 +130,13 @@ void Printer::print_to_viewport(const std::string& str, ViewPort vp, int px, int
 	glBindVertexArray(vao);
 	glBindTexture(GL_TEXTURE_2D, font->texture.tex_id);
 	glDisable(GL_DEPTH_TEST);
-	glViewport(vp.x,0,vp.w,vp.h);
+	glViewport(vp.x, scrHeight-vp.h-vp.y, vp.w, vp.h);
 	glDrawElements(GL_TRIANGLES, 3 * text_indices.size(), GL_UNSIGNED_INT, 0);
 	glViewport(0,0,scrWidth,scrHeight);
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Printer::print_to_viewport(const std::string& str, ViewPort vp, int px, int py, Color color, int fid)
+void Printer::print_to_viewport(const std::string& str, quad vp, int px, int py, Color color, int fid)
 {
 	this->shader->use();
 	shader->setColor("textColor", color);

@@ -19,7 +19,7 @@ extern glm::mat4 per_proj, view, model, ort_proj;
 extern int scrWidth, scrHeight;
 extern ArcBallCamera mCamera;
 
-struct ViewPort {
+struct quad {
 	float x{ 0 }, y{ 0 }, w{ 0 }, h{ 0 };
 };
 
@@ -47,8 +47,8 @@ public:
 	}
 	//void render(std::string str);
 
-	void print_to_viewport(const std::string& str, ViewPort vp, int px, int py, int fid = -1);
-	void print_to_viewport(const std::string& str, ViewPort vp, int px, int py, Color color, int fid = -1);
+	void print_to_viewport(const std::string& str, quad vp, int px, int py, int fid = -1);
+	void print_to_viewport(const std::string& str, quad vp, int px, int py, Color color, int fid = -1);
 
 	void print_to_screen(const std::string& str, int px, int py, int fid = -1);
 	void print_to_screen(const std::string& str, int px, int py, Color color, int fid = -1);
@@ -79,6 +79,12 @@ public:
 		auto font = getFont(fid);
 		return font->lspacing;
 	}
+
+	void get_glyph(int glyph, CharacterQuad* q) {
+		Character chr = system.characters[glyph];
+		get_char_quad(q, chr, 0, 0);
+	}
+
 	const Color _default, _highlighted;
 };
 
