@@ -3,7 +3,7 @@
 #include "grad_bkgrnd.h"
 #include "error.h"
 #include "sphere.h"
-
+#include "circle.h"
 class ArcBallCamera;
 class Shader;
 extern ArcBallCamera mCamera;
@@ -158,8 +158,8 @@ static inline void render_scene() {
 
 	//text_painter->print_to_world("Aasasd", 0.2, 0.2, 0);
 
-	/*UVSphere sphere(0.5f, 20, 40);
-	sphere.render(shaderTable.shader("phong_lighting"));*/
+	Circle circle(0.5f, 40);
+	circle.render(shaderTable.shader("object"));
 
 	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);
