@@ -3,6 +3,7 @@
 #include <string>
 
 class TBuffer {
+
 	typedef std::string line;
 	std::vector<std::string> SplitString(const std::string& s, char delim)
 	{
@@ -30,6 +31,10 @@ class TBuffer {
 	}
 
 public:
+	struct CursorPoint {
+		int ln{ 0 }, col{0};
+	};
+
 	std::vector<line> rows;
 	std::vector<line> scratch;
 	TBuffer() {
@@ -44,18 +49,28 @@ public:
 		}
 	}
 
-	void pop_char() {
-		if (rows.empty()) return;
+	char back() {
+		return rows.back().back();
+	}
+
+	std::string& last_line() {
+		return rows.back();
+	}
+
+	CursorPoint pop_char() {
+		if (rows.empty()) return {0, 0}; // op falls through
 		
 		if (rows.back().empty()) {
 			rows.pop_back();
-			return;
+			return {int(rows.size()), int(rows.back().size())};//remove newline
 		}
 
 		rows.back().pop_back();
-		if (!rows.empty() && rows.back().empty()) {
+		if (rows.size() == 1 && rows.back().empty()) {
 			rows.pop_back();
+			return {0, 0};
 		}
+		return { int(rows.size()), int(rows.back().size()) };//remove char on the same line
 	}
 
 	bool empty() {

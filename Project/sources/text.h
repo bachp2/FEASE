@@ -70,7 +70,7 @@ public:
 		return len;
 	}
 
-	int get_char_advance(const char& c = 'A', int fid = -1) {
+	int get_char_advance(const char& c, int fid = -1) {
 		auto font = getFont(fid);
 		return font->characters[c].xadvance;
 	}
@@ -80,8 +80,9 @@ public:
 		return font->lspacing;
 	}
 
-	void get_glyph(int glyph, CharacterQuad* q) {
-		Character chr = system.characters[glyph];
+	void get_glyph(int glyph, CharacterQuad* q, int fid = -1) {
+		auto font = getFont(fid);
+		Character chr = font->characters[glyph];
 		get_char_quad(q, chr, 0, 0);
 	}
 

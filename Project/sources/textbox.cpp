@@ -6,11 +6,9 @@ TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color bkgrnd)
 	this->x = _x;
 	this->y = _y;
 	this->color = bkgrnd;
-	CharacterQuad q; 
-	mPrinter->get_glyph('D', &q);
 	this->cursor = new Cursor(
-		x, y, 
-		q.x1-q.x0, q.y1-q.y0
+		x+hpad-1, y+vpad,
+		mPrinter->get_char_advance('a',0)+1, mPrinter->get_font_height(0)
 	);
 	const float bwidth = 1.0;
 	const float vertices[] = {
@@ -62,7 +60,7 @@ TextBox::TextBox(int _x, int _y, unsigned int _w, unsigned int _h, Color bkgrnd)
 
 void TextBox::render(Shader* s) {
 	//glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
+	/*glDisable(GL_DEPTH_TEST);
 	s->use();
 	glm::mat4 _model = glm::mat4(1.0f);
 	_model = glm::translate(_model, glm::vec3(x, y, 0));
@@ -78,18 +76,11 @@ void TextBox::render(Shader* s) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, border_ebo);
 	glDrawElements(GL_TRIANGLES, 8 * 4, GL_UNSIGNED_INT, 0);
 
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);*/
 
-	/*auto wt = 0;
-	std::string trimmed;
-	for (const auto& c : buf) {
-		wt += text_painter->get_char_advance(c);
-		if (wt >= this->width) break;
-		trimmed += c;
-	}*/
 	//text_painter->print_to_screen(buf.str(),x, y, 0); //to do: get skip line length
 	quad vp = {x, y, float(width), float(height)};
-	printf("%d\n", buf.total_lines());
+	//printf("%d\n", buf.total_lines());
 	mPrinter->print_to_viewport(buf.str(), vp, this->hpad, this->vpad, 0);
 
 	/*glViewport(0, 0, scrWidth, scrHeight);*/
@@ -106,10 +97,20 @@ void TextBox::update(MouseListener::Event ev) {
 			return;
 		}
 		if (KeyListener::Instance->m_char == GLFW_KEY_BACKSPACE) {
-			buf.pop_char();
+			auto cp = buf.pop_char();
+			cursor->x = this->x + hpad + cp.col*mPrinter->get_char_advance('a', 0);
+			if (cp.ln == 0) goto done;
+			cursor->y = this->y + vpad + (cp.ln-1)*mPrinter->get_font_height(0);
 		}
-		else this->buf.append(KeyListener::Instance->m_char);
+		else {
+			this->buf.append(KeyListener::Instance->m_char);
+			if (KeyListener::Instance->m_char == '\n') {
+				cursor->y += mPrinter->get_font_height(0);
+				cursor->x = hpad;
+			}
+			else cursor->x += mPrinter->get_char_advance(KeyListener::Instance->m_char, 0);
+		}
+		done:
 		KeyListener::Instance->action = GLFW_REPEAT;
 	}
-
 }
