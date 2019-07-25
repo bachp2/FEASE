@@ -265,16 +265,14 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 	ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
 	glm::vec3 ray_wor = (glm::inverse(view) * ray_eye);
 	ray_wor = glm::normalize(ray_wor);
-
-	//printf("x: %.2f, y: %.2f, z: %.2f\n", ray_wor.x, ray_wor.y, ray_wor.z);
+	printf("x: %.2f, y: %.2f, z: %.2f\n", ray_wor.x, ray_wor.y, ray_wor.z);
 	auto camPos = mCamera.getPosition();
 	//printf("radius: %.2f ", camera.Radius);
 	//printf("x: %.2f, y: %.2f, z: %.2f\n", camPos.x, camPos.y, camPos.z);
 	// find t
-	auto t = -camPos.y / ray_wor.y;
+	auto t = -camPos.z / ray_wor.z;
 	if (t >= -0.00001f) {
 		hit = camPos + t*ray_wor;
-		hit.y = hit.z;
 		hit.z = 0;
 		//printf("x: %.2f, y: %.2f, z: %.2f\n\n", hit.x, hit.y, hit.z);
 		auto grid_half_size_after_scaling = 1.0f / mCamera.Zoom / 2;
@@ -291,7 +289,7 @@ inline static bool selectGrid(glm::ivec2& coord, const glm::vec3& hit, float lim
 	auto grid_half_size_after_scaling = 1.0f / mCamera.Zoom / 2;
 	auto grid_step = grid_half_size_after_scaling * 2 / grid.gnum;
 	auto a = hit.x / grid_step;
-	auto b = hit.z / grid_step;
+	auto b = hit.y / grid_step;
 	//PRINT2F(a, b);
 	//auto halfgrid = grid_step / 2;
 	if (!numCloseWithin(a, lim) || !numCloseWithin(b, lim))
@@ -370,7 +368,7 @@ void inline mouse_button_callback(GLFWwindow* window, int button, int action, in
 			if (selectGrid(coord, hit, lim))
 			{
 				printf("i: %d, j: %d\n", coord.x, coord.y);
-				vector_insert(nodes, grid.step*Vec3(coord.x, 0.0f, coord.y));
+				vector_insert(nodes, grid.step*Vec3(coord.x, coord.y, 0));
 			}
 		}
 	}

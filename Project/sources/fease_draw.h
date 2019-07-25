@@ -89,7 +89,7 @@ inline void vector_insert(std::vector<Node>& nv, Node n) {
 extern Printer* mPrinter;
 inline void static setup_points() {
 	// set point size
-	glPointSize(5.0f);
+	glPointSize(4.0f);
 
 	glGenVertexArrays(1, &VAO_point);
 	glBindVertexArray(VAO_point);
