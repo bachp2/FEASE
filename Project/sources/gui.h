@@ -157,8 +157,12 @@ public:
 
 	void render(Shader* s) {
 		//HighlightQuad::render(s);
+		if (glfwGetTime() - blink_timer > 0.5) {
+			visibility = !visibility;
+			blink_timer = glfwGetTime();
+		}
+		if (!visibility) return;
 		glDisable(GL_DEPTH_TEST);
-
 		s->use();
 		glm::mat4 _model = glm::mat4(1.0f);
 		_model = glm::translate(_model, glm::vec3(x, y, 0));
@@ -197,7 +201,14 @@ public:
 
 		glEnable(GL_DEPTH_TEST);
 	}
+	void make_cursor_visible() {
+		this->blink_timer = glfwGetTime();
+		this->visibility = true;
+	}
 	int ln{ 0 }, col{0};
+private:
+	double blink_timer{ 0 };
+	bool visibility{true};
 };
 
 // TODO refactor this struct inside main menu class

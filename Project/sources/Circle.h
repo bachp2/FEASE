@@ -1,6 +1,7 @@
 #pragma once
 #include "shape.h"
-
+#include <glm/gtx/rotate_vector.hpp>
+#define PI 3.14159265358979323846f
 class Circle : public Mesh {
 public:
 	enum Style {
@@ -33,6 +34,7 @@ public:
 
 		model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
+		orientation = glm::quat(glm::vec3(0, 0, 0));
 	}
 
 	~Circle() {
@@ -45,12 +47,25 @@ public:
 		s->use();
 		s->setMat4("projection", per_proj);
 		s->setMat4("view", view);
-		s->setMat4("model", this->model);
+		//auto m = glm::toMat4(-mCamera.orientation())*this->model;
+		//m = glm::translate(m, glm::vec3(0.5, 0.5, 0));
+		auto m = glm::mat4(1.0f);
+		//glm::translate(glm::toMat4(orientation), glm::vec3(0.5, 0.5, 0));
+		m = glm::translate(glm::mat4(1.0f), glm::vec3(0.5, 0.5, 0)) * glm::rotate(glm::mat4(1.0f), PI / 2, glm::vec3(1, 0, 0))*m;
+		//m = glm::toMat4(glm::normalize(glm::quat(glm::vec3(0,PI/2,0))))*m;
+		
+		s->setMat4("model", m);
 		s->setColor("color", genesis.g_colors[0]);
 		glBindVertexArray(vao);
 		if(style == SOLID)
 			glDrawArrays(GL_TRIANGLE_FAN, 0, this->vertices.size());
-		if(style == LINE)
+		if (style == LINE) {
+
+			/*glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);*/
 			glDrawArrays(GL_LINE_LOOP, 0, this->vertices.size());
+		}
 	}
 };

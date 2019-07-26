@@ -69,8 +69,6 @@ void Printer::print_to_viewport(const std::string& str, quad vp, int px, int py,
 	// assume orthographic projection with units = screen pixels, origin at top left
 	std::vector<std::array<float, 5>> text_vertices;
 	std::vector<std::array<unsigned int, 3>> text_indices;
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	auto font = getFont(fid);
 
 	const char* text = str.c_str();
@@ -81,6 +79,8 @@ void Printer::print_to_viewport(const std::string& str, quad vp, int px, int py,
 		if (*text == '\n') {
 			py += font->lspacing;
 			xad = px;
+			++text;
+			continue;
 		}
 
 		if (*text >= ' ' && *text < 128) {
@@ -97,7 +97,10 @@ void Printer::print_to_viewport(const std::string& str, quad vp, int px, int py,
 		}
 		++text;
 	}
+	if (text_vertices.empty()) return;
 
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 5 * text_vertices.size(), &text_vertices[0], GL_DYNAMIC_DRAW);
 
 	// position attribute

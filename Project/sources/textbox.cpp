@@ -80,22 +80,14 @@ void TextBox::render(Shader* s) {
 
 	//text_painter->print_to_screen(buf.str(),x, y, 0); //to do: get skip line length
 	quad vp = {x, y, float(width), float(height)};
-	//printf("%d\n", buf.total_lines());
 	mPrinter->print_to_viewport(buf.str(), vp, this->hpad, this->vpad, 0);
-
-	/*glViewport(0, 0, scrWidth, scrHeight);*/
 	cursor->render(s);
 }
 
 void TextBox::update(MouseListener::Event ev) {
 	if (!KeyListener::Instance->m_char) return;
-
 	if (KeyListener::onPressed() || KeyListener::readyForHoldEvent()) {
-		if (KeyListener::Instance->m_char == GLFW_KEY_ENTER)
-		{
-			KeyListener::Instance->action = GLFW_REPEAT;
-			return;
-		}
+		cursor->make_cursor_visible();
 		if (KeyListener::Instance->m_char == GLFW_KEY_BACKSPACE) {
 			auto cp = buf.pop_char();
 			cursor->x = this->x + hpad + cp.col*mPrinter->get_char_advance('a', 0);
@@ -103,14 +95,14 @@ void TextBox::update(MouseListener::Event ev) {
 			cursor->y = this->y + vpad + (cp.ln-1)*mPrinter->get_font_height(0);
 		}
 		else {
-			this->buf.append(KeyListener::Instance->m_char);
 			if (KeyListener::Instance->m_char == '\n') {
 				cursor->y += mPrinter->get_font_height(0);
 				cursor->x = hpad;
 			}
 			else cursor->x += mPrinter->get_char_advance(KeyListener::Instance->m_char, 0);
+			this->buf.append(KeyListener::Instance->m_char);
 		}
-		done:
+	done:
 		KeyListener::Instance->action = GLFW_REPEAT;
 	}
 }

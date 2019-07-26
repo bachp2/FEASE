@@ -124,7 +124,7 @@ public:
 	}
 
 	glm::quat orientation() {
-		return glm::quat(glm::vec3(Pitch, Yaw, 0));
+		return glm::normalize(glm::quat(glm::vec3(Pitch, Yaw, 0)));
 	}
 
 private:

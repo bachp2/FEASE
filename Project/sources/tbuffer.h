@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-
+#include "key_listener.h"
 class TBuffer {
 
 	typedef std::string line;
@@ -136,6 +136,7 @@ public:
 
 	void append(std::string& s)
 	{
+		//printf("%d\n", chars_count(0));
 		if (rows.empty()) {
 			rows.push_back("");
 		}
@@ -157,5 +158,9 @@ public:
 
 	int total_lines() {
 		return this->rows.size();
+	}
+
+	int chars_count(int ln) {
+		return rows[ln].size();
 	}
 };

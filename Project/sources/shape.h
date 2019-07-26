@@ -3,7 +3,7 @@
 #include "camera.h"
 #include <vector>
 #include <glm/glm.hpp>
-
+#include <glm/gtc/matrix_transform.hpp>
 extern glm::mat4 per_proj, view, model, ort_proj;
 extern ArcBallCamera mCamera;
 
@@ -22,16 +22,21 @@ public:
 		this->orientation = glm::quat(glm::vec3(pitch, yaw, roll));
 	}
 
+	virtual void set_orientation(glm::quat q)
+	{
+		this->orientation = q;
+	}
+
 	virtual void rotate_to(glm::quat& to)
 	{
 		
 	}
-	virtual void render(Shader* s) {};
 
+	virtual void render(Shader* s) {};
+	glm::quat orientation;
 protected:
 	unsigned int vao{0}, vbo{0};
 	std::vector<glm::vec3> vertices;
-	glm::quat orientation;
 	glm::mat4 model{1.0f};
 	GDef genesis;
 };

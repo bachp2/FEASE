@@ -265,7 +265,7 @@ inline static bool getHitPtFromRaycastToGrid(glm::vec3& hit, float mx, float my,
 	ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
 	glm::vec3 ray_wor = (glm::inverse(view) * ray_eye);
 	ray_wor = glm::normalize(ray_wor);
-	printf("x: %.2f, y: %.2f, z: %.2f\n", ray_wor.x, ray_wor.y, ray_wor.z);
+	//printf("x: %.2f, y: %.2f, z: %.2f\n", ray_wor.x, ray_wor.y, ray_wor.z);
 	auto camPos = mCamera.getPosition();
 	//printf("radius: %.2f ", camera.Radius);
 	//printf("x: %.2f, y: %.2f, z: %.2f\n", camPos.x, camPos.y, camPos.z);
