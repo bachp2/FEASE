@@ -1,7 +1,6 @@
 #pragma once
-#include "shape.h"
+#include "common.h"
 #include "cube.h"
-#define PI 3.14159265358979323846
 
 class UVSphere : public Mesh
 {

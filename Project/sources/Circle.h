@@ -1,6 +1,5 @@
 #pragma once
-#include "shape.h"
-#include <glm/gtx/rotate_vector.hpp>
+#include "common.h"
 #define PI 3.14159265358979323846f
 class Circle : public Mesh {
 public:
@@ -51,11 +50,12 @@ public:
 		//m = glm::translate(m, glm::vec3(0.5, 0.5, 0));
 		auto m = glm::mat4(1.0f);
 		//glm::translate(glm::toMat4(orientation), glm::vec3(0.5, 0.5, 0));
-		m = glm::translate(glm::mat4(1.0f), glm::vec3(0.5, 0.5, 0)) * glm::rotate(glm::mat4(1.0f), PI / 2, glm::vec3(1, 0, 0))*m;
+		m = glm::translate(glm::mat4(1.0f), glm::vec3(0.2, 0.2, 0)) * glm::toMat4(orientation)*m;
 		//m = glm::toMat4(glm::normalize(glm::quat(glm::vec3(0,PI/2,0))))*m;
 		
 		s->setMat4("model", m);
 		s->setColor("color", genesis.g_colors[0]);
+
 		glBindVertexArray(vao);
 		if(style == SOLID)
 			glDrawArrays(GL_TRIANGLE_FAN, 0, this->vertices.size());

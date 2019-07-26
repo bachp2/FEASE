@@ -3,7 +3,7 @@
 #include "camera.h"
 #include <vector>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+
 extern glm::mat4 per_proj, view, model, ort_proj;
 extern ArcBallCamera mCamera;
 

@@ -146,9 +146,6 @@
     <ClInclude Include="shader.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="shape.h">
-      <Filter>Header Files\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="cube.h">
       <Filter>Header Files\graphics</Filter>
     </ClInclude>
@@ -165,6 +162,15 @@
       <Filter>Header Files\text</Filter>
     </ClInclude>
     <ClInclude Include="circle.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arrow.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
       <Filter>Header Files\graphics</Filter>
     </ClInclude>
   </ItemGroup>

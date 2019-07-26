@@ -1,15 +1,8 @@
 #pragma once
 
+#include "globals.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/ext/quaternion_transform.hpp>
-
-#define PI 3.14159265358979323846
-#define TAU 2*PI
 
 typedef glm::vec3 Vec3;
 typedef glm::quat Quat;
@@ -124,7 +117,7 @@ public:
 	}
 
 	glm::quat orientation() {
-		return glm::normalize(glm::quat(glm::vec3(Pitch, Yaw, 0)));
+		return glm::quat(glm::vec3(Pitch, Yaw, 0));
 	}
 
 private:
@@ -132,10 +125,8 @@ private:
 	const glm::mat4 LookAtMat = glm::lookAt(Vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 GetModelMatrix()
 	{
-		glm::mat4 model = glm::mat4(1.0f);
 		//model = glm::scale(model, Vec3(Zoom));
-		model = glm::rotate(model, Yaw, Vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, Pitch, Vec3(1.0f, 0.0f, 0.0f));
+		glm::mat4 model = glm::toMat4(orientation())*glm::mat4(1.0f);
 		model = glm::scale(model, Vec3(Zoom));
 		return model;
 	}

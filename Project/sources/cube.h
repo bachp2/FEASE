@@ -1,5 +1,5 @@
 #pragma once
-#include "shape.h"
+#include "common.h"
 
 class Cube : public Mesh {
 public:

@@ -4,6 +4,7 @@
 #include "error.h"
 #include "sphere.h"
 #include "circle.h"
+#include "arrow.h"
 class ArcBallCamera;
 class Shader;
 extern ArcBallCamera mCamera;
@@ -158,12 +159,12 @@ static inline void render_scene() {
 
 	//text_painter->print_to_world("Aasasd", 0.2, 0.2, 0);
 
-	Circle circle(0.5f, 20, Circle::Style::LINE);
-	static float i = 0.0;
-	auto facing_cam = -mCamera.orientation();
-	static auto original = circle.orientation;
-	circle.orientation = glm::slerp(original, facing_cam, abs(sin(i+=0.02)));
-	circle.render(shaderTable.shader("object"));
+	Arrow arrow;
+	//static float i = 0.0;
+	//auto facing_cam = -mCamera.orientation();
+	//static auto original = arrow.orientation;
+	//arrow.orientation = glm::slerp(original, facing_cam, abs(sin(i+=0.02)));
+	arrow.render(shaderTable.shader("object"));
 	
 
 	// need identity matrix for model matrix

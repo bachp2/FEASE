@@ -1,7 +1,13 @@
 #pragma once
+#include <glad/glad.h>
+#define GLFW_INCLUDE_GLU
+#include <GLFW/glfw3.h>
+#include <vector>
+#include <glm/glm.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
 #include <string>
-
-#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
-#define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z); 
-#define PRINTBOOL(X) std::cout << #X << ": " << std::boolalpha << X << std::endl;
 typedef std::string String;
+
+#include "color.h"
+#include "mesh.h"
+#include "globals.h"
