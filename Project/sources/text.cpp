@@ -249,9 +249,10 @@ void Printer::print_to_world(const std::string& str, float px, float py, float p
 	auto right = billboard_orientation * glm::vec3(1, 0, 0);
 	auto up = billboard_orientation * glm::vec3(0, 1, 0);
 
+	auto font = this->getFont(fid);
 	while (*text) {
 		if (*text >= ' ' && *text < 128) {
-			Character chr = system.characters[*text];
+			Character chr = font->characters[*text];
 			//printf("id:%d, x:%d, y:%d, w:%d, h:%d, xoffset\n", chr.id);
 			CharacterQuad q;
 			get_char_quad(&q, chr, px, py);
@@ -314,7 +315,7 @@ void Printer::print_to_world(const std::string& str, float px, float py, float p
 	shader->setMat4("projection", per_proj);
 	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(vao);
-	glBindTexture(GL_TEXTURE_2D, system.texture.tex_id);
+	glBindTexture(GL_TEXTURE_2D, font->texture.tex_id);
 	glDrawElements(GL_TRIANGLES, 3*text_indices.size(), GL_UNSIGNED_INT, 0);
 	glEnable(GL_DEPTH_TEST);
 }

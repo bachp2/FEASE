@@ -4,7 +4,6 @@
 class Cube : public Mesh {
 public:
 	Cube();
-	~Cube();
 	Cube(int sectors_on_face) 
 	{
 		static const float vertices[] = {
@@ -19,7 +18,7 @@ public:
 			 0.5f, -0.5f,  0.5f,
 		};
 
-		genesis.g_colors[0] = Color::hex("#2fbdb1");
+		basis.colors[0] = Color::hex("#2fbdb1");
 
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);

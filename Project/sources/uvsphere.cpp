@@ -1,10 +1,5 @@
 #include "sphere.h"
 
-UVSphere::~UVSphere() {
-	glDeleteVertexArrays(1, &this->vao);
-	glDeleteBuffers(1, &this->vbo);
-	glDeleteBuffers(1, &this->genesis.g_ebos[0]);
-}
 
 UVSphere::UVSphere(float radius, int longc, int latc) {
 
@@ -38,7 +33,7 @@ UVSphere::UVSphere(float radius, int longc, int latc) {
 		}
 	}
 
-	genesis.g_colors[0] = Color::hex("#2fbdb1");
+	basis.colors[0] = Color::hex("#2fbdb1");
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -50,6 +45,7 @@ UVSphere::UVSphere(float radius, int longc, int latc) {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2*sizeof(glm::vec3), (void*)sizeof(glm::vec3));
 	glEnableVertexAttribArray(1);
 
+	std::vector<unsigned int> elems;
 	int k1, k2;
 	for (int i = 0; i < latc; ++i)
 	{
@@ -62,26 +58,27 @@ UVSphere::UVSphere(float radius, int longc, int latc) {
 			// k1 => k2 => k1+1
 			if (i != 0)
 			{
-				genesis.g_elems[0].push_back(k1);
-				genesis.g_elems[0].push_back(k2);
-				genesis.g_elems[0].push_back(k1 + 1);
+				elems.push_back(k1);
+				elems.push_back(k2);
+				elems.push_back(k1 + 1);
 			}
 
 			// k1+1 => k2 => k2+1
 			if (i != (latc - 1))
 			{
-				genesis.g_elems[0].push_back(k1 + 1);
-				genesis.g_elems[0].push_back(k2);
-				genesis.g_elems[0].push_back(k2 + 1);
+				elems.push_back(k1 + 1);
+				elems.push_back(k2);
+				elems.push_back(k2 + 1);
 			}
 		}
 	}
 
-	glGenBuffers(1, &genesis.g_ebos[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, genesis.g_ebos[0]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * genesis.g_elems[0].size(),
-		genesis.g_elems[0].data(), GL_DYNAMIC_DRAW);
+	glGenBuffers(1, &basis.ebos[0]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, basis.ebos[0]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * elems.size(),
+		elems.data(), GL_DYNAMIC_DRAW);
 
+	basis.elems_count[0] = elems.size();
 	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
 
@@ -94,10 +91,10 @@ void UVSphere::render(Shader* s) {
 	s->setMat4("view", view);
 	s->setMat4("model", this->model);
 	s->setVec3("lightPos", mCamera.getPosition());
-	s->setColor("objectColor", genesis.g_colors[0]);
+	s->setColor("objectColor", basis.colors[0]);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBindVertexArray(vao);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, genesis.g_ebos[0]);
-	glDrawElements(GL_TRIANGLES, genesis.g_elems[0].size(), GL_UNSIGNED_INT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, basis.ebos[0]);
+	glDrawElements(GL_TRIANGLES, basis.elems_count[0], GL_UNSIGNED_INT, 0);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

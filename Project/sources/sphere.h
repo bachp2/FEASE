@@ -5,8 +5,6 @@
 class UVSphere : public Mesh
 {
 public:
-	~UVSphere();
-
 	UVSphere(float radius, int longc, int latc);
 
 	void render(Shader* s);

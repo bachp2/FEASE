@@ -173,6 +173,9 @@
     <ClInclude Include="mesh.h">
       <Filter>Header Files\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="cubic_bezier.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\shaders\object.fs">

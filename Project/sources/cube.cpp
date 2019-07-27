@@ -45,7 +45,7 @@ Cube::Cube() {
 		-0.5f,  0.5f, -0.5f
 	};
 
-	genesis.g_colors[0] = Color::hex("#2fbdb1");
+	basis.colors[0] = Color::hex("#2fbdb1");
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -59,18 +59,12 @@ Cube::Cube() {
 	model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
 }
 
-Cube::~Cube() {
-	glDeleteVertexArrays(1, &this->vao);
-	glDeleteBuffers(1, &this->vbo);
-	glDeleteBuffers(1, &this->genesis.g_ebos[0]);
-}
-
 inline void Cube::render(Shader* s) {
 	s->use();
 	s->setMat4("projection", per_proj);
 	s->setMat4("view", view);
 	s->setMat4("model", this->model);
-	s->setColor("color", genesis.g_colors[0]);
+	s->setColor("color", basis.colors[0]);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }

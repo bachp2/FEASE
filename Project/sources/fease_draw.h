@@ -12,9 +12,6 @@
 #endif // !PI
 extern glm::mat4 per_proj, view, model, ort_proj;
 
-//#define PRINT2F(X, Y) printf(#X ": %.2f, " #Y ": %.2f\n", X, Y);
-//#define PRINT3F(X, Y, Z) printf(#X ": %.2f, " #Y ": %.2f, " #Z ": %.2f\n", X, Y, Z);
-
 //////////////////////////////
 //TERRY CUBE
 //////////////////////////////
@@ -305,7 +302,7 @@ struct Grid {
 	float step;
 	int vertices_size;
 	
-	inline void setup(Shader* s, unsigned int grid_num = 20) {
+	inline void setup(Shader* s, unsigned int grid_num = 40) {
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
 

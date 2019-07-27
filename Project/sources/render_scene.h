@@ -5,6 +5,8 @@
 #include "sphere.h"
 #include "circle.h"
 #include "arrow.h"
+#include "cubic_bezier.h"
+
 class ArcBallCamera;
 class Shader;
 extern ArcBallCamera mCamera;
@@ -157,15 +159,20 @@ static inline void render_scene() {
 		o->render(s);
 	}
 
-	//text_painter->print_to_world("Aasasd", 0.2, 0.2, 0);
+	//mPrinter->print_to_world("0.020", 0.2, 0.2, 0);
 
-	Arrow arrow;
+	//Arrow arrow;
 	//static float i = 0.0;
 	//auto facing_cam = -mCamera.orientation();
 	//static auto original = arrow.orientation;
 	//arrow.orientation = glm::slerp(original, facing_cam, abs(sin(i+=0.02)));
-	arrow.render(shaderTable.shader("object"));
-	
+	//arrow.render(shaderTable.shader("object"));
+
+	glm::vec3 cp[4] = {
+		{0,0,0}, {0.5,0.5,0}, {0.4,0.2,0}, {0.8,0,0}
+	};
+	BezierCurve curve(cp);
+	curve.render(shaderTable.shader("object"));
 
 	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);

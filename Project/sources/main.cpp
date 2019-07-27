@@ -62,14 +62,12 @@ MouseListener mouse_listener;
 void run_data_analysis();
 void render_loop();
 void processInput(GLFWwindow *window);
-void render_scene();
-void setup_scene();
-void prog_cleanup();
-GLFWwindow* prog_init();
+void PROG_CLEANUP();
+GLFWwindow* PROG_INIT();
 
 int main(int, char**)
 {
-	window = prog_init();
+	window = PROG_INIT();
 	// set up scene
 	// ------------------------------------------------------------------
 	
@@ -104,7 +102,7 @@ int main(int, char**)
 		delete console_thread;
 	}
 	main_renderer.join();
-	prog_cleanup();
+	PROG_CLEANUP();
 	//gui_widget_container.~WidgetContainer();
 	return 0;
 }
@@ -378,7 +376,7 @@ void character_callback(GLFWwindow* window, unsigned int codepoint);
 //---------------------------------------------------------------------------------------------
 // PROGRAM INIT FUNCTION
 //---------------------------------------------------------------------------------------------
-inline static GLFWwindow* prog_init() {
+inline static GLFWwindow* PROG_INIT() {
 	// glfw window creation
 	// --------------------
 	//GLFWwindow* window = initApp();
@@ -444,7 +442,7 @@ inline static GLFWwindow* prog_init() {
 //---------------------------------------------------------------------------------------------
 // PROGRAM'S CLEANUP FUNC
 //---------------------------------------------------------------------------------------------
-inline void static prog_cleanup(){
+inline void static PROG_CLEANUP(){
 	glDeleteVertexArrays(1, &VAO_point);
 	//glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &VBO_point);

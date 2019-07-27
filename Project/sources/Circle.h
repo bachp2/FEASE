@@ -21,7 +21,7 @@ public:
 			vertices.push_back({x,y,0});
 		}
 
-		genesis.g_colors[0] = Color::hex("#2fbdb1");
+		basis.colors[0] = Color::hex("#2fbdb1");
 
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
@@ -36,12 +36,6 @@ public:
 		orientation = glm::quat(glm::vec3(0, 0, 0));
 	}
 
-	~Circle() {
-		glDeleteVertexArrays(1, &this->vao);
-		glDeleteBuffers(1, &this->vbo);
-		/*glDeleteBuffers(1, &this->genesis.g_ebos[0]);*/
-	}
-
 	void render(Shader* s) {
 		s->use();
 		s->setMat4("projection", per_proj);
@@ -54,7 +48,7 @@ public:
 		//m = glm::toMat4(glm::normalize(glm::quat(glm::vec3(0,PI/2,0))))*m;
 		
 		s->setMat4("model", m);
-		s->setColor("color", genesis.g_colors[0]);
+		s->setColor("color", basis.colors[0]);
 
 		glBindVertexArray(vao);
 		if(style == SOLID)
