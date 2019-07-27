@@ -142,9 +142,9 @@ void MainMenu::render(Shader * s)
 		mPrinter->print_to_screen(str, cx, cy);
 		cx += padding.horizontal*2+mPrinter->get_str_length(str);
 	}
-	auto ss = shaderTable.shader("texture");
+	auto ss = Shader::Table["texture"];
 	for(auto &a : icon_buttons){
-		a.render(ss);
+		a.render(&ss);
 	}
 }
 

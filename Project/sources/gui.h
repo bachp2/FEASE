@@ -5,7 +5,6 @@
 #include "config_parser.h"
 #include "mouse_listener.h"
 #include "key_listener.h"
-#include "shader_manager.h"
 #include <list>
 
 struct Color;
@@ -15,7 +14,6 @@ class TextureQuad;
 
 extern glm::mat4 per_proj, view, model, ort_proj;
 extern ConfigParser configTable;
-extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
 extern Printer* mPrinter;

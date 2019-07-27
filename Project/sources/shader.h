@@ -13,15 +13,15 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_transform.hpp>
-
+#include <map>
 class Shader
 {
 public:
-	unsigned int ID;
+	static std::map<std::string, Shader> Table;
+	unsigned int ID{0};
 	// constructor generates the shader on the fly
 	// ------------------------------------------------------------------------
-	Shader(){}
-	Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
+	Shader(std::string name, const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
 	{
 		// 1. retrieve the vertex/fragment source code from filePath
 		std::string vertexCode;
@@ -100,7 +100,11 @@ public:
 		glDeleteShader(fragment);
 		if (geometryPath != nullptr)
 			glDeleteShader(geometry);
+
+		Shader::Table[name] = *this;
 	}
+
+	Shader() {}
 
 	// activate the shader
 	// ------------------------------------------------------------------------

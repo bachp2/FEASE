@@ -35,8 +35,6 @@ public:
 		glBindVertexArray(0);
 	}
 
-	
-
 	void render(Shader* s)
 	{
 		s->use();

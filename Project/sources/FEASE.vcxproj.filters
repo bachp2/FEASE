@@ -63,9 +63,6 @@
     <ClCompile Include="obj_loader.cpp">
       <Filter>Source Files\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="shader_manager.cpp">
-      <Filter>Source Files\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="config_parser.cpp">
       <Filter>Source Files\config</Filter>
     </ClCompile>
@@ -99,9 +96,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config_parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="shader_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="color.h">

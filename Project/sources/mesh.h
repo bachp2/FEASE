@@ -49,8 +49,4 @@ protected:
 	std::vector<glm::vec3> vertices;
 	glm::mat4 model{1.0f};
 	GDef basis;
-
-	void bind_vao() {
-		
-	}
 };

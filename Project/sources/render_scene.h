@@ -12,7 +12,6 @@ class Shader;
 extern ArcBallCamera mCamera;
 extern glm::mat4 per_proj, view, model, ort_proj;
 
-extern ShaderManager shaderTable;
 extern MouseListener mouse_listener;
 extern int scrWidth, scrHeight;
 extern Printer* mPrinter;
@@ -44,13 +43,13 @@ inline static void setup_scene() {
 
 	//configTable.initialize_shader_program_from_config(&shaderTable, FPATH(resources/config.lua));
 
-	shaderTable.emplaceShader("bitmapped_text", SHAD(texture.vs), SHAD(text.fs));
-	shaderTable.emplaceShader("texture", SHAD(texture.vs), SHAD(texture.fs));
-	shaderTable.emplaceShader("phong_lighting", SHAD(phong.vs), SHAD(phong.fs));
-	shaderTable.emplaceShader("sline", SHAD(solid.vs), SHAD(solid.fs));
-	shaderTable.emplaceShader("object", SHAD(object.vs), SHAD(object.fs));
-	shaderTable.emplaceShader("billboard", SHAD(object.vs), SHAD(object.fs));
-	shaderTable.emplaceShader("screen", SHAD(screen.vs), SHAD(object.fs));
+	Shader("bitmapped_text", SHAD(texture.vs), SHAD(text.fs));
+	Shader("texture", SHAD(texture.vs), SHAD(texture.fs));
+	Shader("phong_lighting", SHAD(phong.vs), SHAD(phong.fs));
+	Shader("sline", SHAD(solid.vs), SHAD(solid.fs));
+	Shader("object", SHAD(object.vs), SHAD(object.fs));
+	Shader("billboard", SHAD(object.vs), SHAD(object.fs));
+	Shader("screen", SHAD(screen.vs), SHAD(object.fs));
 	
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -66,7 +65,7 @@ inline static void setup_scene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	
-	mPrinter = new Printer(shaderTable.shader("bitmapped_text"), configTable.color("text"));
+	mPrinter = new Printer(&Shader::Table["bitmapped_text"], configTable.color("text"));
 	
 	auto menu_bar = new MainMenu(icon_names);
 	menu_bar->set_menu_items({"File", "View", "Tools"});
@@ -88,11 +87,11 @@ inline static void setup_scene() {
 	setup_lines();
 	
 	//grid
-	grid.setup(shaderTable.shader("object"));
+	grid.setup(&Shader::Table["object"]);
 	
 	// load and create a texture 
 	// -------------------------
-	auto textShader = shaderTable.shader("texture");
+	auto textShader = Shader::Table["texture"];
 	create_texture(&texture, FPATH(res/terry.jpg));
 	
 	//textShader->setInt("texture1", texture.tex_id);
@@ -132,7 +131,7 @@ static inline void render_scene() {
 	
 	//// Draw box
 	//// bind textures on corresponding texture units
-	auto textShader = shaderTable.shader("texture");
+	auto textShader = &Shader::Table["texture"];
 	textShader->use();
 	
 	textShader->setMat4("projection", per_proj);
@@ -147,16 +146,16 @@ static inline void render_scene() {
 	glDrawArrays(GL_TRIANGLES, 0, 36);*/
 
 	// Draw lines
-	render_lines(&shaderTable);
+	render_lines(&Shader::Table["object"]);
 
 	// Draw points
 
-	render_points(&shaderTable);
+	render_points(&Shader::Table["object"]);
 
 	//// render obj mesh
-	auto s = shaderTable.shader("billboard");
+	auto s = Shader::Table["billboard"];
 	for(auto& o : asset_container){
-		o->render(s);
+		o->render(&s);
 	}
 
 	//mPrinter->print_to_world("0.020", 0.2, 0.2, 0);
@@ -172,13 +171,13 @@ static inline void render_scene() {
 		{0,0,0}, {0.5,0.5,0}, {0.4,0.2,0}, {0.8,0,0}
 	};
 	BezierCurve curve(cp);
-	curve.render(shaderTable.shader("object"));
+	curve.render(&Shader::Table["object"]);
 
 	// need identity matrix for model matrix
 	model = glm::mat4(1.0f);
 
 	// draw axis lines
-	axisLines.render(shaderTable.shader("sline"), scrWidth, scrHeight);
+	axisLines.render(&Shader::Table["sline"], scrWidth, scrHeight);
 
 	gui_container.update_widgets();
 	gui_container.render_widgets();

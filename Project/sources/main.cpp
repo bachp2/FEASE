@@ -37,6 +37,8 @@
 #pragma warning (disable: 4838)
 
 // settings
+std::map<std::string, Shader> Shader::Table;
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 int scrWidth = SCR_WIDTH, scrHeight = SCR_HEIGHT;
@@ -50,7 +52,6 @@ bool window_resized = false;
 // camera
 
 ArcBallCamera mCamera(glm::radians(-30.0f), glm::radians(20.0f));
-ShaderManager shaderTable;
 ConfigParser configTable;
 Printer* mPrinter;
 

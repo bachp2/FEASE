@@ -3,7 +3,6 @@
 #include <set>
 #include "camera.h"
 #include "color.h"
-#include "shader_manager.h"
 #include <array>
 #include "text.h"
 #ifndef PI
@@ -94,9 +93,8 @@ inline void static setup_points() {
 	glGenBuffers(1, &VBO_point);
 }
 
-inline void static render_points(ShaderManager* sm) {
+inline void static render_points(Shader* shader) {
 	glDisable(GL_DEPTH_TEST);
-	Shader* shader = sm->shader("object");
 	shader->use();
 	shader->setColor("color", configTable.color("dot"));
 	
@@ -199,8 +197,7 @@ inline static void setup_lines(){
 	glGenBuffers(1, &VBO_element);
 }
 
-inline static void render_lines(ShaderManager* sm){
-	Shader* s = sm->shader("object");
+inline static void render_lines(Shader* s){
 	s->use();
 
 	glDisable(GL_DEPTH_TEST);
